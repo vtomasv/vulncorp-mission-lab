@@ -170,7 +170,7 @@ class Handler(BaseHTTPRequestHandler):
         if path=='/api/targets':return self.send({r:request_target(f'http://{r}:{port}/_status') for r,port in [('gateway',8080),('records',8081),('backup',8082)]})
         if path=='/api/export':return self.send(export_bundle())
         if path.startswith('/api/'):return self.send({'error':'Ruta no encontrada'},404)
-        files={'/':'index.html','/app.js':'app.js','/style.css':'style.css','/favicon.svg':'favicon.svg'}
+        files={'/':'index.html','/app.js':'app.js','/style.css':'style.css','/favicon.svg':'favicon.svg','/anatomy.css':'anatomy.css','/context-figure.js':'context-figure.js'}
         if path not in files:return self.send({'error':'Archivo no encontrado'},404)
         f=ROOT/'web'/files[path];raw=f.read_bytes()
         self.send_response(200);self.send_header('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css; charset=utf-8','svg':'image/svg+xml'}[f.suffix[1:]])

@@ -13,6 +13,10 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Pruebas de decisiones y contratos
         run: python3 -m unittest discover -s tests -v
+      - name: Figura didáctica y sintaxis de la interfaz
+        run: |
+          node --check web/app.js
+          node scripts/build-context-figure.mjs --audit
       - name: Contrato de aislamiento
         run: docker compose --profile '*' config --format json | python3 scripts/verify_compose.py
       - name: Iniciar targets aislados

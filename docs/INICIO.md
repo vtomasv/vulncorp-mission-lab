@@ -2,7 +2,7 @@
 
 ## 1. Qué vas a construir
 
-Una empresa ficticia con tres servicios: una entrada pública, un servicio de expedientes y un repositorio de copias. El centro de misión permite investigar, registrar evidencia y defender decisiones. No es una competencia de velocidad ni tiene notas intermedias.
+Una empresa ficticia con tres servicios: una entrada pública, un servicio de expedientes y un repositorio de copias. El aula de práctica permite investigar, registrar evidencia y defender decisiones. No es una competencia de velocidad ni tiene notas intermedias.
 
 **Imagen**: plantilla del software. **Contenedor**: instancia de una imagen en ejecución. **Puerto**: punto de escucha de un servicio. **Red**: qué servicios pueden comunicarse. **Volumen**: datos que sobreviven al contenedor. No necesitas memorizar comandos: sí explicar qué demuestra cada resultado.
 
@@ -64,11 +64,11 @@ Espera la construcción. Debes ver cuatro servicios iniciados, sin fallos de hea
 
 ## 4. Tu primera evidencia
 
-1. En **Mapa operativo**, pulsa **Probar función de negocio**.
+1. En **Inicio y escenario**, pulsa **Probar función de negocio**.
 2. Debe aparecer `status: completed` y `transaction_id: TRAIN-...`.
 3. Pulsa **Probar exportación**. Al inicio devuelve HTTP 200 con registros que dicen PERSONA FICTICIA.
 4. Abre **Evidencias**. Comprueba dos observaciones distintas, con hora, origen, zona y hash.
-5. En **Misiones → Clase 1**, explica qué demuestra cada una. Una transacción exitosa no demuestra que sea segura.
+5. En **Clases y actividades → Clase 1**, explica qué demuestra cada una. Una transacción exitosa no demuestra que sea segura.
 
 ## 5. Conocer la terminal sin perderse
 

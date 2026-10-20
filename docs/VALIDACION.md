@@ -32,6 +32,15 @@ La consulta y su revisión completas están en [el ejemplo capturado](ejemplos/i
 
 La automatización pública ejecuta las pruebas funcionales en Linux **amd64** sin descargar el modelo. La [primera ejecución](https://github.com/vtomasv/vulncorp-mission-lab/actions/runs/39467440045) pasó: pruebas unitarias, contrato Compose, construcción, flujo integrado y descubrimiento desde dos zonas. Consulta las [ejecuciones posteriores](https://github.com/vtomasv/vulncorp-mission-lab/actions/workflows/ci.yml) para el estado actual; una insignia verde no acredita pruebas de IA, Windows ni hardware de 16 GB.
 
+## Rediseño del aula · comprobaciones adicionales
+
+- Pantallas de inicio, clases, hallazgos, decisiones, IA y evidencias revisadas en escritorio y a 390 px de ancho. Tablas amplias contenidas en su propia zona de desplazamiento.
+- Flujo de clasificación en español; guardado y recuperación del foco. Medida solicitada desde el diálogo: exportación 403 y transacción completada; después se restableció el caso.
+- Comparador Anatomy: valores de referencia 64/32/80; movimiento reducido; sin escritura de decisiones al explorar.
+- Geometría: 50 sólidos, soporte y orden sin problemas en cinco posiciones; orden de profundidad resuelto en 17 posiciones. Revisión de ampliaciones 4×. Comprobación de extremos de líneas: cero extremos flotantes en los tres contextos.
+- Contraste de tokens: texto principal 11,81:1; secundario 5,08:1; botón principal 6,56:1; navegación activa 5,84:1; borde de campos 3,20:1. Son mediciones de esas combinaciones concretas.
+- Navegador: sin errores de consola. La verificación de UI usa Chrome de desarrollo; no se afirma una matriz completa de navegadores.
+
 ## Pruebas reproducibles
 
 ```bash

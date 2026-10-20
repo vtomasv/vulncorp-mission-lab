@@ -49,6 +49,16 @@ Las clases 1-3 preparan los laboratorios posteriores de validación profunda y r
 
 Una buena entrega tiene pocas afirmaciones sólidas: archivo de inventario o dibujo, dos perspectivas de acceso, SBOMs de imágenes distintas, reporte real con procedencia, clasificación razonada, decisiones para dos clientes, revisión IA y comparación antes/después de un control.
 
-El expediente JSON incluye solo lo registrado en el centro de misión. Los archivos CLI/SBOM/Grype se conservan aparte en `artifacts/`; el alumno los adjunta a su carpeta de laboratorio. No se solicitan datos personales reales ni credenciales del equipo.
+El expediente JSON incluye solo lo registrado en el aula de práctica. Los archivos CLI/SBOM/Grype se conservan aparte en `artifacts/`; el alumno los adjunta a su carpeta de laboratorio. No se solicitan datos personales reales ni credenciales del equipo.
 
 Guías del docente por jornada: [Clase 1](../labs/01-superficie/INSTRUCTOR.md), [Clase 2](../labs/02-evidencia/INSTRUCTOR.md), [Clase 3](../labs/03-priorizacion/INSTRUCTOR.md).
+
+## Interfaz de aula y recorrido
+
+**Inicio y escenario** presenta tres accesos de clase y distingue el contexto del cliente, las instrucciones y las observaciones guardadas. **Clases y actividades** reúne las reflexiones; los contadores describen registros guardados, sin asignar notas ni acreditar dominio.
+
+La maqueta Anatomy es una pregunta inicial para el grupo: ¿por qué cambia el índice de referencia si el hallazgo técnico permanece? La exploración es independiente de la selección de empresa del expediente. Pedir al estudiante que explique el cambio antes de abrir Decisiones; el valor ilustrativo no sustituye su evaluación.
+
+Los formularios de clasificación, medidas y revisión de IA solicitan una explicación en español. Distinguir el texto descriptivo de las opciones de los códigos técnicos que conserva el expediente. Una medida todavía exige comprobar acceso y función; guardar un formulario no cierra el razonamiento.
+
+El diseño usa fondo claro, una paleta discreta, texto amplio e instrucciones progresivas. No hay clasificación competitiva, puntuación de velocidad ni una estética de intrusión. El apoyo visual debe dirigir la atención hacia evidencias, consecuencias y responsabilidades.

@@ -6,7 +6,7 @@
 
 El dueño dice: «Todo funciona. Solo necesito que me digas qué debemos proteger primero». Hay un inventario incompleto, una cuenta de soporte compartida y una API que nadie recuerda haber publicado. Tu misión es reconstruir el servicio antes de hablar de severidades.
 
-Elige **RedSalud Sur**, **Aguas del Valle Sur** o **NubeAndes Servicios** en el centro de misión. Los nombres, empresas, personas y expedientes son ficticios. La condición OIV es un supuesto académico, no una calificación de una empresa real.
+Elige **RedSalud Sur**, **Aguas del Valle Sur** o **NubeAndes Servicios** en el aula de práctica. Los nombres, empresas, personas y expedientes son ficticios. La condición OIV es un supuesto académico, no una calificación de una empresa real.
 
 ## Al terminar podrás
 
@@ -108,7 +108,7 @@ Repite las dos pruebas con los botones del mapa para guardarlas en la bitácora.
 
 ### Paso 8. Pregunta al dueño
 
-Abre **Misiones** y las tarjetas del dueño. Antes de leerlas, la persona que representa al dueño debe recibir estas preguntas:
+Abre **Clases y actividades** y las tarjetas del dueño. Antes de leerlas, la persona que representa al dueño debe recibir estas preguntas:
 
 1. ¿Qué función no puede dejar de operar?
 2. ¿Qué alternativa manual existe y con qué capacidad?
@@ -119,7 +119,7 @@ Registra una dependencia que no podías obtener de un escáner. La criticidad se
 
 ### Paso 9. Recibe el giro
 
-Vuelve al mapa y pulsa **Revelar giro de misión**. El sistema guarda un nuevo hecho sintético de negocio. No modifica los hallazgos técnicos ni borra decisiones previas. Cambia una premisa, no el pasado.
+Vuelve al mapa y pulsa **Revelar nueva información**. El sistema guarda un nuevo hecho sintético de negocio. No modifica los hallazgos técnicos ni borra decisiones previas. Cambia una premisa, no el pasado.
 
 ### Paso 10. Defiende tres investigaciones
 
@@ -127,7 +127,7 @@ En comité, elige qué tres cosas investigarías en las próximas horas. Para ca
 
 ## Reflexión y salida
 
-Completa las cuatro reflexiones de **Misiones → Clase 1**. Cada explicación debe contener «observé», «esto permite concluir» y «falta comprobar». Exporta tu expediente.
+Completa las cuatro reflexiones de **Clases y actividades → Clase 1**. Cada explicación debe contener «observé», «esto permite concluir» y «falta comprobar». Exporta tu expediente.
 
 **Éxito observable:** puedes reproducir una ruta desde una zona; distinguir no accesible directamente de accesible por gateway; relacionar el activo con un servicio y un dueño; citar al menos dos observaciones reales.
 

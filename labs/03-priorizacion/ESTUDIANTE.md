@@ -103,7 +103,7 @@ Durante la clase:
 
 Windows: `.\lab.ps1 ai-prepare` y `.\lab.ps1 ai-on`. Se pausan targets; permanecen centro de misión y evidencia. Ollama usa CPU, un modelo Qwen3 1.7B y límite de 4 GB. No hay un endpoint de IA publicado al host.
 
-Abre **IA local**. Debe decir **LISTO · CPU** y mostrar el modelo. Si dice apagado o sin modelo, no se ha realizado inferencia. Hay un ejemplo sintético para crítica expresamente rotulado; no debe presentarse como respuesta real.
+Abre **IA local**. Debe decir **Disponible · CPU** y mostrar el modelo. Si dice apagado o sin modelo, no se ha realizado inferencia. Hay un ejemplo sintético para crítica expresamente rotulado; no debe presentarse como respuesta real.
 
 ### Paso 8. Pide contexto, no una autorización automática
 
@@ -140,7 +140,7 @@ El sistema rechaza combinaciones que exceden el caso. **La cartera es planificac
 
 ### Paso 11. Recibe el giro y revisa
 
-Pulsa **Revelar giro de misión** en el mapa. Lee el nuevo hecho y explica qué entrada de tu evaluación cambia y cuál permanece. Conserva la decisión previa. Una excepción no se vuelve permanente por haber sido aceptada una vez.
+Pulsa **Revelar nueva información** en el mapa. Lee el nuevo hecho y explica qué entrada de tu evaluación cambia y cuál permanece. Conserva la decisión previa. Una excepción no se vuelve permanente por haber sido aceptada una vez.
 
 ### Paso 12. Aplica A y comprueba dos resultados
 

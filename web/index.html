@@ -1,29 +1,41 @@
 <!doctype html>
 <html lang="es">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VulnCorp · Mission Lab</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/style.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f6f7f9"><title>VulnCorp · Aula de práctica</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/anatomy.css"><link rel="stylesheet" href="/style.css"></head>
 <body>
+<a class="skip-link" href="#main-content">Saltar al contenido</a>
+<svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+ <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6C8 3 4 4 3 5v14c3-2 6-1 9 1 3-2 6-3 9-1V5c-1-1-5-2-9 1Zm0 0v14"/></symbol>
+ <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-8h6v8"/></symbol>
+ <symbol id="i-layers" viewBox="0 0 24 24"><path d="m3 7 9-4 9 4-9 4-9-4Zm0 5 9 4 9-4M3 17l9 4 9-4"/></symbol>
+ <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+ <symbol id="i-decide" viewBox="0 0 24 24"><path d="M8 4v16m8-16v16M4 8h8m0 8h8"/><circle cx="8" cy="8" r="2.5"/><circle cx="16" cy="16" r="2.5"/></symbol>
+ <symbol id="i-ai" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M9 10h.01M15 10h.01M9 15h6M9 1v3m6-3v3M9 20v3m6-3v3M1 9h3m16 0h3M1 15h3m16 0h3"/></symbol>
+ <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H5v18h14V8l-5-5Zm0 0v5h5M8 12h8M8 16h6"/></symbol>
+ <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+</defs></svg>
 <aside class="sidebar">
- <a class="brand" href="#mapa"><span class="brand-mark">V</span><span>VulnCorp<small>MISSION LAB / 01—03</small></span></a>
- <div class="side-label">TU CENTRO DE OPERACIONES</div>
+ <a class="brand" href="#mapa"><span class="brand-mark"><svg class="icon"><use href="#i-book"/></svg></span><span>VulnCorp<small>Aula de práctica</small></span></a>
+ <div class="course-label"><span>MAR303</span> Gestión de vulnerabilidades</div>
+ <div class="side-label">ESPACIO DE APRENDIZAJE</div>
  <nav aria-label="Navegación principal">
-  <button data-view="mapa" class="nav active"><span>◈</span> Mapa operativo</button>
-  <button data-view="misiones" class="nav"><span>◎</span> Misiones <small id="mission-count">0/12</small></button>
-  <button data-view="hallazgos" class="nav"><span>⌕</span> Hallazgos</button>
-  <button data-view="decisiones" class="nav"><span>⇅</span> Decisiones</button>
-  <button data-view="ia" class="nav"><span>✧</span> IA local <i class="new">CPU</i></button>
-  <button data-view="evidencias" class="nav"><span>▤</span> Evidencias</button>
+  <button data-view="mapa" class="nav active"><svg class="icon"><use href="#i-home"/></svg> Inicio y escenario</button>
+  <button data-view="misiones" class="nav"><svg class="icon"><use href="#i-layers"/></svg> Clases y actividades <small id="mission-count">0/12</small></button>
+  <button data-view="hallazgos" class="nav"><svg class="icon"><use href="#i-search"/></svg> Hallazgos</button>
+  <button data-view="decisiones" class="nav"><svg class="icon"><use href="#i-decide"/></svg> Decisiones</button>
+  <button data-view="ia" class="nav"><svg class="icon"><use href="#i-ai"/></svg> IA local <i class="new">CPU</i></button>
+  <button data-view="evidencias" class="nav"><svg class="icon"><use href="#i-file"/></svg> Evidencias</button>
  </nav>
- <div class="side-mission"><div class="eyebrow">EL TRABAJO DE HOY</div><p>Proteger un servicio.<br>Demostrar una decisión.</p><span class="quiet">Aprender, comprobar, volver a intentar.</span></div>
- <div class="side-bottom"><span class="status-dot"></span> ENTORNO SINTÉTICO AISLADO<small>MAR303 · Tomás Vera<br>Sin calificaciones intermedias</small></div>
+ <div class="side-mission"><div class="eyebrow">APRENDER CON CRITERIO</div><p>Observar.<br>Comprender.<br>Justificar.</p><span class="quiet">El objetivo es explicar por qué una decisión protege el servicio.</span></div>
+ <div class="side-bottom"><span class="status-dot"></span> Entorno de práctica<small>Tomás Vera · MAR303<br>Actividades sin calificación</small></div>
 </aside>
-<main>
- <header class="topbar"><div class="breadcrumbs">MAR303 <span>/</span> GESTIÓN DE VULNERABILIDADES</div><div class="top-right"><span class="local-tag">◉ LOCAL / DOCKER</span><button id="export-top" class="button ghost small">Exportar evidencia ↗</button></div></header>
- <section class="client-strip"><div><span class="eyebrow">CLIENTE EN OPERACIÓN</span><select id="client-select" aria-label="Cliente"></select></div><div class="owner-line" id="owner-line"></div><div class="clock"><b>08:10</b><small>HORA DEL ESCENARIO</small></div></section>
- <div id="content" aria-live="polite"><div class="loading">Preparando el centro de misión…</div></div>
- <footer>Construido para pensar antes de priorizar. <span>v0.1.0 · Datos ficticios · No exponer a Internet</span></footer>
+<main id="main-content" tabindex="-1">
+ <header class="topbar"><div class="breadcrumbs">Tu aula <span>/</span> <b id="page-label">Inicio y escenario</b></div><div class="top-right"><span class="local-tag"><span class="status-dot"></span> Laboratorio local</span><button id="export-top" class="button ghost small">Exportar cuaderno</button></div></header>
+ <section class="client-strip" aria-label="Contexto de trabajo"><div class="client-choice"><span class="eyebrow">EMPRESA DEL CASO</span><select id="client-select" aria-label="Cliente"></select></div><div class="owner-line"><small>RESPONSABLE DEL SERVICIO</small><span id="owner-line"></span></div><div class="scenario-label">Caso simulado <span>08:10 · inicio de la jornada</span></div></section>
+ <div id="content"><div class="loading">Preparando tu espacio de aprendizaje…</div></div>
+ <footer>Aprender a gestionar es aprender a justificar. <span>MAR303 · Datos ficticios · Entorno local</span></footer>
 </main>
 <div id="toast" role="status" class="toast hidden"></div>
-<dialog id="decision-dialog"><form id="decision-form">
+<dialog id="decision-dialog" aria-labelledby="decision-title"><form id="decision-form">
  <div class="dialog-head"><div><div class="eyebrow">DECISIÓN TRAZABLE</div><h2 id="decision-title"></h2></div><button type="button" id="close-dialog" class="icon-button" aria-label="Cerrar">×</button></div>
  <input type="hidden" name="finding_id">
  <div class="notice">El índice es ordinal. SSVC usa su propio impacto humano, distinto del I máximo. Justifica los valores con el dueño y la evidencia.</div>
@@ -43,5 +55,13 @@
  <label>Justificación, supuestos y criterio del dueño<textarea name="reason" rows="3" minlength="30" required placeholder="Este escenario afecta… La evidencia demuestra… Falta comprobar… El dueño acepta o solicita…"></textarea></label>
  <div class="dialog-actions"><button type="button" id="cancel-dialog" class="button ghost">Volver</button><button class="button primary" type="submit">Guardar decisión con evidencia ↗</button></div>
 </form></dialog>
+<dialog id="reason-dialog" aria-labelledby="reason-title"><form id="reason-form">
+ <div class="dialog-head"><div><div class="eyebrow">RAZONAMIENTO Y EVIDENCIA</div><h2 id="reason-title"></h2></div><button type="button" class="icon-button" id="reason-close" aria-label="Cerrar">×</button></div>
+ <p id="reason-description" class="quiet"></p>
+ <label id="classification-label">Tu clasificación<select name="classification"></select></label>
+ <label>Explica tu criterio<textarea name="reason" rows="5" minlength="30" maxlength="4000" required placeholder="Observé… Esto permite concluir… Falta comprobar…" autofocus></textarea><small>Al menos 30 caracteres. Relaciona una observación con tu conclusión.</small></label>
+ <div class="dialog-actions"><button type="button" id="reason-cancel" class="button ghost">Volver</button><button type="submit" id="reason-submit" class="button primary">Guardar razonamiento</button></div>
+</form></dialog>
+<script src="/context-figure.js"></script>
 <script src="/app.js"></script>
 </body></html>

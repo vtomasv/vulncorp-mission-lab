@@ -1,4 +1,4 @@
-# VulnCorp Mission Lab
+# VulnCorp Mission Lab · Aula de práctica
 
 [![Laboratorios verificables](https://github.com/vtomasv/vulncorp-mission-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/vtomasv/vulncorp-mission-lab/actions/workflows/ci.yml)
 
@@ -6,7 +6,7 @@
 
 Tres laboratorios intensivos del curso MAR303, creados por **Tomás Vera**. Una experiencia práctica en español, para estudiantes desde principiante, con Docker, herramientas abiertas e IA local en CPU. Equipos de referencia: **16 GB RAM, sin GPU**.
 
-![Centro de misión: mapa operativo y contexto del cliente](docs/assets/mission-control.png)
+![Aula de práctica: recorrido de aprendizaje y comparación de contexto](docs/assets/mission-control.png)
 
 ## En cinco minutos, después de descargar imágenes
 
@@ -31,6 +31,10 @@ cd vulncorp-mission-lab
 ```
 
 Abre **[http://localhost:8095](http://localhost:8095)**. Si Windows bloquea el script, consulta [Inicio para principiantes](docs/INICIO.md); también puedes usar directamente los comandos Docker que se documentan allí.
+
+## Un aula para formar criterio
+
+Inicio con tres clases guiadas, lectura clara y formularios de razonamiento en español. La figura interactiva **Anatomy** explica cómo cambia el índice de referencia al cambiar el contexto del cliente; explorar no guarda una decisión. Observaciones, hipótesis y decisiones conservan su identidad en el cuaderno.
 
 ## El giro de la experiencia
 
@@ -58,7 +62,7 @@ Cada jornada tiene **420 minutos de actividad**, incluidos dos bloques de labora
 ./lab.sh ai-on        # inferencia CPU; pausa los tres targets
 ```
 
-En Windows reemplaza `./lab.sh` por `.\lab.ps1`. En el centro de misión abre **IA local**. Para volver al escenario:
+En Windows reemplaza `./lab.sh` por `.\lab.ps1`. En el aula de práctica abre **IA local**. Para volver al escenario:
 
 ```bash
 ./lab.sh ai-off

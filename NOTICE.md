@@ -26,6 +26,10 @@ Las imágenes se descargan desde sus distribuidores con tag y digest fijados en 
 
 Las distribuciones base incluyen sus avisos y licencias. `requirements-legacy.txt` fija hashes de wheels obtenidos de PyPI. Los paquetes legacy son deliberadamente antiguos, no dependencias de la aplicación activa.
 
+## Figura Anatomy
+
+La figura interactiva de comparación de contexto se construye con **Anatomy**, copyright (c) 2026 Ryan, bajo MIT. Se conserva la [licencia original](scripts/vendor/anatomy/LICENSE), junto a los módulos de geometría y auditoría usados en desarrollo. `web/anatomy.css` procede del mismo kit; `web/context-figure.js` es su figura generada. La geometría y su integración con el caso son originales del curso. Los módulos de desarrollo no se cargan en el navegador ni se incorporan a la imagen runtime.
+
 ## Datos y marcos
 
 - FIRST EPSS: atribución a FIRST y al proyecto EPSS; snapshot real con fecha/origen en `data/intelligence.json`. [Datos y uso](https://www.first.org/epss/data.html).

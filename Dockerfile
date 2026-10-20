@@ -6,6 +6,8 @@ COPY data ./data
 COPY web ./web
 COPY tests ./tests
 COPY requirements-legacy.txt ./requirements-legacy.txt
+COPY LICENSE NOTICE.md ./
+COPY scripts/vendor/anatomy/LICENSE ./licenses/anatomy.txt
 RUN mkdir -p /state && chown 10001:10001 /state
 USER 10001:10001
 CMD ["python", "-m", "app.server"]

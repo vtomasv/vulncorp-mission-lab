@@ -51,4 +51,18 @@ Backup es un catálogo: **no** implementa borrado ni restauración en estas tres
 
 Contenerización no equivale a una máquina virtual de alta seguridad. El dueño del host controla contenedores, código y datos; esta experiencia no pretende resistir a un alumno administrador malicioso. No montar carpetas de usuario, credenciales cloud ni datos reales. Los endpoints públicos del caso son públicos **dentro de la red simulada**; no se publican a Internet.
 
-No hay dependencias runtime de Python de terceros en el centro de misión. Los paquetes legacy se instalan con hashes solo en la etapa records y no se importan por el servicio. Se estudia inventario y aplicabilidad sin ejecutar sus exploits.
+No hay dependencias runtime de Python de terceros en el aula de práctica. Los paquetes legacy se instalan con hashes solo en la etapa records y no se importan por el servicio. Se estudia inventario y aplicabilidad sin ejecutar sus exploits.
+
+## Figura didáctica y recursos del navegador
+
+La mesa de comparación de contexto es una **maqueta conceptual**, no un escáner ni una representación física de Docker. El lector recorre tres expedientes; la referencia de F-02 conserva CVSS y L mientras cambia el impacto del cliente. Los valores se obtienen del dossier del caso y se rotulan como referencia docente; explorar la figura no guarda una decisión, no cambia el cliente del expediente ni modifica los targets.
+
+La figura contiene 50 sólidos. El generador usa el kit Anatomy bajo MIT y comprueba soporte y orden de profundidad en distintas posiciones. El navegador recibe SVG preconstruido: no requiere WebGL, GPU, CDN ni librerías externas. Solo anima mientras cambia de posición y está visible; respeta movimiento reducido. La comparación en secuencia se inicia por elección del estudiante y no altera su trabajo.
+
+Solo para mantener la ilustración, con Node instalado en el equipo de desarrollo:
+
+```bash
+node scripts/build-context-figure.mjs --audit
+```
+
+La CI también ejecuta ese generador. Node sigue sin ser requisito para alumnos; la figura se distribuye construida en `web/context-figure.js`.

@@ -90,11 +90,11 @@ Consulta [el advisory de requests](https://github.com/psf/requests/security/advi
 
 ### Paso 8. Identifica el duplicado
 
-Compara F-01 y VENDOR-06: activo, paquete, versión y CVE. En **Clasificar con una razón**, usa `duplicate` para VENDOR-06 y explica la coincidencia. Mismo CVE en **otro activo** no sería necesariamente el mismo trabajo de remediación: no dedupliques solo por CVE.
+Compara F-01 y VENDOR-06: activo, paquete, versión y CVE. En **Clasificar con evidencia**, elige **Duplicado de otro hallazgo** (`duplicate`) para VENDOR-06 y explica la coincidencia. Mismo CVE en **otro activo** no sería necesariamente el mismo trabajo de remediación: no dedupliques solo por CVE.
 
 ### Paso 9. Impugna la atribución incorrecta
 
-VENDOR-07 atribuye requests al centro de misión. Usa su **SBOM propio**, no el de records, para cuestionarlo. Clasifica con `false_positive` y evidencia concreta. No justifiques el estado diciendo «no fue explotado».
+VENDOR-07 atribuye requests al centro de misión. Usa su **SBOM propio**, no el de records, para cuestionarlo. Clasifica como **Atribución o coincidencia incorrecta** (`false_positive`) y evidencia concreta. No justifiques el estado diciendo «no fue explotado».
 
 ### Paso 10. Recupera la falla sin CVE
 
