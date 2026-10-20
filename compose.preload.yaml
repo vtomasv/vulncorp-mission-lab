@@ -1,0 +1,4 @@
+# Solo Ollama obtiene egreso temporal para descargar pesos. Targets siguen aislados.
+services:
+  ollama:
+    networks: [ai, feeds]

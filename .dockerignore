@@ -1,0 +1,9 @@
+.git
+artifacts
+__pycache__
+*.pyc
+docs
+labs
+.github
+node_modules
+.DS_Store

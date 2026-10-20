@@ -1,0 +1,58 @@
+[
+  {
+    "id": "EV-ARCHITECTURE",
+    "title": "Arquitectura verificada por el código",
+    "text": "gateway escucha 8080 en edge y app. records escucha 8081 solo en app. backup escucha 8082 solo en support. El centro de misión escucha 8000. El código activo usa la biblioteca estándar: /opt/legacy no se importa. Las redes target son internal:true. No hay Docker socket ni privilegios generales.",
+    "source": "compose.yaml; app/targets.py; Dockerfile",
+    "kind": "Código del laboratorio"
+  },
+  {
+    "id": "EV-PACKAGES",
+    "title": "Componentes legacy reales",
+    "text": "La etapa records instala Django 3.2 y requests 2.31.0 en /opt/legacy con versiones y hashes fijados. Hay que verificarlo con Syft sobre la imagen exacta. Presencia de un paquete no demuestra uso de su función vulnerable.",
+    "source": "requirements-legacy.txt; Dockerfile",
+    "kind": "Verificar con SBOM real"
+  },
+  {
+    "id": "EV-EXPORT",
+    "title": "Hipótesis de exportación pública",
+    "text": "La versión inicial de gateway deja pasar /api/export a records. records devuelve expedientes sintéticos sin autenticar. Se debe comprobar desde edge y guardar status, contenido y hora. Un bloqueo de gateway reduce exposición, pero no corrige la autorización en records.",
+    "source": "app/targets.py; prueba probe public export",
+    "kind": "Hipótesis hasta ejecutar la prueba"
+  },
+  {
+    "id": "EV-BACKUP",
+    "title": "Catálogo de copias y permiso compartido",
+    "text": "backup solo es accesible desde support. La llave training-backup-key del caso accede al catálogo que declara permisos read y delete. Las clases 1-3 no implementan borrado. Ni el catálogo ni una marca equivalen a una restauración probada.",
+    "source": "app/targets.py; prueba probe support backup",
+    "kind": "Hipótesis hasta ejecutar la prueba"
+  },
+  {
+    "id": "EV-DIAGNOSTICS",
+    "title": "Diagnóstico publicado",
+    "text": "/api/diagnostics revela topología y versiones desde la entrada pública simulada. La lista de servicios no prueba acceso a sus redes. Después de restringir la ruta debe verificarse denegación y función legítima.",
+    "source": "app/targets.py",
+    "kind": "Hipótesis hasta ejecutar la prueba"
+  },
+  {
+    "id": "EV-VENDOR",
+    "title": "Reporte de proveedor sintético",
+    "text": "VENDOR-06 repite F-01 en el mismo activo y componente. VENDOR-07 atribuye requests al centro de misión, donde no se instala. Son trampas docentes declaradas en la guía del instructor; no son resultados auténticos de Grype.",
+    "source": "data/findings.json",
+    "kind": "Datos sintéticos del ejercicio"
+  },
+  {
+    "id": "EV-RISK",
+    "title": "Política docente de decisión",
+    "text": "El índice R=4×L×I usa L entre 1 y 5 e I máximo de operación, personas, datos y finanzas. Es ordinal; no porcentaje. SSVC Deployer DT_DP v1.0.0 usa explotación, exposición, automatización e impacto humano. Human Impact tiene su definición oficial y no equivale al I de esta fórmula. EPSS global no es probabilidad local; KEV no demuestra compromiso de este activo.",
+    "source": "app/risk.py; data/ssvc/deployer.json",
+    "kind": "Política docente y tabla CERT/CC"
+  },
+  {
+    "id": "EV-CONTROLS",
+    "title": "Tratamientos y continuidad",
+    "text": "Restringir exportación cuesta 2 horas de ingeniería y cero minutos de interrupción en este caso. Rotar la llave cuesta 2 horas y 10 minutos. Restringir diagnóstico cuesta 1 hora y 5 minutos. Una mitigación no elimina una CVE ni prueba ausencia de compromiso. Se debe repetir una prueba de seguridad y una transacción de negocio.",
+    "source": "Política sintética de los tres clientes",
+    "kind": "Supuesto de negocio"
+  }
+]

@@ -1,0 +1,186 @@
+[
+  {
+    "id": "F-01",
+    "asset": "records",
+    "title": "La biblioteca crítica que nadie usa",
+    "kind": "CVE real / aplicabilidad por comprobar",
+    "cve": "CVE-2021-35042",
+    "package": "Django",
+    "version": "3.2",
+    "severity": "CRITICAL",
+    "cvss": 9.8,
+    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "description": "La imagen contiene Django 3.2 en /opt/legacy. La aplicación activa usa la biblioteca estándar de Python y no importa Django. El componente afectado está presente; no se demuestra una ruta explotable por su mera presencia.",
+    "likelihood": 1,
+    "evidence": [
+      "EV-PACKAGES",
+      "EV-ARCHITECTURE"
+    ],
+    "cwe": "CWE-89",
+    "mitre": [
+      "T1190"
+    ],
+    "iso": [
+      "A.8.8"
+    ],
+    "law": "Ley 21.663 art. 8 a), d); aplicabilidad simulada.",
+    "source": "https://www.djangoproject.com/weblog/2021/jul/01/security-releases/"
+  },
+  {
+    "id": "F-02",
+    "asset": "gateway",
+    "title": "Un expediente ajeno, a un clic",
+    "kind": "Falla local reproducible",
+    "cve": null,
+    "package": "API de transferencia del curso",
+    "version": "0.1.0",
+    "severity": "HIGH",
+    "cvss": 7.5,
+    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N",
+    "description": "/api/export?tenant=sur devuelve expedientes sintéticos sin verificar la identidad del solicitante. La prueba se ejecuta desde la zona pública simulada. El vector es una valoración docente, no un CVE de un producto real.",
+    "likelihood": 4,
+    "evidence": [
+      "EV-EXPORT"
+    ],
+    "cwe": "CWE-862",
+    "mitre": [
+      "T1190",
+      "T1213.006"
+    ],
+    "iso": [
+      "A.8.8",
+      "A.8.26"
+    ],
+    "law": "Ley 21.663 art. 8 a), d), e); alcance del caso.",
+    "source": null
+  },
+  {
+    "id": "F-03",
+    "asset": "backup",
+    "title": "La llave compartida de la recuperación",
+    "kind": "Configuración / sin CVE",
+    "cve": null,
+    "package": "Repositorio de copias",
+    "version": "0.1.0",
+    "severity": "CONTEXT",
+    "cvss": null,
+    "vector": null,
+    "description": "Una llave de entrenamiento compartida accede al catálogo de recuperación desde soporte. El catálogo declara privilegios de lectura y borrado; las clases 1-3 no ejecutan borrado. Verificar copias, privilegios y consecuencias con el dueño.",
+    "likelihood": 3,
+    "evidence": [
+      "EV-BACKUP"
+    ],
+    "cwe": "CWE-798",
+    "mitre": [
+      "T1078"
+    ],
+    "iso": [
+      "A.8.2",
+      "A.8.13",
+      "A.5.30"
+    ],
+    "law": "Ley 21.663 art. 8 a), c); continuidad simulada.",
+    "source": null
+  },
+  {
+    "id": "F-04",
+    "asset": "gateway",
+    "title": "El diagnóstico que salió de soporte",
+    "kind": "Falla local reproducible",
+    "cve": null,
+    "package": "Endpoint de diagnóstico",
+    "version": "0.1.0",
+    "severity": "MEDIUM",
+    "cvss": 5.3,
+    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+    "description": "/api/diagnostics publica nombres de servicios y versiones desde una ruta que debía ser solo de soporte. El vector es docente. La exposición no prueba por sí sola movimiento lateral.",
+    "likelihood": 3,
+    "evidence": [
+      "EV-DIAGNOSTICS"
+    ],
+    "cwe": "CWE-200",
+    "mitre": [],
+    "iso": [
+      "A.8.9",
+      "A.8.22"
+    ],
+    "law": "Ley 21.663 art. 7 y 8 a); alcance simulado.",
+    "source": null
+  },
+  {
+    "id": "F-05",
+    "asset": "records",
+    "title": "La dependencia presente con condiciones",
+    "kind": "CVE real / revisión de código",
+    "cve": "CVE-2024-35195",
+    "package": "requests",
+    "version": "2.31.0",
+    "severity": "MEDIUM",
+    "cvss": 5.6,
+    "vector": "CVSS:3.1/AV:L/AC:H/PR:H/UI:R/S:U/C:H/I:H/A:N",
+    "description": "requests 2.31.0 está en /opt/legacy. La vulnerabilidad depende del uso de una Session y de verify=False. El servicio no importa requests: presencia y afectación no prueban alcanzabilidad.",
+    "likelihood": 1,
+    "evidence": [
+      "EV-PACKAGES",
+      "EV-ARCHITECTURE"
+    ],
+    "cwe": "CWE-670",
+    "mitre": [],
+    "iso": [
+      "A.8.8"
+    ],
+    "law": "Registro de aplicabilidad; caso académico.",
+    "source": "https://github.com/psf/requests/security/advisories/GHSA-9wx4-h78v-vm56"
+  },
+  {
+    "id": "VENDOR-06",
+    "asset": "records",
+    "title": "El mismo Django en otro reporte",
+    "kind": "Duplicado docente intencional",
+    "cve": "CVE-2021-35042",
+    "package": "Django",
+    "version": "3.2",
+    "severity": "CRITICAL",
+    "cvss": 9.8,
+    "duplicate_of": "F-01",
+    "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    "description": "Reporte de proveedor sintético: mismo activo, componente, versión y CVE que F-01. No representa dos fallas independientes.",
+    "likelihood": 1,
+    "evidence": [
+      "EV-VENDOR"
+    ],
+    "cwe": "CWE-89",
+    "mitre": [],
+    "iso": [
+      "A.8.8"
+    ],
+    "law": "Caso docente.",
+    "source": null
+  },
+  {
+    "id": "VENDOR-07",
+    "asset": "mission",
+    "title": "El escáner asegura algo que no está instalado",
+    "kind": "Falso positivo docente intencional",
+    "cve": "CVE-2024-35195",
+    "package": "requests",
+    "version": "2.31.0",
+    "severity": "MEDIUM",
+    "cvss": 5.6,
+    "false_positive": true,
+    "vector": null,
+    "description": "El proveedor sintético atribuye requests al centro de misión. Esa imagen solo contiene el runtime Python y el código del curso, sin /opt/legacy. Contrastar contra el SBOM de la imagen correcta.",
+    "likelihood": 1,
+    "evidence": [
+      "EV-VENDOR",
+      "EV-ARCHITECTURE"
+    ],
+    "cwe": "CWE-670",
+    "mitre": [],
+    "iso": [
+      "A.8.8"
+    ],
+    "law": "Caso docente.",
+    "source": null
+  }
+]

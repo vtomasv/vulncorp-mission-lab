@@ -1,0 +1,16 @@
+[
+  {
+    "package": "Django",
+    "version": "3.2",
+    "source": "https://pypi.org/pypi/Django/3.2/json",
+    "filename": "Django-3.2-py3-none-any.whl",
+    "sha256": "0604e84c4fb698a5e53e5857b5aea945b2f19a18f25f10b8748dbdf935788927"
+  },
+  {
+    "package": "requests",
+    "version": "2.31.0",
+    "source": "https://pypi.org/pypi/requests/2.31.0/json",
+    "filename": "requests-2.31.0-py3-none-any.whl",
+    "sha256": "58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f"
+  }
+]

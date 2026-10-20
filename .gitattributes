@@ -1,0 +1,2 @@
+# Preserve vendored official SSVC data and license byte for byte.
+data/ssvc/* -whitespace

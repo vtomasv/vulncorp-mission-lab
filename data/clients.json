@@ -1,0 +1,155 @@
+[
+  {
+    "id": "salud",
+    "name": "RedSalud Sur",
+    "sector": "SALUD",
+    "icon": "✚",
+    "color": "#63e1ba",
+    "mission": "Que un resultado crítico llegue a tiempo a quien debe decidir.",
+    "story": "Son las 08:10. El laboratorio clínico debe entregar resultados urgentes. El portal de agenda factura más, pero los resultados sostienen decisiones clínicas. Todos los pacientes son ficticios.",
+    "owner": "Dra. Elisa Rojas · directora de operaciones clínicas",
+    "rto": "15 min",
+    "rpo": "5 min",
+    "owner_cards": [
+      {
+        "id": "S-01",
+        "title": "Lo que el inventario no dice",
+        "text": "Los resultados de laboratorio llegan por la API de transferencia. El procedimiento manual atiende solo al 20% de la demanda. Pregunta qué ocurre si esa API se detiene."
+      },
+      {
+        "id": "S-02",
+        "title": "Una copia que no restaura no protege",
+        "text": "Las copias contienen el historial de resultados. Perder su disponibilidad puede impedir recuperarse dentro de la tolerancia del servicio."
+      }
+    ],
+    "impacts": {
+      "F-01": [
+        2,
+        1,
+        1,
+        2
+      ],
+      "F-02": [
+        4,
+        3,
+        4,
+        3
+      ],
+      "F-03": [
+        5,
+        5,
+        4,
+        3
+      ],
+      "F-04": [
+        3,
+        2,
+        3,
+        2
+      ]
+    },
+    "normative": "Condición OIV ficticia para el ejercicio; no corresponde a una institución real."
+  },
+  {
+    "id": "agua",
+    "name": "Aguas del Valle Sur",
+    "sector": "AGUA",
+    "icon": "≈",
+    "color": "#74b9ff",
+    "mission": "Mantener la observación operacional y la capacidad de recuperar la telemetría.",
+    "story": "Son las 08:10. Un operador necesita reconstruir las últimas lecturas del historiador. Facturación puede esperar. Este caso representa dependencias de TI: no controla agua, válvulas ni una planta real.",
+    "owner": "Camila Soto · jefa de continuidad",
+    "rto": "30 min",
+    "rpo": "10 min",
+    "owner_cards": [
+      {
+        "id": "A-01",
+        "title": "El servidor que parecía secundario",
+        "text": "El repositorio de copias permite reconstruir la telemetría histórica y decisiones del operador. Una cuenta con permisos demasiado amplios amenaza la recuperación."
+      },
+      {
+        "id": "A-02",
+        "title": "No confundir portal y operación",
+        "text": "La API pública entrega documentos administrativos. El portal no tiene una conexión con dispositivos físicos. El servicio esencial depende de otra cadena de datos."
+      }
+    ],
+    "impacts": {
+      "F-01": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "F-02": [
+        2,
+        1,
+        2,
+        2
+      ],
+      "F-03": [
+        5,
+        5,
+        3,
+        4
+      ],
+      "F-04": [
+        4,
+        3,
+        2,
+        3
+      ]
+    },
+    "normative": "Calificación OIV simulada para funciones del dossier, no para toda aplicación de la empresa."
+  },
+  {
+    "id": "digital",
+    "name": "NubeAndes Servicios",
+    "sector": "SERVICIOS DIGITALES",
+    "icon": "⌘",
+    "color": "#bfadff",
+    "mission": "Evitar que un error compartido se convierta en la exposición de todos los clientes.",
+    "story": "Son las 08:10. La misma API mueve documentos de varios clientes. Una exposición alcanza a múltiples organizaciones; el entorno legacy de demostración no recibe tráfico de clientes.",
+    "owner": "Diego Leiva · responsable de servicios gestionados",
+    "rto": "60 min",
+    "rpo": "15 min",
+    "owner_cards": [
+      {
+        "id": "D-01",
+        "title": "La dependencia compartida",
+        "text": "La API de transferencia sirve a todos los clientes. La separación entre expedientes importa más que el conteo de vulnerabilidades de una biblioteca que no se usa."
+      },
+      {
+        "id": "D-02",
+        "title": "El costo del cambio",
+        "text": "Existe una ventana de 15 minutos y solo cuatro horas de ingeniería. Una restricción de acceso puede ser provisional: no equivale a corregir la causa raíz."
+      }
+    ],
+    "impacts": {
+      "F-01": [
+        2,
+        1,
+        1,
+        2
+      ],
+      "F-02": [
+        5,
+        2,
+        5,
+        5
+      ],
+      "F-03": [
+        2,
+        1,
+        2,
+        2
+      ],
+      "F-04": [
+        4,
+        1,
+        4,
+        3
+      ]
+    },
+    "normative": "Proveedor ficticio con alcance OIV definido solo para el caso académico."
+  }
+]

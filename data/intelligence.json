@@ -1,0 +1,31 @@
+{
+  "retrieved_at": "2026-10-20T16:56:59.401997+00:00",
+  "epss_source": "https://api.first.org/data/v1/epss?cve=CVE-2021-35042,CVE-2024-35195",
+  "epss": {
+    "status": "OK",
+    "status-code": 200,
+    "version": "1.0",
+    "access": "public",
+    "total": 2,
+    "offset": 0,
+    "limit": 100,
+    "data": [
+      {
+        "cve": "CVE-2024-35195",
+        "epss": "0.003400000",
+        "percentile": "0.260270000",
+        "date": "2026-10-20"
+      },
+      {
+        "cve": "CVE-2021-35042",
+        "epss": "0.443690000",
+        "percentile": "0.987520000",
+        "date": "2026-10-20"
+      }
+    ]
+  },
+  "kev_source": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+  "kev_catalog_version": "2026.10.16",
+  "kev_matches": [],
+  "note": "Datos reales congelados. EPSS no es probabilidad local. Ausencia en KEV no prueba ausencia de explotación."
+}

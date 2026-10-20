@@ -1,0 +1,11 @@
+{
+  "model": "qwen3:1.7b",
+  "digest": "8f68893c685c3ddff2aa3fffce2aa60a30bb2da65ca488b61fff134a4d1730e7",
+  "observed_at": "2026-10-20",
+  "source": "https://ollama.com/library/qwen3:1.7b",
+  "verification": "Downloaded through Ollama; manifest digest read from its local /api/tags endpoint. A digest identifies content; it is not a publisher signature.",
+  "size_bytes": 1359293444,
+  "quantization": "Q4_K_M",
+  "license": "Apache-2.0",
+  "policy": "Reference model must match this digest. Other explicitly selected models are marked unverified and need a new resource and quality assessment."
+}

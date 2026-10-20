@@ -1,0 +1,55 @@
+[
+  {
+    "id": "gateway",
+    "name": "Gateway público",
+    "role": "Entrada de trámites y API",
+    "port": 8080,
+    "zones": [
+      "edge",
+      "app"
+    ],
+    "owner": "Operación de aplicaciones",
+    "image": "vulncorp-core:0.1.0",
+    "data": "Tránsito de expedientes sintéticos"
+  },
+  {
+    "id": "records",
+    "name": "Servicio de expedientes",
+    "role": "Datos y transacciones del negocio",
+    "port": 8081,
+    "zones": [
+      "app"
+    ],
+    "owner": "Dueño del servicio",
+    "image": "vulncorp-records:0.1.0",
+    "data": "Expedientes sintéticos por cliente"
+  },
+  {
+    "id": "backup",
+    "name": "Repositorio de recuperación",
+    "role": "Catálogo de copias y recuperación",
+    "port": 8082,
+    "zones": [
+      "support"
+    ],
+    "owner": "Continuidad y soporte",
+    "image": "vulncorp-core:0.1.0",
+    "data": "Manifiestos sintéticos de copias"
+  },
+  {
+    "id": "mission",
+    "name": "Centro de misión",
+    "role": "Gestión y evidencias del alumno",
+    "port": 8000,
+    "zones": [
+      "ui",
+      "edge",
+      "app",
+      "support",
+      "ai"
+    ],
+    "owner": "Equipo de gestión",
+    "image": "vulncorp-core:0.1.0",
+    "data": "Decisiones docentes y evidencia"
+  }
+]

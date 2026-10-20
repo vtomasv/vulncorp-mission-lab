@@ -1,0 +1,104 @@
+[
+  {
+    "id": 1,
+    "title": "Lo que no ves también decide",
+    "subtitle": "Servicio → activo → exposición",
+    "brief": "El dueño pide proteger su servicio. Su inventario está incompleto. Tu primera misión es demostrar qué existe, desde dónde se alcanza y qué función sostiene.",
+    "tasks": [
+      {
+        "id": "1-1",
+        "title": "Dibuja antes de escanear",
+        "instruction": "Lee el dossier, abre el portal y completa una transacción sintética. Explica qué servicio se perdería si records se detiene.",
+        "command": "./lab.sh probe public transaction",
+        "expected": "La transacción devuelve status=completed y un identificador. No prueba seguridad; prueba función."
+      },
+      {
+        "id": "1-2",
+        "title": "Mira desde dos lugares",
+        "instruction": "Ejecuta el descubrimiento desde público y soporte. Compara resultados DNS/TCP. Un puerto que no responde no es prueba de ausencia.",
+        "command": "./lab.sh discover public\n./lab.sh discover support",
+        "expected": "Público alcanza gateway; soporte alcanza backup. records no se alcanza directamente desde ninguna de esas dos zonas."
+      },
+      {
+        "id": "1-3",
+        "title": "Encuentra la puerta inesperada",
+        "instruction": "Prueba export y diagnostics desde público. Conserva respuesta y hora. No hay datos de personas reales.",
+        "command": "./lab.sh probe public export\n./lab.sh probe public diagnostics",
+        "expected": "La ruta export devuelve expedientes sin autenticar. diagnostics revela servicios. Explica qué demuestra cada respuesta."
+      },
+      {
+        "id": "1-4",
+        "title": "Pregunta al dueño",
+        "instruction": "Abre las tarjetas de contexto y registra una dependencia que no aparece en el inventario técnico.",
+        "expected": "La explicación relaciona al menos un activo con una función del cliente y una consecuencia."
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "El ruido y la señal",
+    "subtitle": "SBOM → hallazgo → evidencia",
+    "brief": "Un proveedor entrega siete hallazgos. Hay CVEs reales, fallas del curso, un duplicado y un falso positivo. Tu trabajo es reconstruir la verdad sin confiar en la cantidad de alertas.",
+    "tasks": [
+      {
+        "id": "2-1",
+        "title": "Abre la lista de ingredientes",
+        "instruction": "Genera SBOM de records y del centro de misión con Syft. Busca Django y requests y compara las imágenes.",
+        "command": "./lab.sh sbom",
+        "expected": "Los dos paquetes legacy aparecen en records, no en mission. Los reportes se guardan en artifacts/."
+      },
+      {
+        "id": "2-2",
+        "title": "Cruza software con vulnerabilidades",
+        "instruction": "Escanea el SBOM real con Grype. La primera vez descarga su base. El catálogo docente permanece congelado y rotulado.",
+        "command": "./lab.sh scan",
+        "expected": "Hay un reporte Grype real, versión de base y fecha. Su conteo puede cambiar y no tiene que coincidir con las siete tarjetas del caso."
+      },
+      {
+        "id": "2-3",
+        "title": "Investiga, no borres alertas",
+        "instruction": "Revisa código activo, ubicación del componente y advisory. Clasifica F-01, VENDOR-06 y VENDOR-07 con una razón y evidencia.",
+        "expected": "Distingues componente presente sin ruta demostrada, duplicado y atribución al activo equivocado."
+      },
+      {
+        "id": "2-4",
+        "title": "Saca la falla que el SBOM no ve",
+        "instruction": "Contrasta el escaneo con la prueba export de la clase 1. Explica por qué una falla de autorización sin CVE puede importar más.",
+        "expected": "La evidencia de función y acceso complementa al escáner de componentes."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "La prioridad cambia de dueño",
+    "subtitle": "Mismo hallazgo. Otra misión. Otra decisión.",
+    "brief": "Solo tienes cuatro horas de ingeniería y una ventana de quince minutos. Construye y defiende una cartera de tratamientos para tres clientes. Usa IA local para cuestionar tu análisis, conservando tu responsabilidad.",
+    "tasks": [
+      {
+        "id": "3-1",
+        "title": "Decide con evidencia",
+        "instruction": "En Decisiones, evalúa F-01 a F-04. Elige L, cuatro impactos, entradas SSVC y justificación. El índice y el árbol se calculan automáticamente.",
+        "expected": "Cada decisión incluye dueño, evidencia y supuestos. Un índice de 80 no es 80% de probabilidad."
+      },
+      {
+        "id": "3-2",
+        "title": "Cambia el cliente, conserva los hechos",
+        "instruction": "Selecciona otro cliente y repite al menos F-02 y F-03. Abre Comparar. Explica qué premisa del negocio cambia la acción.",
+        "expected": "Salud y servicios digitales priorizan la API; agua da mayor peso a recuperación. Otras decisiones se aceptan con evidencia suficiente."
+      },
+      {
+        "id": "3-3",
+        "title": "Interroga a la IA local",
+        "instruction": "Activa el perfil CPU, carga Qwen3 y pide preguntas y opciones. Revisa fuentes y registra aceptar, corregir o rechazar.",
+        "command": "./lab.sh ai-prepare\n./lab.sh ai-on",
+        "expected": "El panel distingue inferencia real de ejemplo docente. El modelo no ejecuta comandos ni calcula riesgo."
+      },
+      {
+        "id": "3-4",
+        "title": "Cierra el ciclo",
+        "instruction": "Aplica una restricción temporal de exportación y repite export y transaction. Conserva ambas pruebas y registra el riesgo residual.",
+        "expected": "La exportación pública se bloquea, la transacción legítima funciona. Esto es mitigación temporal, no corrección de autorización."
+      }
+    ]
+  }
+]

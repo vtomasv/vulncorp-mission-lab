@@ -1,0 +1,165 @@
+name: vulncorp-mission
+
+x-common: &common
+  image: vulncorp-core:0.1.0
+  build:
+    context: .
+    target: core
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  pids_limit: 96
+  cpus: 0.50
+  mem_limit: 160m
+  tmpfs: ["/tmp:size=32m,mode=1777"]
+  restart: unless-stopped
+
+services:
+  mission:
+    <<: *common
+    ports: ["127.0.0.1:${LAB_PORT:-8095}:8000"]
+    networks: [ui, edge, app, support, ai]
+    volumes: [mission_state:/state]
+    mem_limit: 256m
+    cpus: 1.0
+    environment:
+      LAB_DB: /state/mission.db
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:1.7b}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 10s
+
+  gateway:
+    <<: *common
+    command: [python, -m, app.targets]
+    environment: {LAB_ROLE: gateway}
+    networks: [edge, app]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health',timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+
+  records:
+    <<: *common
+    image: vulncorp-records:0.1.0
+    build: {context: ., target: records}
+    command: [python, -m, app.targets]
+    environment: {LAB_ROLE: records}
+    networks: [app]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8081/health',timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+
+  backup:
+    <<: *common
+    command: [python, -m, app.targets]
+    environment: {LAB_ROLE: backup}
+    networks: [support]
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8082/health',timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+
+  probe-public:
+    <<: *common
+    profiles: [tools]
+    entrypoint: [python, -m, app.cli]
+    command: [discover]
+    environment: {LAB_ZONE: public}
+    networks: [edge]
+    restart: "no"
+    mem_limit: 128m
+
+  probe-support:
+    <<: *common
+    profiles: [tools]
+    entrypoint: [python, -m, app.cli]
+    command: [discover]
+    environment: {LAB_ZONE: support}
+    networks: [support]
+    restart: "no"
+    mem_limit: 128m
+
+  check:
+    <<: *common
+    profiles: [tools]
+    entrypoint: [python, -m, unittest, discover, -s, tests, -v]
+    networks: [edge]
+    restart: "no"
+    environment: {LAB_DB: /tmp/tests.db}
+    mem_limit: 256m
+
+  syft:
+    image: anchore/syft:v1.55.0@sha256:4cc92b64ca74ffca4c94d4c8fcc01f217731375300be14d0b6eeb2e82eaa110a
+    profiles: [scanners]
+    volumes: [./artifacts/images:/input:ro, syft_tmp:/tmp]
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 1g
+    cpus: 2.0
+    environment: {SYFT_CHECK_FOR_APP_UPDATE: "false", XDG_CACHE_HOME: /tmp/.cache}
+
+  grype:
+    image: anchore/grype:v0.121.0@sha256:621d56d1d68106b787022c81546f7e0a36202a25d1239f0c20195fab8c16f7ea
+    profiles: [scanners]
+    volumes: [./artifacts:/reports:ro, grype_cache:/cache, grype_tmp:/tmp]
+    networks: [feeds]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 1g
+    cpus: 2.0
+    environment:
+      GRYPE_DB_CACHE_DIR: /cache
+      GRYPE_CHECK_FOR_APP_UPDATE: "false"
+
+  ollama:
+    image: ollama/ollama:0.40.6@sha256:265409e1d931028a8f7d5a32bcbafddd7bffbc6cc629d77efe9560adf692a5e7
+    profiles: [ai]
+    networks: [ai]
+    volumes: [ollama_models:/root/.ollama]
+    mem_limit: 4g
+    memswap_limit: 4g
+    cpus: 2.0
+    pids_limit: 128
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: ["/tmp:size=128m,mode=1777"]
+    environment:
+      OLLAMA_NUM_PARALLEL: "1"
+      OLLAMA_MAX_LOADED_MODELS: "1"
+      OLLAMA_CONTEXT_LENGTH: "4096"
+      OLLAMA_KEEP_ALIVE: 2m
+      OLLAMA_NO_CLOUD: "1"
+    healthcheck:
+      test: [CMD, ollama, list]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+networks:
+  ui: {}
+  edge: {internal: true}
+  app: {internal: true}
+  support: {internal: true}
+  ai: {internal: true}
+  feeds: {}
+
+volumes:
+  mission_state: {}
+  ollama_models: {}
+  grype_cache: {}
+  syft_tmp: {}
+  grype_tmp: {}

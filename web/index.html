@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>VulnCorp · Mission Lab</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/style.css"></head>
+<body>
+<aside class="sidebar">
+ <a class="brand" href="#mapa"><span class="brand-mark">V</span><span>VulnCorp<small>MISSION LAB / 01—03</small></span></a>
+ <div class="side-label">TU CENTRO DE OPERACIONES</div>
+ <nav aria-label="Navegación principal">
+  <button data-view="mapa" class="nav active"><span>◈</span> Mapa operativo</button>
+  <button data-view="misiones" class="nav"><span>◎</span> Misiones <small id="mission-count">0/12</small></button>
+  <button data-view="hallazgos" class="nav"><span>⌕</span> Hallazgos</button>
+  <button data-view="decisiones" class="nav"><span>⇅</span> Decisiones</button>
+  <button data-view="ia" class="nav"><span>✧</span> IA local <i class="new">CPU</i></button>
+  <button data-view="evidencias" class="nav"><span>▤</span> Evidencias</button>
+ </nav>
+ <div class="side-mission"><div class="eyebrow">EL TRABAJO DE HOY</div><p>Proteger un servicio.<br>Demostrar una decisión.</p><span class="quiet">Aprender, comprobar, volver a intentar.</span></div>
+ <div class="side-bottom"><span class="status-dot"></span> ENTORNO SINTÉTICO AISLADO<small>MAR303 · Tomás Vera<br>Sin calificaciones intermedias</small></div>
+</aside>
+<main>
+ <header class="topbar"><div class="breadcrumbs">MAR303 <span>/</span> GESTIÓN DE VULNERABILIDADES</div><div class="top-right"><span class="local-tag">◉ LOCAL / DOCKER</span><button id="export-top" class="button ghost small">Exportar evidencia ↗</button></div></header>
+ <section class="client-strip"><div><span class="eyebrow">CLIENTE EN OPERACIÓN</span><select id="client-select" aria-label="Cliente"></select></div><div class="owner-line" id="owner-line"></div><div class="clock"><b>08:10</b><small>HORA DEL ESCENARIO</small></div></section>
+ <div id="content" aria-live="polite"><div class="loading">Preparando el centro de misión…</div></div>
+ <footer>Construido para pensar antes de priorizar. <span>v0.1.0 · Datos ficticios · No exponer a Internet</span></footer>
+</main>
+<div id="toast" role="status" class="toast hidden"></div>
+<dialog id="decision-dialog"><form id="decision-form">
+ <div class="dialog-head"><div><div class="eyebrow">DECISIÓN TRAZABLE</div><h2 id="decision-title"></h2></div><button type="button" id="close-dialog" class="icon-button" aria-label="Cerrar">×</button></div>
+ <input type="hidden" name="finding_id">
+ <div class="notice">El índice es ordinal. SSVC usa su propio impacto humano, distinto del I máximo. Justifica los valores con el dueño y la evidencia.</div>
+ <div class="form-grid"><label>Estado del riesgo<select name="state"><option value="inherent">Inherente / antes del control</option><option value="residual">Residual / control ya probado</option></select></label><label>Responsable<input name="owner" required minlength="3" maxlength="150"></label>
+ <label>Plausibilidad contextual L<select name="likelihood" required><option value="">Elegir…</option><option value="1">1 · Sin ruta identificada tras pruebas</option><option value="2">2 · Ruta indirecta con condiciones</option><option value="3">3 · Ruta plausible / prueba parcial</option><option value="4">4 · Ruta reproducida en el caso</option><option value="5">5 · Explotación del activo observada</option></select></label><div class="score-preview"><small>ÍNDICE DOCENTE</small><b id="risk-preview">—</b><span>4 × L × I máximo</span></div></div>
+ <h3>Consecuencias para este cliente <small>1 menor · 5 máxima según el BIA</small></h3>
+ <div class="impact-grid" id="impact-inputs"></div>
+ <h3>SSVC Deployer <small>DT_DP v1.0.0 · CERT/CC</small></h3>
+ <div class="form-grid">
+  <label>Estado de explotación<select name="exploitation" required><option value="">Elegir…</option><option value="N">None · sin evidencia ni PoC público</option><option value="P">Public PoC · prueba o método conocido</option><option value="A">Active · evidencia creíble en el mundo real</option></select></label>
+  <label>Exposición del sistema<select name="exposure" required><option value="">Elegir…</option><option value="S">Small · superficie reducida</option><option value="C">Controlled · acceso restringido comprobado</option><option value="O">Open · red ampliamente accesible</option></select></label>
+  <label>Automatizable<select name="automatable" required><option value="">Elegir…</option><option value="N">No</option><option value="Y">Sí</option></select></label>
+  <label>Impacto humano SSVC<select name="human_impact" required><option value="">Elegir según misión y seguridad…</option><option value="L">Low</option><option value="M">Medium</option><option value="H">High</option><option value="VH">Very High</option></select></label>
+ </div>
+ <details><summary>Cómo distinguir el impacto humano de SSVC</summary><p>Low: seguridad negligible/marginal y misión degradada o soporte de función esencial afectado. Medium: falla de función esencial con seguridad negligible/marginal, o misión degradada con seguridad crítica. High: seguridad crítica y soporte esencial afectado o función esencial fallida. Very High: seguridad catastrófica o falla de la misión. Consulta la tabla oficial y el dossier; no conviertas I=5 automáticamente en Very High.</p></details>
+ <label>Evidencia y contexto usados<select name="evidence_ids" multiple size="4" required></select><small>Ctrl/Cmd para varias opciones. Un documento de contexto no equivale a una prueba ejecutada.</small></label>
+ <label>Justificación, supuestos y criterio del dueño<textarea name="reason" rows="3" minlength="30" required placeholder="Este escenario afecta… La evidencia demuestra… Falta comprobar… El dueño acepta o solicita…"></textarea></label>
+ <div class="dialog-actions"><button type="button" id="cancel-dialog" class="button ghost">Volver</button><button class="button primary" type="submit">Guardar decisión con evidencia ↗</button></div>
+</form></dialog>
+<script src="/app.js"></script>
+</body></html>
