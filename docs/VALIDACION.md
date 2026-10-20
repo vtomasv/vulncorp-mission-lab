@@ -30,7 +30,7 @@ Entorno local: Docker Desktop Linux **arm64**, motor 29, con más RAM disponible
 
 La consulta y su revisión completas están en [el ejemplo capturado](ejemplos/inferencia-cpu.json). Es una captura de validación, no una respuesta que la aplicación use para aparentar inferencia.
 
-La automatización pública ejecuta las pruebas funcionales en Linux **amd64** sin descargar el modelo: [ejecuciones de GitHub Actions](https://github.com/vtomasv/vulncorp-mission-lab/actions/workflows/ci.yml). Su estado debe consultarse allí; una insignia verde no acredita pruebas de IA, Windows ni hardware de 16 GB.
+La automatización pública ejecuta las pruebas funcionales en Linux **amd64** sin descargar el modelo. La [primera ejecución](https://github.com/vtomasv/vulncorp-mission-lab/actions/runs/39467440045) pasó: pruebas unitarias, contrato Compose, construcción, flujo integrado y descubrimiento desde dos zonas. Consulta las [ejecuciones posteriores](https://github.com/vtomasv/vulncorp-mission-lab/actions/workflows/ci.yml) para el estado actual; una insignia verde no acredita pruebas de IA, Windows ni hardware de 16 GB.
 
 ## Pruebas reproducibles
 

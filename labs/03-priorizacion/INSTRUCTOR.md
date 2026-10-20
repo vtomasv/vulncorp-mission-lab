@@ -33,6 +33,10 @@ Después de `ai-off`, targets arrancan iniciales. Aplicar restricción de export
 
 La mitigación retira una ruta pública; records sigue sin autorización. No presentar esto como corrección de raíz. La rotación de llave modifica acceso al catálogo, no prueba una recuperación.
 
+## Quince minutos del comité: controles con evidencia
+
+Usar el paso 13 para exigir dos relaciones argumentadas entre conducta, medida, MITRE, ISO y deber OIV simulado. No aceptar una colección de IDs sin condiciones. La contraprueba buscada es rechazar «diagnóstico 403 demuestra M1030/A.8.22»: se restringió una ruta HTTP; las redes no cambiaron. También rechazar «catálogo 200 demuestra continuidad». El registro del cambio y sus pruebas puede discutir el art. 8 b), sin acreditar por sí solo el conjunto de obligaciones. Guardar el razonamiento en reflexión 3-4 y conservar tabla aparte.
+
 ## Últimos 30 minutos
 
 Cada persona explica la decisión más difícil, una salida de IA corregida o rechazada y una pregunta que cambia la prioridad. Exportar. Sin nota ni ranking.

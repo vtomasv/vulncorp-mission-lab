@@ -157,8 +157,21 @@ El gateway limita la ruta pública; records sigue sin implementar autorización.
 
 Puedes aplicar B y comprobar que la llave antigua deja de abrir el catálogo; no declares restauración probada: estas clases no implementan restauración ni borrado de copias.
 
+### Paso 13. Defiende la trazabilidad del control
+
+Reserva 15 minutos del comité para esta comprobación. Abre las referencias candidatas de las tarjetas y contrástalas con [MITRE, ISO y fuentes chilenas](../../docs/CASOS_Y_FUENTES.md). Completa dos filas; guarda la explicación en la reflexión **3-4** y adjunta tu tabla al expediente:
+
+| Medida | Conducta ATT&CK candidata y condición | Mitigación MITRE candidata | Control ISO 27001:2022 | Relación con deber OIV simulado | IDs de pruebas y límite |
+|---|---|---|---|---|---|
+| Rotar llave y reducir permisos del catálogo | ¿Cuándo sería defendible T1078? | Investiga M1026; explica qué parte corresponde a privilegios y cuál a rotación. | Investiga A.8.2. | Art. 8 a) y b): evaluación y registro. La continuidad exige más evidencia. | Llave anterior → 403; ¿qué no demuestra esa prueba? |
+| Restringir diagnóstico público | No asignes una técnica solo porque se publicó una versión. | Examina M1030: ¿se cambió realmente la segmentación? | Compara A.8.9 y A.8.22 con el cambio efectivo. | Art. 8 a), b) y d), según alcance del caso. | Diagnóstico → 403, transacción → completed; redes sin cambio. |
+
+Debes **rechazar al menos una relación que la evidencia no sostenga**. Un HTTP 403 en una ruta no prueba por sí mismo segmentación de red. Un catálogo accesible no demuestra recuperación ni cumplimiento de A.8.13/A.5.30.
+
+Consulta directamente el [artículo 8 de la Ley 21.663 en BCN](https://www.bcn.cl/leychile/navegar?idNorma=1202434). Distingue evaluar riesgos, registrar acciones, revisar y mantener continuidad. La empresa es OIV por supuesto académico; el expediente aporta evidencia parcial para discutir esos deberes, sin certificar cumplimiento. Verifica el alcance y las fuentes al redactar tu argumento.
+
 ## Entrega formativa
 
-Exporta expediente y reportes. Deben quedar: dos clientes comparados, cuatro decisiones iniciales, una revisión de IA real o crítica sintética claramente identificada si hubo un fallo, una cartera, una reevaluación y dos pruebas después de una medida.
+Exporta expediente y reportes. Deben quedar: dos clientes comparados, cuatro decisiones iniciales, una revisión de IA real o crítica sintética claramente identificada si hubo un fallo, una cartera, una reevaluación, dos pruebas después de una medida y dos relaciones de controles discutidas con sus límites.
 
 **Éxito observable:** puedes explicar la diferencia entre severidad, índice y urgencia; el dueño cambia una premisa; la IA tiene revisión humana; la medida reduce una exposición y preserva una función.
