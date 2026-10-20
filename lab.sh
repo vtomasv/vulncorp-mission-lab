@@ -6,15 +6,16 @@ need(){ command -v docker >/dev/null || { echo 'Instala Docker Engine/Compose o 
 usage(){ cat <<'TXT'
 VulnCorp Mission Lab · sin herramientas de seguridad instaladas en el host
   ./lab.sh doctor                    comprobar el equipo
-  ./lab.sh up                        construir e iniciar el caso
+  ./lab.sh up                        construir e iniciar los puestos
+  ./lab.sh prepare-game              preparar puestos, base Grype e IA (Internet)
   ./lab.sh down                      detener solo este proyecto; conserva evidencia
   ./lab.sh discover public|support    observar rutas desde una zona
   ./lab.sh probe public export        prueba acotada (transaction/diagnostics/backup)
   ./lab.sh sbom                      Syft real sobre imágenes exportadas
   ./lab.sh scan                      Grype real; primera vez descarga su base
   ./lab.sh ai-prepare                 descargar motor y modelo (Internet)
-  ./lab.sh ai-on                      pausar targets e iniciar IA aislada
-  ./lab.sh ai-off                     descargar modelo de RAM y volver a targets
+  ./lab.sh ai-on                      iniciar IA aislada; puestos siguen activos
+  ./lab.sh ai-off                     liberar RAM de IA; conserva puestos y controles
   ./lab.sh test                       pruebas unitarias en Docker
   ./lab.sh smoke                      pruebas integradas contra el entorno
   ./lab.sh export                     guardar expediente en artifacts/
@@ -31,9 +32,15 @@ case "$cmd" in
   docker version --format 'Motor: {{.Server.Version}} / {{.Server.Os}} / {{.Server.Arch}}'
   docker info --format 'Memoria asignada a Docker (bytes): {{.MemTotal}}'
   docker compose version
-  echo 'Referencia: equipo de 16 GB, Docker con 6-8 GB, 2 CPU para IA; 25 GB de disco libre mínimo recomendado.'
+  echo 'Referencia: equipo de 16 GB, Docker con 8 GB, 2 CPU para IA; 30 GB de disco libre mínimo recomendado.'
   echo 'El caso funciona sin GPU. Primera preparación requiere Internet; después se usan cachés.';;
- up) dc build mission records; dc up -d --wait mission records gateway backup; echo 'Abre http://localhost:8095 (o el LAB_PORT de .env).';;
+ up) dc build mission records workstation ops appdesk; dc up -d --wait mission records gateway backup workstation ops appdesk; if [[ "${LAB_SKIP_AI:-0}" != 1 ]]; then dc --profile ai up -d --wait ollama; fi; echo 'Abre http://localhost:8095 (o el LAB_PORT de .env).';;
+ prepare-game)
+  ./lab.sh up
+  dc run --rm --no-deps grype db update
+  dc run --rm --no-deps prepare-cache
+  ./lab.sh ai-prepare
+  echo 'Campaña preparada. Abre http://localhost:8095 y entra al puesto.';;
  down) dc --profile ai --profile tools --profile scanners down;;
  status) dc --profile ai ps; ids=$(dc ps -q); if [[ -n "$ids" ]]; then docker stats --no-stream $ids; fi;;
  discover|probe)
@@ -52,7 +59,7 @@ case "$cmd" in
   [[ -s artifacts/sbom-records.cdx.json ]] || { echo 'Ejecuta primero ./lab.sh sbom';exit 1; }
   dc run --rm --no-deps grype sbom:/reports/sbom-records.cdx.json -o json > artifacts/grype-records.json
   dc run --rm --no-deps grype db status > artifacts/grype-db-status.txt
-  echo 'Reporte real: artifacts/grype-records.json. Impórtalo en Hallazgos; no esperes el mismo conteo del caso docente.';;
+  echo 'Reporte real: artifacts/grype-records.json. El juego ejecuta su propio escaneo desde aplicaciones; este reporte completo es una extensión docente.';;
  ai-prepare)
   dc -f compose.yaml -f compose.preload.yaml --profile ai up -d --wait ollama
   trap 'dc --profile ai up -d --wait --force-recreate ollama' EXIT
@@ -63,12 +70,10 @@ case "$cmd" in
   echo 'Pesos descargados; Ollama volvió a la red interna. Ejecuta ./lab.sh ai-on.';;
  ai-on)
   dc --profile ai up -d --wait mission ollama
-  dc stop gateway records backup
-  echo 'IA local lista en el panel. Targets pausados; sus evidencias se conservan. No se usa GPU.';;
+  echo 'IA local CPU lista. Puestos y servicios siguen activos.';;
  ai-off)
   dc --profile ai stop ollama
-  dc up -d --wait gateway records backup mission
-  echo 'IA detenida y memoria liberada. Los targets vuelven al estado inicial: repite las pruebas y revisa las mitigaciones.';;
+  echo 'IA detenida y memoria liberada. Puestos, servicios y medidas permanecen activos.';;
  test) dc run --rm --no-deps check;;
  smoke) dc exec -T mission python -m tests.smoke;;
  export) dc exec -T mission python -c 'import json; from app.server import export_bundle; print(json.dumps(export_bundle(),ensure_ascii=False,indent=2))' > artifacts/expediente.json; echo 'Guardado: artifacts/expediente.json';;

@@ -1,177 +1,52 @@
-# Clase 3 · La prioridad cambia de dueño
+# Continuidad · decide y demuestra el efecto
 
-**Duración:** 7 horas efectivas. **Evaluación:** formativa, sin nota. **Requisitos:** expediente y observaciones de clases 1-2. La IA se prepara antes de la jornada para no consumirla descargando pesos.
+## 11. Dos dueños, un hallazgo
 
-## La decisión de las 08:10
+En la ruta lee primero salud y luego agua. Evalúa F-02 para ambos: conserva el hecho técnico y L, reconsidera las cuatro consecuencias y vincula una prueba de exportación real.
 
-Cuatro horas de ingeniería. Quince minutos de ventana. Mismos componentes y hallazgos, tres clientes con misiones distintas. No puedes resolver el encargo diciendo «primero todo lo crítico».
+El índice es `4 × L × máximo(operación, personas, datos, finanzas)`. Cada nivel está entre 1 y 5; es ordinal, no porcentaje. Compara, por ejemplo, L=4 con impacto máximo 4 y luego 2: obtienes 64 y 32. Esos valores ilustran el cálculo; tus premisas deben explicarse al dueño.
 
-## Agenda
+Selecciona las cuatro entradas del árbol SSVC Deployer. Su Human Impact tiene una definición propia: no copies el impacto máximo de la fórmula. No atribuyas explotación real a una CVE por haberla reproducido en el laboratorio.
 
-| Min | Actividad |
-|---:|---|
-| 20 | Recuperar una afirmación técnica y una consecuencia de negocio. |
-| 40 | CVSS, EPSS, KEV; índice ordinal; SSVC Deployer; urgencia y viabilidad. |
-| 30 | Ejemplo completo con dueño, cálculo, árbol y evidencia. |
-| 110 | Laboratorio A: decidir para el primer cliente. |
-| 110 | Laboratorio B: cambiar de cliente y auditar IA local. |
-| 80 | Cartera, giro de negocio y mitigación verificada. |
-| 30 | Reflexión, revisión individual y exportación. |
+## 12. Una segunda mirada
 
-## Laboratorio A · Construir una decisión defendible
-
-### Paso 1. Separa cuatro señales
-
-- **CVSS:** severidad técnica. Conserva versión y vector.
-- **EPSS:** predicción global de explotación de una CVE en 30 días; el percentil es su posición relativa. No es probabilidad de compromiso del cliente.
-- **KEV:** explotación conocida; no prueba compromiso de tu activo. Ausencia no implica seguridad.
-- **Contexto:** función, acceso, condiciones, controles probados y consecuencias acordadas con el dueño.
-
-En Hallazgos se muestran valores EPSS reales del snapshot y su fecha. Los hallazgos locales sin CVE no reciben un EPSS inventado.
-
-### Paso 2. Habla con el dueño
-
-Selecciona un cliente, lee su misión, RTO/RPO y tarjetas. Anota las consecuencias en cuatro dimensiones: **operación, personas, datos y finanzas**. Usa niveles de 1 a 5 y explica las anclas del caso:
-
-1. Menor, sin degradación relevante.
-2. Local, con alternativa suficiente.
-3. Degradación relevante o exposición acotada.
-4. Supera una tolerancia, afecta datos sensibles o múltiples clientes.
-5. Función esencial sin alternativa suficiente o consecuencias máximas según el BIA del cliente.
-
-Estos umbrales son pedagógicos: no son una escala legal ni un estándar universal. Usa las tarjetas para defenderlos; si falta un dato, regístralo.
-
-### Paso 3. Calcula el índice
-
-En **Decisiones → Evaluar**, selecciona L de 1 a 5 y cuatro impactos. El motor calcula:
-
-```text
-I = máximo(operación, personas, datos, finanzas)
-R = 4 × L × I
-```
-
-L describe plausibilidad contextual: 1 sin ruta identificada tras pruebas acotadas; 2 ruta indirecta con condiciones; 3 ruta plausible o probada parcialmente; 4 ruta reproducida en el caso; 5 evidencia de explotación del activo. No se obtiene convirtiendo EPSS a un nivel.
-
-Ejemplo sintético: L=4 e I=5 → 80. Ese 80 **no es 80%**. Si la evidencia de un control permite justificar L=2, el residual sería 40, conservando I=5. No reduzcas L por declarar un firewall: comprueba el control.
-
-### Paso 4. Recorre SSVC sin mezclar modelos
-
-Usamos **SSVC Deployer Patch Application Priority DT_DP v1.0.0**, de CERT/CC. El JSON oficial está en `data/ssvc/deployer.json`; sus 72 combinaciones se comprueban con tests.
-
-Entradas: estado de explotación, exposición del sistema, automatización e **impacto humano**. Salidas: Defer, Scheduled, Out-of-Cycle e Immediate. No son las etiquetas Track/Track*/Attend/Act de CISA Coordinator.
-
-El impacto humano combina **misión y seguridad** con su definición oficial. No se convierte automáticamente del I máximo del índice. Lee la ayuda del formulario y [la documentación del desplegador](https://certcc.github.io/SSVC/howto/deployer_tree/).
-
-Una prueba exitosa en un target de entrenamiento no acredita explotación activa en el mundo real. No selecciones `Active` solo porque hiciste un `probe` o porque EPSS sea alto. La categoría Public PoC también incluye métodos de explotación bien conocidos según su definición.
-
-### Paso 5. Guarda F-01 a F-04
-
-Para cada uno registra responsable, estado inherente, evidencia/ contexto y una justificación que conecte consecuencia y decisión. Los IDs `EV-*` son documentos de contexto o hipótesis; los IDs de pruebas ejecutadas aparecen como observados. No los trates como intercambiables.
-
-El sistema conserva cada evaluación; reevaluar no borra las anteriores. El índice ayuda a comparar dentro de una política; no puede desplazar por sí solo un tratamiento que requiere urgencia mayor.
-
-## Laboratorio B · Otro dueño y una segunda mirada
-
-### Paso 6. Cambia el cliente
-
-Evalúa de nuevo F-02 y F-03 para otro cliente. No modifiques CVSS ni la evidencia técnica porque cambió el dueño. Abre la comparación.
-
-Referencia trabajada del índice, disponible después de justificar:
-
-| Hallazgo | Salud | Agua | Servicios digitales |
-|---|---:|---:|---:|
-| F-01, L=1 | 8 | 4 | 8 |
-| F-02, L=4 | 64 | 32 | 80 |
-| F-03, L=3 | 60 | 60 | 24 |
-| F-04, L=3 | 36 | 48 | 48 |
-
-Son valores sintéticos de referencia, no una respuesta única calificable. Debes justificar por qué asignas impacto y cómo se relaciona con SSVC. Otras decisiones requieren evidencia y límites claros.
-
-### Paso 7. Activa IA local
-
-Primera preparación, con Internet:
+Desde análisis, entra a aplicaciones si hace falta:
 
 ```bash
-./lab.sh ai-prepare
+ssh appdesk
+lab ia
 ```
 
-Durante la clase:
+Espera la inferencia real de Qwen3 local en CPU. Vuelve al objetivo de la ruta: contrasta una afirmación completa con su fragmento, no solo con la existencia del ID. Registra aceptar, corregir o rechazar, citando la frase y tu fundamento. El modelo no ejecuta cambios, calcula el riesgo ni acepta el residual.
+
+## 13. Cuatro horas para proteger
+
+En la ruta selecciona una cartera de hasta 4 h y 15 min de ventana. Incluye la restricción de exportación A para la prueba posterior. Explica qué pospones y por qué. Relaciona hipótesis de conducta, objetivo de control y deber de gestión de la OIV ficticia con MITRE, ISO y ley; delimita lo que esa relación no prueba.
+
+Restringir `/api/export` no acredita segregación de redes ni cumplimiento integral. La calidad del fundamento se discute con el dueño, aunque el presupuesto sea válido.
+
+## 14. Una medida en la empresa
+
+En aplicaciones:
 
 ```bash
-./lab.sh ai-on
+lab proteger
 ```
 
-Windows: `.\lab.ps1 ai-prepare` y `.\lab.ps1 ai-on`. Se pausan targets; permanecen centro de misión y evidencia. Ollama usa CPU, un modelo Qwen3 1.7B y límite de 4 GB. No hay un endpoint de IA publicado al host.
+El comando pide tu motivo. Escribe al menos 30 caracteres que expliquen propósito y comprobaciones posteriores, y pulsa Enter. El gateway debe confirmar. La causa raíz de autorización en records sigue pendiente.
 
-Abre **IA local**. Debe decir **Disponible · CPU** y mostrar el modelo. Si dice apagado o sin modelo, no se ha realizado inferencia. Hay un ejemplo sintético para crítica expresamente rotulado; no debe presentarse como respuesta real.
+## 15. Proteger sin interrumpir
 
-### Paso 8. Pide contexto, no una autorización automática
-
-Consulta F-02: «¿Qué debo preguntar al dueño antes de priorizar? Separa hechos, hipótesis y datos faltantes. Propón dos tratamientos y cita las fuentes recibidas».
-
-Espera la inferencia real. El panel guarda modelo, digest, versión del prompt, fuentes recuperadas, salida, tiempo y errores de referencias. La CPU puede tardar; no se promete una latencia universal.
-
-Verifica **una afirmación completa**: ID citado → texto recuperado → dato del caso → conclusión. Que el ID exista no prueba que el fragmento sustente lo dicho. El asistente no observa una prueba solo por haber leído su descripción.
-
-Registra aceptar, corregir o rechazar **con una razón**. Una recomendación fluida sin sustento no es competente. No se permite aceptar una salida con referencias que el validador detectó como inválidas.
-
-### Paso 9. Vuelve a los targets
+Vuelve desde aplicaciones a análisis:
 
 ```bash
-./lab.sh ai-off
+exit
+curl -s -o /tmp/exportacion.json -w '%{http_code}\n' http://gateway:8080/api/export
+curl -s http://gateway:8080/api/transaction | jq
 ```
 
-Libera la RAM del modelo y reinicia el escenario. Repite una prueba antes de aplicar medidas: los controles de los targets son efímeros y la bitácora es histórica.
+Debes observar **403** y **completed**, ambos después de aplicar la medida. Un 503 no acredita continuidad. En la ruta registra el residual y cita las dos pruebas posteriores. La plataforma comprueba también que la restricción siga activa.
 
-## Comité · Elegir y demostrar
+## Defensa del equipo
 
-### Paso 10. Diseña una cartera
-
-En Decisiones, selecciona paquetes. Presupuesto sintético: 4 horas de ingeniería y 15 minutos de interrupción acumulada.
-
-| Paquete | Ingeniería | Interrupción |
-|---|---:|---:|
-| A · Restringir exportación | 2 h | 0 min |
-| B · Rotar llave de copias | 2 h | 10 min |
-| C · Restringir diagnóstico | 1 h | 5 min |
-| D · Actualizar legacy | 3 h | 30 min |
-
-El sistema rechaza combinaciones que exceden el caso. **La cartera es planificación:** no ejecuta automáticamente todos los paquetes. Las medidas A/B/C se pueden aplicar individualmente en el simulador. D es una opción de negociación que queda fuera de la ventana, no una actualización implementada en estas clases.
-
-### Paso 11. Recibe el giro y revisa
-
-Pulsa **Revelar nueva información** en el mapa. Lee el nuevo hecho y explica qué entrada de tu evaluación cambia y cuál permanece. Conserva la decisión previa. Una excepción no se vuelve permanente por haber sido aceptada una vez.
-
-### Paso 12. Aplica A y comprueba dos resultados
-
-En Decisiones, pulsa **Aplicar con justificación** en Restringir exportación. Describe el motivo y las pruebas esperadas. Después ejecuta:
-
-```bash
-./lab.sh probe public export
-./lab.sh probe public transaction
-```
-
-Resultado esperado: export HTTP **403** y transacción HTTP **200**, `completed`. Repite con los botones para guardar evidencia.
-
-El gateway limita la ruta pública; records sigue sin implementar autorización. Esto es una **mitigación temporal**. La causa raíz no está corregida, la biblioteca no se actualizó y no se probó ausencia de compromiso. Reevalúa el residual solamente con lo que la prueba demuestra.
-
-Puedes aplicar B y comprobar que la llave antigua deja de abrir el catálogo; no declares restauración probada: estas clases no implementan restauración ni borrado de copias.
-
-### Paso 13. Defiende la trazabilidad del control
-
-Reserva 15 minutos del comité para esta comprobación. Abre las referencias candidatas de las tarjetas y contrástalas con [MITRE, ISO y fuentes chilenas](../../docs/CASOS_Y_FUENTES.md). Completa dos filas; guarda la explicación en la reflexión **3-4** y adjunta tu tabla al expediente:
-
-| Medida | Conducta ATT&CK candidata y condición | Mitigación MITRE candidata | Control ISO 27001:2022 | Relación con deber OIV simulado | IDs de pruebas y límite |
-|---|---|---|---|---|---|
-| Rotar llave y reducir permisos del catálogo | ¿Cuándo sería defendible T1078? | Investiga M1026; explica qué parte corresponde a privilegios y cuál a rotación. | Investiga A.8.2. | Art. 8 a) y b): evaluación y registro. La continuidad exige más evidencia. | Llave anterior → 403; ¿qué no demuestra esa prueba? |
-| Restringir diagnóstico público | No asignes una técnica solo porque se publicó una versión. | Examina M1030: ¿se cambió realmente la segmentación? | Compara A.8.9 y A.8.22 con el cambio efectivo. | Art. 8 a), b) y d), según alcance del caso. | Diagnóstico → 403, transacción → completed; redes sin cambio. |
-
-Debes **rechazar al menos una relación que la evidencia no sostenga**. Un HTTP 403 en una ruta no prueba por sí mismo segmentación de red. Un catálogo accesible no demuestra recuperación ni cumplimiento de A.8.13/A.5.30.
-
-Consulta directamente el [artículo 8 de la Ley 21.663 en BCN](https://www.bcn.cl/leychile/navegar?idNorma=1202434). Distingue evaluar riesgos, registrar acciones, revisar y mantener continuidad. La empresa es OIV por supuesto académico; el expediente aporta evidencia parcial para discutir esos deberes, sin certificar cumplimiento. Verifica el alcance y las fuentes al redactar tu argumento.
-
-## Entrega formativa
-
-Exporta expediente y reportes. Deben quedar: dos clientes comparados, cuatro decisiones iniciales, una revisión de IA real o crítica sintética claramente identificada si hubo un fallo, una cartera, una reevaluación, dos pruebas después de una medida y dos relaciones de controles discutidas con sus límites.
-
-**Éxito observable:** puedes explicar la diferencia entre severidad, índice y urgencia; el dueño cambia una premisa; la IA tiene revisión humana; la medida reduce una exposición y preserva una función.
+Presenta la decisión antes/después, el dueño responsable, el alcance del control y las condiciones de aceptación. Un equipo auditor cuestiona una afirmación legal, una técnica y una de la IA. Formula el siguiente trabajo pendiente para corregir la causa raíz y verificar recuperación real en una ampliación del juego.

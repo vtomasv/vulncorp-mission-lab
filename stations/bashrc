@@ -1,0 +1,5 @@
+export PS1='\[\033[38;5;60m\]\u@\h\[\033[0m\]:\w\$ '
+alias ll='ls -lah'
+export PATH=/usr/local/bin:/usr/bin:/bin
+
+alias jq='jq -M'

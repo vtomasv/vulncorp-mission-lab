@@ -1,0 +1,8 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Puesto de análisis · VulnCorp</title><style>html,body,#screen{margin:0;width:100%;height:100%;overflow:hidden;background:#e9edf3;font:14px system-ui;color:#33475e}#message{position:fixed;inset:0;display:grid;place-items:center;z-index:1;background:#e9edf3}#message[hidden]{display:none}</style></head><body><div id="message">Conectando con tu puesto de trabajo…</div><div id="screen"></div><script type="module">
+import RFB from './core/rfb.js';
+const url=new URL('./websockify',location.href);url.protocol=location.protocol==='https:'?'wss:':'ws:';
+const rfb=new RFB(document.getElementById('screen'),url.href);rfb.scaleViewport=true;rfb.resizeSession=true;
+rfb.addEventListener('connect',()=>{document.getElementById('message').hidden=true;parent.postMessage({type:'lab:connected'},location.origin);});
+rfb.addEventListener('disconnect',()=>{const m=document.getElementById('message');m.hidden=false;m.textContent='La estación se desconectó. Vuelve a abrir el puesto cuando el entorno esté disponible.';parent.postMessage({type:'lab:disconnected'},location.origin);});
+window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==parent||e.data?.type!=='lab:type')return;const value=String(e.data.text||'');if(value.length>2000||/[\r\n]/.test(value))return;rfb.focus();for(const char of value){const n=char.codePointAt(0);rfb.sendKey(n<256?n:0x01000000|n);} parent.postMessage({type:'lab:typed',text:value},location.origin); });
+</script></body></html>

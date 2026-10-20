@@ -13,16 +13,20 @@ x-common: &common
   mem_limit: 160m
   tmpfs: ["/tmp:size=32m,mode=1777"]
   restart: unless-stopped
+  volumes: [lab_secrets:/secrets:ro]
+  depends_on:
+    init-game: {condition: service_completed_successfully}
 
 services:
   mission:
     <<: *common
     ports: ["127.0.0.1:${LAB_PORT:-8095}:8000"]
     networks: [ui, edge, app, support, ai]
-    volumes: [mission_state:/state]
+    volumes: [mission_state:/state, lab_secrets:/secrets:ro]
     mem_limit: 256m
     cpus: 1.0
     environment:
+      LAB_SECRET_DIR: /secrets
       LAB_DB: /state/mission.db
       OLLAMA_URL: http://ollama:11434
       OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:1.7b}
@@ -36,7 +40,7 @@ services:
   gateway:
     <<: *common
     command: [python, -m, app.targets]
-    environment: {LAB_ROLE: gateway}
+    environment: {LAB_ROLE: gateway, LAB_SECRET_DIR: /secrets}
     networks: [edge, app]
     healthcheck:
       test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health',timeout=2)"]
@@ -49,7 +53,7 @@ services:
     image: vulncorp-records:0.1.0
     build: {context: ., target: records}
     command: [python, -m, app.targets]
-    environment: {LAB_ROLE: records}
+    environment: {LAB_ROLE: records, LAB_SECRET_DIR: /secrets}
     networks: [app]
     healthcheck:
       test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8081/health',timeout=2)"]
@@ -60,13 +64,99 @@ services:
   backup:
     <<: *common
     command: [python, -m, app.targets]
-    environment: {LAB_ROLE: backup}
+    environment: {LAB_ROLE: backup, LAB_SECRET_DIR: /secrets}
     networks: [support]
     healthcheck:
       test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8082/health',timeout=2)"]
       interval: 10s
       timeout: 3s
       retries: 6
+
+  init-game:
+    image: vulncorp-core:0.1.0
+    command: [python, -m, app.init_game]
+    environment: {LAB_SECRET_DIR: /secrets}
+    volumes: [lab_secrets:/secrets]
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 64m
+    restart: "no"
+
+  workstation:
+    image: vulncorp-desktop:0.2.0
+    build: {context: ., target: desktop}
+    hostname: analisis
+    networks: [edge]
+    environment: {LAB_STATION: analyst, LAB_SECRET_DIR: /secrets}
+    volumes: [analyst_home:/home/student, analyst_journal:/journal, station_access:/access, lab_secrets:/secrets:ro]
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER, SETUID, SETGID, SYS_CHROOT]
+    security_opt: [no-new-privileges:true]
+    tmpfs: ["/tmp:size=64m,mode=1777", "/run:size=32m,mode=755"]
+    shm_size: 64m
+    mem_limit: 512m
+    cpus: 1.0
+    pids_limit: 160
+    depends_on:
+      init-game: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:6080/desk.html',timeout=2); urllib.request.urlopen('http://127.0.0.1:9091/health',timeout=2)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    restart: unless-stopped
+
+  ops:
+    image: vulncorp-station:0.2.0
+    build: {context: ., target: station-base}
+    hostname: soporte
+    networks: [edge, support]
+    environment: {LAB_STATION: ops, LAB_SECRET_DIR: /secrets}
+    volumes: [ops_home:/home/student, ops_journal:/journal, station_access:/access:ro, lab_secrets:/secrets:ro]
+    read_only: true
+    cap_drop: [ALL]
+    cap_add: [AUDIT_WRITE, CHOWN, DAC_OVERRIDE, FOWNER, SETUID, SETGID, SYS_CHROOT]
+    security_opt: [no-new-privileges:true]
+    tmpfs: ["/tmp:size=32m,mode=1777", "/run:size=16m,mode=755"]
+    mem_limit: 128m
+    cpus: 0.50
+    pids_limit: 80
+    depends_on:
+      workstation: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request,socket; urllib.request.urlopen('http://127.0.0.1:9091/health',timeout=2); socket.create_connection(('127.0.0.1',2222),2).close()"]
+      interval: 10s
+      timeout: 4s
+      retries: 8
+    restart: unless-stopped
+
+  appdesk:
+    extends: {service: ops}
+    image: vulncorp-appdesk:0.2.0
+    build: {context: ., target: appdesk}
+    hostname: aplicaciones
+    networks: !override [edge, app]
+    environment: {LAB_STATION: appdesk, LAB_SECRET_DIR: /secrets, GRYPE_DB_CACHE_DIR: /cache, GRYPE_DB_AUTO_UPDATE: "false", GRYPE_CHECK_FOR_APP_UPDATE: "false", SYFT_CHECK_FOR_APP_UPDATE: "false"}
+    volumes: !override [appdesk_home:/home/student, appdesk_journal:/journal, station_access:/access:ro, lab_secrets:/secrets:ro, grype_cache:/cache:ro]
+    mem_limit: 1280m
+    cpus: 2.0
+
+  prepare-cache:
+    image: vulncorp-core:0.1.0
+    profiles: [tools]
+    user: "0:0"
+    command: [python, -c, "from pathlib import Path; p=Path('/cache'); p.chmod(0o755); [(x.chmod(0o755 if x.is_dir() else 0o644)) for x in p.rglob('*')]" ]
+    volumes: [grype_cache:/cache]
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 64m
+    restart: "no"
 
   probe-public:
     <<: *common
@@ -158,6 +248,14 @@ networks:
   feeds: {}
 
 volumes:
+  lab_secrets: {}
+  analyst_home: {}
+  analyst_journal: {}
+  station_access: {}
+  ops_home: {}
+  ops_journal: {}
+  appdesk_home: {}
+  appdesk_journal: {}
   mission_state: {}
   ollama_models: {}
   grype_cache: {}

@@ -1,0 +1,384 @@
+{
+  "id": "operacion-continuidad",
+  "version": "2.0",
+  "title": "Operación continuidad",
+  "zones": [
+    {
+      "id": "terreno",
+      "name": "Reconoce el terreno",
+      "short": "Terreno",
+      "story": "Entra a la empresa. Entiende qué debe seguir funcionando.",
+      "badge": "Servicio reconstruido"
+    },
+    {
+      "id": "senales",
+      "name": "Separa señal de ruido",
+      "short": "Señales",
+      "story": "Un reporte es el principio de una investigación, no su conclusión.",
+      "badge": "Evidencia contrastada"
+    },
+    {
+      "id": "continuidad",
+      "name": "Protege la continuidad",
+      "short": "Continuidad",
+      "story": "Decide con el dueño y demuestra el efecto de tu medida.",
+      "badge": "Servicio protegido"
+    }
+  ],
+  "challenges": [
+    {
+      "id": "contacto",
+      "zone": "terreno",
+      "title": "Primer contacto",
+      "xp": 40,
+      "brief": "Tu puesto ya tiene acceso a la empresa. Comprueba quién eres y desde dónde trabajas.",
+      "station": "analyst",
+      "steps": [
+        {
+          "command": "lab iniciar",
+          "where": "Puesto de análisis",
+          "why": "Muestra la identidad y registra la ejecución en esta estación."
+        }
+      ],
+      "hints": [
+        "El escritorio es un sistema Linux real. Haz clic en la terminal antes de escribir.",
+        "El botón de pegar solo escribe el comando: tú pulsas Enter."
+      ],
+      "form": null,
+      "requires": []
+    },
+    {
+      "id": "funcion",
+      "zone": "terreno",
+      "title": "El servicio sigue vivo",
+      "xp": 60,
+      "brief": "Antes de buscar fallas, comprueba la función que no debes interrumpir.",
+      "station": "analyst",
+      "steps": [
+        {
+          "command": "curl -s http://gateway:8080/api/transaction | jq",
+          "where": "Puesto de análisis",
+          "why": "Busca status: completed y un identificador TRAIN. La transacción depende de records."
+        }
+      ],
+      "hints": [
+        "Una transacción completada prueba función; todavía no prueba seguridad."
+      ],
+      "form": null,
+      "requires": [
+        "contacto"
+      ]
+    },
+    {
+      "id": "segmento",
+      "zone": "terreno",
+      "title": "El límite de la red",
+      "xp": 80,
+      "brief": "Una estación no debería alcanzar todos los servicios. Contrasta tu predicción con rutas reales.",
+      "station": "analyst",
+      "steps": [
+        {
+          "command": "lab red",
+          "where": "Puesto de análisis",
+          "why": "La comprobación prueba DNS y conexión TCP a los tres servicios del caso."
+        }
+      ],
+      "hints": [
+        "Desde análisis se alcanza gateway. Records y backup no se resuelven aquí.",
+        "Una ausencia de resolución desde esta zona no demuestra ausencia del activo."
+      ],
+      "form": null,
+      "requires": [
+        "funcion"
+      ]
+    },
+    {
+      "id": "exposicion",
+      "zone": "terreno",
+      "title": "La puerta inesperada",
+      "xp": 80,
+      "brief": "La entrada de trámites parece funcionar. Investiga si entrega más de lo necesario.",
+      "station": "analyst",
+      "steps": [
+        {
+          "command": "curl -s http://gateway:8080/api/export | jq",
+          "where": "Puesto de análisis",
+          "why": "Observa los dos registros ficticios y si se verificó la autenticación."
+        },
+        {
+          "command": "curl -s http://gateway:8080/api/diagnostics | jq",
+          "where": "Puesto de análisis",
+          "why": "Comprueba qué topología y versiones se publican."
+        }
+      ],
+      "hints": [
+        "Esta falla local de autorización puede existir sin una CVE de proveedor."
+      ],
+      "form": null,
+      "requires": [
+        "segmento"
+      ]
+    },
+    {
+      "id": "soporte",
+      "zone": "terreno",
+      "title": "Otro punto de vista",
+      "xp": 90,
+      "brief": "El dueño depende de recuperar sus datos. Entra a soporte por el camino permitido y revisa el catálogo.",
+      "station": "ops",
+      "steps": [
+        {
+          "command": "ssh ops",
+          "where": "Desde análisis",
+          "why": "Entra por SSH a la estación de soporte. No es otra pestaña pública."
+        },
+        {
+          "command": "lab red",
+          "where": "En soporte",
+          "why": "Gateway y backup son accesibles; records sigue fuera de esta perspectiva."
+        },
+        {
+          "command": "curl -s -H 'X-Training-Key: training-backup-key' http://backup:8082/catalog | jq",
+          "where": "En soporte",
+          "why": "Comprueba el alcance de la llave de entrenamiento. Catalogar no equivale a restaurar."
+        }
+      ],
+      "hints": [
+        "Para salir de una estación SSH escribe exit.",
+        "Las credenciales y datos del caso son sintéticos."
+      ],
+      "form": null,
+      "requires": [
+        "exposicion"
+      ]
+    },
+    {
+      "id": "inventario",
+      "zone": "senales",
+      "title": "Inventario con procedencia",
+      "xp": 90,
+      "brief": "En aplicaciones conservan una copia de archivos del servicio. Obtén su inventario real sin tocar el motor Docker.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "ssh appdesk",
+          "where": "Desde análisis",
+          "why": "Si sigues en soporte, escribe exit primero."
+        },
+        {
+          "command": "lab inventario",
+          "where": "En aplicaciones",
+          "why": "Ejecuta Syft contra el snapshot de solo lectura y conserva nombre, versión, purl y alcance."
+        }
+      ],
+      "hints": [
+        "El inventario es de archivos reales; su alcance es parcial, no toda la imagen.",
+        "Los paquetes legacy están presentes, pero el servicio activo no los importa."
+      ],
+      "form": null,
+      "requires": [
+        "soporte"
+      ]
+    },
+    {
+      "id": "alertas",
+      "zone": "senales",
+      "title": "Una alerta no es una decisión",
+      "xp": 100,
+      "brief": "El inventario ya tiene procedencia. Ahora contrástalo con una base de vulnerabilidades fechada.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab escanear",
+          "where": "En aplicaciones",
+          "why": "Ejecuta Grype sobre un SBOM recién generado. Conserva su base, hash y alias CVE/GHSA."
+        }
+      ],
+      "hints": [
+        "El docente precarga la base. La estación de práctica no descarga datos desde Internet.",
+        "Una coincidencia de versión no demuestra que la función afectada sea alcanzable."
+      ],
+      "form": null,
+      "requires": [
+        "inventario"
+      ]
+    },
+    {
+      "id": "aplicabilidad",
+      "zone": "senales",
+      "title": "Presente y utilizado",
+      "xp": 80,
+      "brief": "Django tiene una vulnerabilidad crítica conocida. Comprueba qué demuestra la revisión del código que atiende el servicio.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab revisar",
+          "where": "En aplicaciones",
+          "why": "Inspecciona los imports del archivo activo y conserva su hash."
+        }
+      ],
+      "hints": [
+        "La revisión muestra imports reales mediante el árbol de sintaxis de Python.",
+        "La conclusión proporcional es componente presente, sin ruta de uso demostrada en la revisión realizada."
+      ],
+      "form": null,
+      "requires": [
+        "alertas"
+      ]
+    },
+    {
+      "id": "proveedor",
+      "zone": "senales",
+      "title": "Dos errores del proveedor",
+      "xp": 100,
+      "brief": "El proveedor contó el mismo trabajo dos veces y atribuyó un paquete a otro activo. Reúne pruebas antes de impugnarlo.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab contrastar",
+          "where": "En aplicaciones",
+          "why": "Compara los paquetes de los snapshots de records y del runtime de mission."
+        }
+      ],
+      "hints": [
+        "VENDOR-06 repite F-01 en el mismo activo, versión y CVE.",
+        "VENDOR-07 atribuye requests a mission. Usa el inventario de ese activo."
+      ],
+      "form": "proveedor",
+      "requires": [
+        "aplicabilidad"
+      ]
+    },
+    {
+      "id": "expediente",
+      "zone": "senales",
+      "title": "Un expediente defendible",
+      "xp": 100,
+      "brief": "Conserva la falla sin CVE y describe el componente sin exagerar lo que has comprobado.",
+      "station": "appdesk",
+      "steps": [],
+      "hints": [
+        "Una etiqueta no sustituye su razón y sus fuentes.",
+        "El juego comprueba que se registraron relaciones y evidencia; discutirás la calidad de la conclusión."
+      ],
+      "form": "expediente",
+      "requires": [
+        "proveedor"
+      ]
+    },
+    {
+      "id": "contexto",
+      "zone": "continuidad",
+      "title": "Dos dueños, un hallazgo",
+      "xp": 100,
+      "brief": "Salud y agua usan la misma tecnología para funciones distintas. Evalúa F-02 para ambos y explica el cambio.",
+      "station": "analyst",
+      "steps": [],
+      "hints": [
+        "El índice es ordinal: 4 × L × máximo de cuatro impactos. No es un porcentaje.",
+        "SSVC expresa urgencia y usa su propia definición de impacto humano."
+      ],
+      "form": "contexto",
+      "requires": [
+        "expediente"
+      ]
+    },
+    {
+      "id": "asistente",
+      "zone": "continuidad",
+      "title": "Una segunda mirada",
+      "xp": 100,
+      "brief": "Pide ayuda al modelo local y revisa una afirmación completa contra su fuente. La decisión sigue siendo tuya.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab ia",
+          "where": "En aplicaciones",
+          "why": "Ejecuta una consulta real al modelo local en CPU. Después revisa la propuesta en este objetivo."
+        }
+      ],
+      "hints": [
+        "La inferencia puede tardar. El terminal muestra cuándo terminó.",
+        "Una referencia existente puede estar mal usada. Corrige o rechaza si corresponde."
+      ],
+      "form": "asistente",
+      "requires": [
+        "contexto"
+      ]
+    },
+    {
+      "id": "cartera",
+      "zone": "continuidad",
+      "title": "Cuatro horas para proteger",
+      "xp": 90,
+      "brief": "Solo hay cuatro horas de ingeniería y quince minutos de ventana. Elige una cartera viable y delimita qué control puedes afirmar.",
+      "station": "analyst",
+      "steps": [],
+      "hints": [
+        "A restringir exportación: 2 h / 0 min. B rotar llave: 2 h / 10 min.",
+        "C restringir diagnóstico: 1 h / 5 min. D actualizar legacy: 3 h / 30 min.",
+        "Restringir una ruta HTTP no demuestra por sí solo segmentación de redes."
+      ],
+      "form": "cartera",
+      "requires": [
+        "asistente"
+      ]
+    },
+    {
+      "id": "medida",
+      "zone": "continuidad",
+      "title": "Una medida en la empresa",
+      "xp": 110,
+      "brief": "Ejecuta desde aplicaciones una restricción temporal de la exportación. El servicio debe confirmar el cambio.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab proteger",
+          "where": "En aplicaciones",
+          "why": "El comando pide tu motivo, aplica la restricción y guarda la respuesta auténtica del servicio."
+        }
+      ],
+      "hints": [
+        "Esta es una mitigación. La causa raíz de autorización en records permanece pendiente."
+      ],
+      "form": null,
+      "requires": [
+        "cartera"
+      ]
+    },
+    {
+      "id": "continuidad",
+      "zone": "continuidad",
+      "title": "Proteger sin interrumpir",
+      "xp": 150,
+      "brief": "Vuelve al puesto de análisis. Comprueba el acceso denegado y la función legítima, y registra tu evaluación residual.",
+      "station": "analyst",
+      "steps": [
+        {
+          "command": "exit",
+          "where": "Si sigues dentro de aplicaciones",
+          "why": "Regresa al puesto de análisis; la perspectiva de la prueba importa."
+        },
+        {
+          "command": "curl -s -o /tmp/exportacion.json -w '%{http_code}\\n' http://gateway:8080/api/export",
+          "where": "En análisis",
+          "why": "Debe devolver 403 después de la medida, sin expedientes exportados."
+        },
+        {
+          "command": "curl -s http://gateway:8080/api/transaction | jq",
+          "where": "En análisis",
+          "why": "Debe devolver completed. Un 503 no acredita continuidad."
+        }
+      ],
+      "hints": [
+        "La comprobación vincula el antes, el cambio y las dos pruebas posteriores.",
+        "El juego registra estructura y cálculo del residual; su aceptación sigue requiriendo criterio."
+      ],
+      "form": "residual",
+      "requires": [
+        "medida"
+      ]
+    }
+  ],
+  "grading": "formative-only"
+}

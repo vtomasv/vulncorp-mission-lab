@@ -1,31 +1,10 @@
-# Inicio para principiantes
+# Tu primera entrada a VulnCorp
 
-## 1. Qué vas a construir
+## Preparar una vez
 
-Una empresa ficticia con tres servicios: una entrada pública, un servicio de expedientes y un repositorio de copias. El aula de práctica permite investigar, registrar evidencia y defender decisiones. No es una competencia de velocidad ni tiene notas intermedias.
+Necesitas 16 GB de RAM física, Docker Engine/Desktop con contenedores Linux, Compose **2.24.4+**, Git y navegador. Asigna **8 GB a Docker**; deja 30 GB libres para imágenes, escritorio, base de Grype y modelo. Sin GPU. En Windows usa Docker Desktop con WSL2.
 
-**Imagen**: plantilla del software. **Contenedor**: instancia de una imagen en ejecución. **Puerto**: punto de escucha de un servicio. **Red**: qué servicios pueden comunicarse. **Volumen**: datos que sobreviven al contenedor. No necesitas memorizar comandos: sí explicar qué demuestra cada resultado.
-
-## 2. Preparación del equipo
-
-- 16 GB de RAM física; no necesitas GPU.
-- Docker Engine con Compose v2, o Docker Desktop con contenedores Linux.
-- En Windows: backend WSL2 de Docker Desktop. Sigue la instalación oficial antes de la clase; no hace falta que aprendas Linux por tu cuenta.
-- Git y un navegador moderno.
-- Referencia inicial: asignar 6-8 GB a Docker si el equipo lo permite, dos CPU para la inferencia y 25 GB libres de disco. Las imágenes y pesos se descargan la primera vez. El docente debe prepararlos antes de comenzar la jornada.
-- Cierra solo las aplicaciones que tú decidas. El lanzador no detiene proyectos Docker ajenos.
-
-Comprueba:
-
-```bash
-docker version
-docker compose version
-git --version
-```
-
-Debe aparecer una sección **Server** en Docker. Si ves solo Client, abre el motor y espera. `docker version` no es lo mismo que `docker --version`: el segundo solo confirma que existe el cliente.
-
-## 3. Obtener e iniciar el caso
+Abre una terminal en la carpeta donde guardarás el proyecto:
 
 ```bash
 git clone https://github.com/vtomasv/vulncorp-mission-lab.git
@@ -36,59 +15,51 @@ macOS/Linux:
 
 ```bash
 ./lab.sh doctor
-./lab.sh up
+./lab.sh prepare-game
 ```
 
 Windows PowerShell:
 
 ```powershell
 .\lab.ps1 doctor
-.\lab.ps1 up
+.\lab.ps1 prepare-game
 ```
 
-Si PowerShell impide ejecutar scripts, una alternativa para **esta sesión** es:
+Espera a que termine. La preparación construye los puestos, descarga la base de Grype, permite su lectura desde aplicaciones y descarga Qwen3. La conexión temporal de descarga del modelo se retira al finalizar. No se descarga contenido desde los puestos durante el juego.
 
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-.\lab.ps1 up
-```
+Si PowerShell bloquea scripts, consulta la política del equipo con el docente. Para una sesión personal puedes usar `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`; no hace falta un cambio permanente. El lanzador de Windows todavía requiere validación en una máquina Windows.
 
-No es necesario modificar una política permanente del equipo. Si tu organización administra esa política, utiliza los comandos Docker directamente o pide al docente el equipo de práctica:
+## Jugar
 
-```powershell
-docker compose build mission records
-docker compose up -d --wait mission records gateway backup
-```
+1. Abre [localhost:8095](http://localhost:8095).
+2. Lee **Primer contacto** y pulsa **Entrar al puesto**.
+3. Haz clic dentro de la terminal Linux. Pulsa **Pegar en el puesto**: aparecerá `lab iniciar`.
+4. Revisa el comando y pulsa **Enter**. Verás `uid=1000(student)`, el nombre del puesto y un ID de evidencia.
+5. En unos segundos aparece **Objetivo comprobado · +40 PX**. Continúa al siguiente objetivo.
 
-Espera la construcción. Debes ver cuatro servicios iniciados, sin fallos de healthcheck. Abre **http://localhost:8095** y selecciona un cliente.
+Los pasos se muestran de uno en uno. «Siguiente paso» cambia la instrucción; no acredita el objetivo. «Necesito una pista» ofrece ayuda sin penalización. «Volver a la ruta» conserva el escritorio abierto y tu trabajo.
 
-## 4. Tu primera evidencia
+El botón de pegar solo escribe una línea; no la ejecuta. Si un comando queda escrito dos veces, limpia la línea con Ctrl+U antes de pegar. Si necesitas interrumpir un comando usa Ctrl+C. Para abrir otra terminal puedes pulsar Ctrl+Alt+T dentro del escritorio.
 
-1. En **Inicio y escenario**, pulsa **Probar función de negocio**.
-2. Debe aparecer `status: completed` y `transaction_id: TRAIN-...`.
-3. Pulsa **Probar exportación**. Al inicio devuelve HTTP 200 con registros que dicen PERSONA FICTICIA.
-4. Abre **Evidencias**. Comprueba dos observaciones distintas, con hora, origen, zona y hash.
-5. En **Clases y actividades → Clase 1**, explica qué demuestra cada una. Una transacción exitosa no demuestra que sea segura.
+## Moverse entre puestos
 
-## 5. Conocer la terminal sin perderse
+En análisis, `ssh ops` entra a soporte y `ssh appdesk` a aplicaciones. El prompt cambia. `exit` vuelve al puesto anterior. No entres a aplicaciones desde soporte: vuelve primero a análisis. Si ejecutas un comando en la perspectiva incorrecta, puede no haber evidencia válida; revisa la ubicación que indica la guía.
 
-Abre la terminal en la carpeta que contiene `compose.yaml`. Cada comando del lanzador opera ese proyecto.
+Estos son computadores Linux en contenedores distintos. noVNC transmite pantalla y teclado del puesto de análisis. SSH permite usar los otros puestos. El host no publica sus puertos.
 
-| Acción | macOS/Linux | Windows |
+## Guardar y volver
+
+El cuaderno muestra objetivos acreditados, decisiones y procedencia. **Exportar expediente** descarga JSON con el historial y un hash. La base SQLite, hogares de los puestos, base de Grype y pesos viven en volúmenes Docker.
+
+| Acción desde la carpeta del proyecto | macOS/Linux | Windows |
 |---|---|---|
-| Ver el estado | `./lab.sh status` | `.\lab.ps1 status` |
-| Ver rutas públicas | `./lab.sh discover public` | `.\lab.ps1 discover public` |
-| Probar función | `./lab.sh probe public transaction` | `.\lab.ps1 probe public transaction` |
-| Detener sin borrar evidencia | `./lab.sh down` | `.\lab.ps1 down` |
+| Volver a iniciar | `./lab.sh up` | `.\lab.ps1 up` |
+| Ver estado | `./lab.sh status` | `.\lab.ps1 status` |
+| Detener sin borrar | `./lab.sh down` | `.\lab.ps1 down` |
+| Exportar a artifacts | `./lab.sh export` | `.\lab.ps1 export` |
+| Liberar RAM de IA | `./lab.sh ai-off` | `.\lab.ps1 ai-off` |
+| Encender IA | `./lab.sh ai-on` | `.\lab.ps1 ai-on` |
 
-`Ctrl+C` detiene el comando que estás viendo, no necesariamente los contenedores que ya están en segundo plano. `up -d` significa iniciar en segundo plano. `down` retira contenedores y redes de este proyecto; conserva los volúmenes. No uses `down -v` si quieres conservar tus decisiones y los pesos del modelo.
+Apagar IA conserva puestos y medidas. Reiniciar los servicios vulnerables devuelve sus fallas iniciales: sus controles son volátiles. El expediente histórico se conserva; una evidencia pasada no garantiza estado actual. No uses `down -v` para una pausa: elimina los volúmenes del proyecto.
 
-## 6. Conservar el aprendizaje
-
-- Las reflexiones y decisiones del centro de misión viven en un volumen SQLite.
-- **Exportar evidencia** descarga un JSON de tu expediente.
-- El lanzador `export` lo guarda también en `artifacts/expediente.json`.
-- Syft y Grype escriben reportes en `artifacts/`. Esos archivos no se suben a Git.
-- Si quieres entregar los comandos ejecutados en terminal, conserva sus salidas junto al expediente. No se incluyen automáticamente en la exportación de la UI.
-
-Continúa con [Clase 1](../labs/01-superficie/ESTUDIANTE.md). Si aparece un problema, consulta [Soluciones](SOLUCIONES.md).
+Continúa con [Terreno](../labs/01-superficie/ESTUDIANTE.md). Ante un problema consulta [Soluciones](SOLUCIONES.md).

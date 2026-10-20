@@ -1,64 +1,46 @@
-# Plan docente · clases 1 a 3
+# Tres jornadas de siete horas; una campaña continua
 
-## Preparar una experiencia, no una instalación colectiva
+La interfaz del jugador habla de zonas y objetivos. La organización académica vive en estas guías: no se transforma cada jornada en un menú del producto. Esta edición usa tres zonas y quince objetivos; el curso completo puede prolongar la misma campaña.
 
-Antes de dictar, ejecutar `doctor`, `up`, `sbom`, `scan` y `ai-prepare` en los equipos de práctica. Las descargas son preparación técnica, no trabajo académico calificable. Conservar cachés y reporte real con fecha. Probar las guías con una persona principiante: el instructor experto no es una medida suficiente de duración.
+Solo el examen final del curso genera nota. Los PX son hitos de práctica sin ponderación, bonos ni penalización. El tablero comprueba evidencias técnicas y restricciones; no certifica comprensión ni califica automáticamente el criterio.
 
-Se necesitan Git y Docker; todo el resto corre en contenedores. Para 16 GB/CPU usar Qwen3 1.7B y alternar perfiles. No levantar plataformas pesadas de gestión ni modelos 8B en estas tres jornadas. El centro de misión es el registro del proceso, no un simulacro de un producto comercial.
+## Preparación docente
 
-Cada guía reserva 420 minutos efectivos y pausas aparte. Solo el examen final del curso genera nota; estas actividades no aportan puntos, bonos, rankings ni penalizaciones. Los contadores indican reflexiones guardadas, no competencia certificada.
+Ejecutar `prepare-game` antes de la jornada; comprobar noVNC, SSH, Grype e inferencia en cada equipo. Precargar imágenes, base y pesos. Probar las guías con una persona principiante y registrar tiempos: no hay todavía piloto físico de 16 GB ni validación de duración en una cohorte.
 
-## Trabajo cognitivo visible
+Cada estudiante dispone de su instalación. Se puede discutir en tríos, rotando analista, dueño y auditor cada 25 minutos, pero cada persona opera su puesto y conserva sus decisiones. El curso no requiere instalar herramientas de seguridad en el host.
 
-En cada bloque de laboratorio pedir cuatro actos:
+## Distribución de cada jornada
 
-1. **Predecir** antes del comando.
-2. **Observar** sin sustituir el resultado por lo esperado.
-3. **Explicar el límite** de lo observado.
-4. **Cambiar una premisa** y revisar la decisión.
+420 minutos de reloj: 380 de trabajo y 40 de pausas incluidas:
 
-Grupos de 3-4; rotación de roles cada 20-30 minutos. Nadie queda toda la clase como espectador del teclado. Cada persona registra una explicación breve propia al cierre. El grupo puede compartir pruebas; no debe sustituir el razonamiento individual.
+| Bloque | Min | Terreno | Señales | Continuidad |
+|---|---:|---|---|---|
+| Predicción | 20 | Dibujar la cadena del servicio. | Anticipar qué puede y qué no puede decir un escáner. | Proponer una prioridad sin conocer todavía el dueño. |
+| Conceptos esenciales | 35 | Servicio, dependencia, exposición y evidencia. | Identidad del activo, SBOM, CVE, alias y aplicabilidad. | Índice ordinal, SSVC, controles y responsabilidad. |
+| Demostración breve | 25 | Teclado, noVNC, prompt y lectura de una respuesta. | Procedencia, archivo real y revisión de imports. | Un cálculo y una revisión crítica de una afirmación IA. |
+| Pausa | 10 | Recuperación. | Recuperación. | Recuperación. |
+| Juego y contraste I | 100 | Objetivos 1–3; probar predicciones y explicar límites. | Objetivos 6–8; explorar paquetes, advisories y código. | Objetivos 11–12; entrevistar dueños, comparar y revisar IA. |
+| Pausa | 20 | Descanso. | Descanso. | Descanso. |
+| Juego y contraste II | 100 | Objetivos 4–5; reproducir exposición y cambiar de perspectiva. | Objetivos 9–10; impugnar el proveedor y defender el expediente. | Objetivos 13–15; negociar cartera, mapear y probar medida/función. |
+| Pausa | 10 | Recuperación. | Recuperación. | Recuperación. |
+| Defensa y contraprueba | 70 | Reconstruir red, dependencia y preguntas al dueño. | Otro equipo intenta refutar tres conclusiones usando las fuentes. | Otro equipo cuestiona alcance del control, residual y aceptación. |
+| Reflexión y expediente | 30 | Una observación, una inferencia y una pregunta pendiente. | Una alerta descartada de prioridad, pero conservada con sus límites. | Qué decisión cambió y qué nunca delegaría al modelo. |
 
-## Cómo retirar ayudas
+No se llenan siete horas copiando quince comandos. Los hitos son la columna vertebral de una investigación: cada bloque incluye predicción individual, ejecución, contraste en pareja, revisión de evidencia y defensa. Los equipos rápidos realizan contrapruebas, no esperan bloqueados por temporizadores.
 
-| Clase | Ayuda disponible | Decisión que no se entrega resuelta |
-|---|---|---|
-| 1 | Lanzador, salida esperada, glosario y rutas de recuperación. | Dependencia relevante y pregunta al dueño. |
-| 2 | Reporte proveedor, advisory y comparación de imágenes. | Aplicabilidad y clasificación con evidencia. |
-| 3 | Formulario, motor de cálculo, tabla oficial SSVC y referencia docente desplegable. | Valores de contexto, urgencia, cartera y aceptación. |
+## Profundizar con trabajo real
 
-**Error productivo 1:** un equipo dice que records no existe porque no resuelve desde edge. Pedir la transacción y otra perspectiva de red.
+**Terreno:** antes de `lab red`, cada persona predice una matriz puesto/servicio. Después compara DNS y TCP, localiza la dependencia que no era visible desde análisis y explica por qué `completed` no demuestra autorización. En soporte, distinguir acceso al catálogo de restauración probada. Cambiar el dueño y preguntar qué función es esencial.
 
-**Error productivo 2:** un equipo cierra F-01 porque la biblioteca no se importa. Pedir una conclusión proporcional: componente afectado presente, sin ruta demostrada bajo la revisión realizada.
+**Señales:** abrir `~/evidence/records.cdx.json`, localizar purl y versión con jq, confrontar el advisory del proveedor y leer `/company/active-service/targets.py`. Registrar por separado hecho, hipótesis, alcance y fuente. No convertir «no importa Django en este archivo» en «jamás puede usarse». Proponer una prueba que podría invalidar la clasificación.
 
-**Error productivo 3:** la IA cita un ID real pero el fragmento no sustenta la conclusión. Preguntar qué parte de la frase está realmente respaldada.
+**Continuidad:** mantener el hecho técnico y L al comparar salud/agua; explicar qué consecuencias cambian. Discutir el máximo de impactos y los límites de operar escalas ordinales. Revisar las definiciones de Human Impact antes de SSVC. En IA, identificar una frase completa, verificar su fragmento y corregir una inferencia no sustentada. Defender qué tratamiento queda pendiente con 4 h/15 min y distinguir ruta HTTP de segregación de redes.
 
-**Error productivo 4:** se obtiene HTTP 403 después de un control y se cierra el caso sin verificar negocio. Pedir transacción legítima y explicar la causa raíz pendiente.
+## Retirada progresiva de ayudas
 
-## Conexión con el programa
+La guía muestra ubicación, comando, razón y pistas. Primero se exige predecir antes de desplegar la pista; después se pide formular una contraprueba antes de ejecutar el siguiente paso. Las pistas no restan puntos. Los ejemplos de respuesta del instructor orientan discusión, no son una pauta de aceptación universal del riesgo.
 
-- Identificación/manejo: inventario, taxonomías, alcance y consecuencias.
-- Metodologías: hipótesis, reglas de prueba, evidencia y reporte; no se evalúa memorizar listas de fases.
-- ATT&CK: T1190/T1213.006/T1078 como candidatos según conducta y contexto. Un CVE no se mapea automáticamente a una técnica.
-- Remediación: negociación, control temporal, prueba de seguridad y función, riesgo residual.
-- IA: uso local auditable, sin autoridad para cerrar hallazgos ni ejecutar comandos.
+Errores productivos: confundir DNS con inexistencia; presencia con explotación; CVSS con prioridad del dueño; referencia IA válida con conclusión sustentada; 403 con continuidad; asociación normativa con cumplimiento. Pedir siempre **qué viste, qué infieres y qué todavía no puedes afirmar**.
 
-Las clases 1-3 preparan los laboratorios posteriores de validación profunda y recuperación. Aquí se comprueba catálogo y continuidad de una transacción; no se afirma haber probado restauración, SQL injection de Django, ransomware ni movimiento lateral.
-
-## Evidencias formativas
-
-Una buena entrega tiene pocas afirmaciones sólidas: archivo de inventario o dibujo, dos perspectivas de acceso, SBOMs de imágenes distintas, reporte real con procedencia, clasificación razonada, decisiones para dos clientes, revisión IA y comparación antes/después de un control.
-
-El expediente JSON incluye solo lo registrado en el aula de práctica. Los archivos CLI/SBOM/Grype se conservan aparte en `artifacts/`; el alumno los adjunta a su carpeta de laboratorio. No se solicitan datos personales reales ni credenciales del equipo.
-
-Guías del docente por jornada: [Clase 1](../labs/01-superficie/INSTRUCTOR.md), [Clase 2](../labs/02-evidencia/INSTRUCTOR.md), [Clase 3](../labs/03-priorizacion/INSTRUCTOR.md).
-
-## Interfaz de aula y recorrido
-
-**Inicio y escenario** presenta tres accesos de clase y distingue el contexto del cliente, las instrucciones y las observaciones guardadas. **Clases y actividades** reúne las reflexiones; los contadores describen registros guardados, sin asignar notas ni acreditar dominio.
-
-La maqueta Anatomy es una pregunta inicial para el grupo: ¿por qué cambia el índice de referencia si el hallazgo técnico permanece? La exploración es independiente de la selección de empresa del expediente. Pedir al estudiante que explique el cambio antes de abrir Decisiones; el valor ilustrativo no sustituye su evaluación.
-
-Los formularios de clasificación, medidas y revisión de IA solicitan una explicación en español. Distinguir el texto descriptivo de las opciones de los códigos técnicos que conserva el expediente. Una medida todavía exige comprobar acceso y función; guardar un formulario no cierra el razonamiento.
-
-El diseño usa fondo claro, una paleta discreta, texto amplio e instrucciones progresivas. No hay clasificación competitiva, puntuación de velocidad ni una estética de intrusión. El apoyo visual debe dirigir la atención hacia evidencias, consecuencias y responsabilidades.
+Guías: [Terreno](../labs/01-superficie/ESTUDIANTE.md), [Señales](../labs/02-evidencia/ESTUDIANTE.md), [Continuidad](../labs/03-priorizacion/ESTUDIANTE.md). Los recursos del instructor acompañan cada una. La ampliación se rige por [el diseño de campaña](REPLANTEAMIENTO_JUEGO.md).

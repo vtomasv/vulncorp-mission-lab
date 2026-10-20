@@ -8,7 +8,7 @@ Set-Location $PSScriptRoot
 function DC { & docker compose @args; if ($LASTEXITCODE -ne 0) { throw 'Docker Compose no pudo completar el paso. Revisa docs/SOLUCIONES.md.' } }
 function Write-Utf8($Path, $Lines) { [IO.File]::WriteAllText((Join-Path $PSScriptRoot $Path), ($Lines -join "`n"), (New-Object System.Text.UTF8Encoding($false))) }
 if ($Command -eq 'help') {
-  Write-Host '.\lab.ps1 up | doctor | status | down | sbom | scan | ai-prepare | ai-on | ai-off | test | smoke | export | reset-targets'
+  Write-Host '.\lab.ps1 up | prepare-game | doctor | status | down | sbom | scan | ai-prepare | ai-on | ai-off | test | smoke | export | reset-targets'
   Write-Host '.\lab.ps1 discover public     .\lab.ps1 discover support'
   Write-Host '.\lab.ps1 probe public export     .\lab.ps1 probe public transaction'
   return
@@ -18,8 +18,9 @@ if (-not (Get-Command docker -ErrorAction SilentlyContinue)) { throw 'Instala Do
 if ($LASTEXITCODE -ne 0) { throw 'Abre Docker Desktop y espera a que el motor termine de iniciar.' }
 New-Item -ItemType Directory -Force artifacts/images | Out-Null
 switch ($Command) {
-  doctor { docker version --format 'Motor: {{.Server.Version}} / {{.Server.Os}} / {{.Server.Arch}}'; docker info --format 'RAM Docker (bytes): {{.MemTotal}}'; DC version; Write-Host 'Referencia: 16 GB RAM, Docker 6-8 GB, CPU sin GPU. Ver docs/INICIO.md.' }
-  up { DC build mission records; DC up -d --wait mission records gateway backup; Write-Host 'Abre http://localhost:8095 (o LAB_PORT de .env).' }
+  doctor { docker version --format 'Motor: {{.Server.Version}} / {{.Server.Os}} / {{.Server.Arch}}'; docker info --format 'RAM Docker (bytes): {{.MemTotal}}'; DC version; Write-Host 'Referencia: 16 GB RAM, Docker 8 GB, CPU sin GPU. Ver docs/INICIO.md.' }
+  up { DC build mission records workstation ops appdesk; DC up -d --wait mission records gateway backup workstation ops appdesk; if ($env:LAB_SKIP_AI -ne '1') { DC --profile ai up -d --wait ollama }; Write-Host 'Abre http://localhost:8095 (o LAB_PORT de .env).' }
+  prepare-game { & $PSCommandPath up; DC run --rm --no-deps grype db update; DC run --rm --no-deps prepare-cache; & $PSCommandPath ai-prepare; Write-Host 'Campaña preparada. Abre http://localhost:8095.' }
   down { DC --profile ai --profile tools --profile scanners down }
   status { DC --profile ai ps }
   discover { if ($Zone -notin @('public','support')) { throw 'Zona: public o support' }; DC run --rm --no-deps "probe-$Zone" discover }
@@ -39,7 +40,7 @@ switch ($Command) {
     $Lines = @(DC run --rm --no-deps grype sbom:/reports/sbom-records.cdx.json -o json)
     Write-Utf8 'artifacts/grype-records.json' $Lines
     Write-Utf8 'artifacts/grype-db-status.txt' @(DC run --rm --no-deps grype db status)
-    Write-Host 'Importa artifacts/grype-records.json en Hallazgos.'
+    Write-Host 'Reporte completo en artifacts/grype-records.json; el juego ejecuta su propio escaneo en aplicaciones.'
   }
   ai-prepare {
     DC -f compose.yaml -f compose.preload.yaml --profile ai up -d --wait ollama
@@ -48,8 +49,8 @@ switch ($Command) {
     finally { DC --profile ai up -d --wait --force-recreate ollama }
     Write-Host 'Pesos descargados y egreso temporal retirado. Sigue con ai-on.'
   }
-  ai-on { DC --profile ai up -d --wait mission ollama; DC stop gateway records backup; Write-Host 'IA aislada activa. Targets pausados; evidencia preservada.' }
-  ai-off { DC --profile ai stop ollama; DC up -d --wait gateway records backup mission; Write-Host 'IA detenida. Targets en estado inicial; vuelve a verificar controles.' }
+  ai-on { DC --profile ai up -d --wait mission ollama; Write-Host 'IA CPU activa; puestos y servicios siguen activos.' }
+  ai-off { DC --profile ai stop ollama; Write-Host 'IA detenida; puestos, servicios y medidas permanecen activos.' }
   test { DC run --rm --no-deps check }
   smoke { DC exec -T mission python -m tests.smoke }
   export { $Lines = @(DC exec -T mission python -c 'import json; from app.server import export_bundle; print(json.dumps(export_bundle(),ensure_ascii=False,indent=2))'); Write-Utf8 'artifacts/expediente.json' $Lines; Write-Host 'Expediente guardado.' }

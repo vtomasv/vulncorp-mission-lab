@@ -13,7 +13,7 @@ Conservan **copyright 2026 Carnegie Mellon University** y su licencia MIT (SEI)-
 
 ## Software de terceros
 
-Las imágenes se descargan desde sus distribuidores con tag y digest fijados en Compose. No se redistribuyen binarios dentro de Git:
+Las imágenes base y herramientas se descargan con tag y digest fijados. Los paquetes del escritorio se instalan desde Debian Bookworm; sus versiones se registran en la imagen, sin afirmar una construcción bit a bit reproducible. No se redistribuyen binarios dentro de Git:
 
 | Componente | Proyecto / licencia principal |
 |---|---|
@@ -22,13 +22,17 @@ Las imágenes se descargan desde sus distribuidores con tag y digest fijados en 
 | Ollama | [ollama/ollama](https://github.com/ollama/ollama) / MIT |
 | Qwen3 1.7B | [Qwen3](https://qwenlm.github.io/blog/qwen3/) / Apache-2.0, consultar licencia del modelo exacto |
 | Django 3.2 | [Django](https://github.com/django/django) / BSD-3-Clause |
+| noVNC | [noVNC](https://github.com/novnc/noVNC) / MPL-2.0; visor basado en su API pública |
+| websockify | [websockify](https://github.com/novnc/websockify) / LGPL-3.0 |
+| TigerVNC | [TigerVNC](https://github.com/TigerVNC/tigervnc) / GPL-2.0 y avisos del proyecto |
+| Openbox, xterm, OpenSSH | Paquetes Debian con sus licencias y copyright en `/usr/share/doc` de la imagen |
 | requests 2.31.0 | [Requests](https://github.com/psf/requests) / Apache-2.0 |
 
 Las distribuciones base incluyen sus avisos y licencias. `requirements-legacy.txt` fija hashes de wheels obtenidos de PyPI. Los paquetes legacy son deliberadamente antiguos, no dependencias de la aplicación activa.
 
 ## Figura Anatomy
 
-La figura interactiva de comparación de contexto se construye con **Anatomy**, copyright (c) 2026 Ryan, bajo MIT. Se conserva la [licencia original](scripts/vendor/anatomy/LICENSE), junto a los módulos de geometría y auditoría usados en desarrollo. `web/anatomy.css` procede del mismo kit; `web/context-figure.js` es su figura generada. La geometría y su integración con el caso son originales del curso. Los módulos de desarrollo no se cargan en el navegador ni se incorporan a la imagen runtime.
+La figura de comparación de contexto, conservada como recurso complementario y fuera de la ruta principal del juego, se construye con **Anatomy**, copyright (c) 2026 Ryan, bajo MIT. Se conserva la [licencia original](scripts/vendor/anatomy/LICENSE), junto a los módulos de geometría y auditoría usados en desarrollo. `web/anatomy.css` procede del mismo kit; `web/context-figure.js` es su figura generada. La geometría y su integración con el caso son originales del curso. Los módulos de desarrollo no se cargan en el navegador ni se incorporan a la imagen runtime.
 
 ## Datos y marcos
 

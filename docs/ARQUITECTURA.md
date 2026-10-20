@@ -1,68 +1,58 @@
-# Arquitectura y límites de confianza
+# Arquitectura de la campaña
 
 ```mermaid
 flowchart LR
-  H[Navegador del alumno] -->|127.0.0.1:8095| M[Centro de misión / SQLite]
-  P[Sonda public / edge] --> G[Gateway :8080]
-  G -->|red app| R[Records :8081]
-  S[Sonda support] --> B[Backup :8082]
-  M -->|pruebas acotadas / control docente| G
-  M --> B
-  M -->|red ai interna| O[Ollama / Qwen3 CPU]
+ B[Navegador del alumno] -->|loopback 8095| M[Plataforma y verificador]
+ M -->|proxy fijo noVNC| W[Análisis · escritorio Linux]
+ W -->|SSH 2222| O[Soporte]
+ W -->|SSH 2222| A[Aplicaciones · Syft/Grype]
+ W --> G[Gateway]
+ O --> G
+ O --> K[Copias]
+ A --> G
+ A --> R[Expedientes]
+ G --> R
+ M -->|lectura autenticada| E[Agentes y auditoría de servicios]
+ M --> I[Ollama · Qwen3 en CPU]
 ```
 
-Tres targets, un plano de gestión. El diagrama muestra relaciones relevantes; mission también tiene acceso a app para salud y reset de records. No reenvía IP entre redes ni recibe el socket de Docker.
+## Segmentación efectiva
 
-## Redes
-
-| Red | Miembros principales | Egreso |
+| Componente | Redes | Alcance esperado de los tres targets |
 |---|---|---|
-| ui | solo mission; publicación loopback al host | Bridge normal necesario para publicación en Docker Desktop; no compartido con targets o IA |
-| edge | gateway, mission, sonda public | `internal: true` |
-| app | gateway, records, mission | `internal: true` |
-| support | backup, mission, sonda support | `internal: true` |
-| ai | mission, ollama | `internal: true` |
-| feeds | Grype durante escaneo; Ollama solo durante preparación | base/descarga de pesos; Ollama pierde esta conexión al recrear desde base |
+| Análisis | edge | gateway |
+| Soporte | edge, support | gateway y backup |
+| Aplicaciones | edge, app | gateway y records |
+| Gateway | edge, app | entrada y dependencia de expedientes |
+| Records | app | sin publicación al host |
+| Backup | support | sin publicación al host |
+| Plataforma | ui, edge, app, support, ai | plano de gestión de confianza |
+| Ollama | ai | sin puerto publicado; red interna |
 
-Solo mission publica un puerto al host, enlazado a loopback. Su red ui usa un bridge normal para que Docker publique el puerto; no se comparte con targets u Ollama. Todos los targets ejecutan un usuario sin privilegios, filesystem de solo lectura y capacidades eliminadas. No hay `privileged`, `network_mode: host` ni montajes del socket de Docker. La ausencia de egreso se exige a los targets y al motor de IA, no al plano de gestión.
+edge/app/support/ai son `internal:true`. Los puestos no tienen salida a Internet ni capacidades NET_ADMIN/NET_RAW. Dos interfaces en un puesto no lo convierten en router. La plataforma es el plano de gestión, con acceso deliberado a los servicios para verificarlos; no debe confundirse con una estación del estudiante.
 
-El plano de gestión es una herramienta docente de confianza. Los endpoints `/_control` de targets usan una llave **sintética y pública**, exclusivamente para orquestación del caso. No constituyen una frontera frente al alumno que administra Docker ni un mecanismo de seguridad de producción. El gateway no reenvía rutas arbitrarias: solo export y transaction.
+Solo se publica `127.0.0.1:8095`. La plataforma sirve noVNC y reenvía HTTP/WebSocket únicamente a workstation:6080. No hay socket Docker, acceso privilegiado general, puertos SSH publicados ni selección arbitraria de destino en ese proxy. La preparación de bases/modelos usa servicios distintos con egreso y retira la red temporal de Ollama.
 
-## Datos
+## Quién puede acreditar qué
 
-- `mission_state`: SQLite, decisiones, notas, controles, inferencias y revisiones. Sobrevive a `down`.
-- Targets: estado intencionalmente efímero. Reiniciar devuelve fallas iniciales. La bitácora nunca se reescribe para fingir que una prueba antigua es actual.
-- `ollama_models`: pesos descargados; persisten aunque el proceso se detenga.
-- `grype_cache`: base con metadatos y fecha; no se confunde con el expediente curado.
-- `artifacts/`: imágenes exportadas, SBOMs, reportes y expediente. Ignorado por Git.
+El usuario de práctica es **student, UID 1000**. El agente del puesto corre separado y admite acciones fijas mediante un socket Unix local: identidad, conectividad, inventario, escaneo, revisión, consulta y restricción. Los procesos de herramientas corren con UID 1000. No acepta rutas, hosts o comandos arbitrarios suministrados por el alumno.
 
-## Funciones y fallas
+Cada instalación genera secretos aleatorios en un volumen, legibles por el plano educativo y el agente, fuera del acceso de student. Los resultados de acciones se guardan en un diario privado y se firman HMAC. El endpoint remoto permite leer, no ejecutar. La identidad firmada enumera todas las interfaces del puesto; así se atribuyen correctamente solicitudes de una estación con dos redes.
 
-| Ruta | Estado inicial | Medida reversible |
-|---|---|---|
-| gateway `/api/transaction` | Completa una operación usando records. | Debe seguir funcionando tras restringir exportación. |
-| gateway `/api/export` → records `/export` | Sin autenticación; expedientes ficticios. | Restricción de ruta pública; raíz en records sigue pendiente. |
-| gateway `/api/diagnostics` | Topología publicada. | Retirar la ruta pública. |
-| backup `/catalog` | Llave compartida sintética. | Rotación; llave anterior rechazada. |
+Los targets registran solicitudes, IP de origen real, ruta, hora, estado HTTP y copia de la respuesta. El verificador acepta observaciones cuya IP corresponde a una interfaz verificada del puesto. Las pruebas del antiguo endpoint de gestión `/api/probe` conservan valor histórico, pero no acreditan estos objetivos.
 
-Backup es un catálogo: **no** implementa borrado ni restauración en estas tres clases. Los costos y tiempos de ventanas son supuestos docentes, no retrasos artificiales de los contenedores.
+El verificador filtra pruebas por inicio de campaña, aplica requisitos y concede cada premio una sola vez. SQLite conserva campañas, activaciones, observaciones y premios. Repetir una comprobación no duplica PX. Las observaciones auténticas hechas antes del desbloqueo pueden reutilizarse dentro de la misma campaña; no se finge que el alumno volvió a ejecutar algo.
 
-## Qué no se presupone
+## Alcance del inventario y de los controles
 
-Contenerización no equivale a una máquina virtual de alta seguridad. El dueño del host controla contenedores, código y datos; esta experiencia no pretende resistir a un alumno administrador malicioso. No montar carpetas de usuario, credenciales cloud ni datos reales. Los endpoints públicos del caso son públicos **dentro de la red simulada**; no se publican a Internet.
+Aplicaciones contiene copias reales, de solo lectura, de `/opt/legacy` de records y del runtime de mission. Son **snapshots parciales**, no el filesystem completo ni un SBOM de toda la imagen. Los dos paquetes se instalan con versión y hash fijados y no son importados por el servicio activo. Syft genera CycloneDX; Grype recibe un SBOM recién generado por el agente, no un archivo editado por el alumno. Conserva aliases, descriptor de base, hashes y reporte completo.
 
-No hay dependencias runtime de Python de terceros en el aula de práctica. Los paquetes legacy se instalan con hashes solo en la etapa records y no se importan por el servicio. Se estudia inventario y aplicabilidad sin ejecutar sus exploits.
+La medida `restrict_export` cambia realmente la respuesta del gateway. No corrige la autorización en records ni instala una regla de firewall. El cierre exige 403 desde análisis y una transacción completada posterior al cambio, restricción vigente y residual que cite ambas pruebas.
 
-## Figura didáctica y recursos del navegador
+## Memoria y límites
 
-La mesa de comparación de contexto es una **maqueta conceptual**, no un escáner ni una representación física de Docker. El lector recorre tres expedientes; la referencia de F-02 conserva CVSS y L mientras cambia el impacto del cliente. Los valores se obtienen del dossier del caso y se rotulan como referencia docente; explorar la figura no guarda una decisión, no cambia el cliente del expediente ni modifica los targets.
+Límites configurados: plataforma 256 MiB; tres servicios 160 MiB cada uno; escritorio 512 MiB; soporte 128 MiB; aplicaciones 1280 MiB; Ollama 4 GiB. Total de servicios del juego con IA: **6752 MiB**, más sobrecarga del motor. Referencia: Docker con 8 GiB en host de 16 GB. Una herramienta pesada y una inferencia a la vez; el agente serializa acciones por puesto.
 
-La figura contiene 50 sólidos. El generador usa el kit Anatomy bajo MIT y comprueba soporte y orden de profundidad en distintas posiciones. El navegador recibe SVG preconstruido: no requiere WebGL, GPU, CDN ni librerías externas. Solo anima mientras cambia de posición y está visible; respeta movimiento reducido. La comparación en secuencia se inicia por elección del estudiante y no altera su trabajo.
+Los puestos arrancan con un proceso raíz y capacidades limitadas para preparar hogares, cambiar a UID 1000 y ejecutar sshd/X. Los puestos SSH necesitan además AUDIT_WRITE para abrir una terminal interactiva; está verificado explícitamente y no se concede al escritorio. El usuario interactivo carece de esas capacidades. El árbol de archivos del contenedor es de solo lectura, con hogares y directorios temporales específicos escribibles.
 
-Solo para mantener la ilustración, con Node instalado en el equipo de desarrollo:
-
-```bash
-node scripts/build-context-figure.mjs --audit
-```
-
-La CI también ejecuta ese generador. Node sigue sin ser requisito para alumnos; la figura se distribuye construida en `web/context-figure.js`.
+Esta es una frontera pedagógica local. El administrador del host Docker puede alterar contenedores, reloj, redes, secretos y base. HMAC protege procedencia frente al uso normal del puesto; no demuestra autoría individual ni resiste al propietario administrador. Cada estudiante necesita su propia instalación. No hay cuentas ni aislamiento multiusuario de producción.

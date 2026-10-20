@@ -1,0 +1,28 @@
+#!/usr/local/bin/python
+"""Local station commands: root-owned agent executes a fixed catalogue, never arbitrary shell."""
+import json
+import socket
+import sys
+
+args=sys.argv[1:]
+if not args or args[0] in ['help','ayuda','--help']:
+    print('lab iniciar | red | inventario | escanear | revisar | contrastar | ia | proteger')
+    print('Los comandos ejecutan herramientas reales y conservan evidencia verificable.')
+    raise SystemExit(0)
+data={'action':args[0]}
+if args[0]=='proteger':
+    data['reason']=input('Motivo y pruebas posteriores (minimo 30 caracteres): ')
+print('Ejecutando en el puesto. Espera el resultado; el agente registra la evidencia.',flush=True)
+try:
+    with socket.socket(socket.AF_UNIX,socket.SOCK_STREAM) as channel:
+        channel.settimeout(300);channel.connect('/run/lab-agent.sock')
+        channel.sendall(json.dumps(data).encode()+b'\n')
+        result=b''
+        while chunk:=channel.recv(65536):result+=chunk
+    out=json.loads(result)
+    if out.get('stdout'):print(out['stdout'])
+    if out.get('error'):print(out['error'],file=sys.stderr)
+    if out.get('proof_id'):print('\nEvidencia registrada:',out['proof_id'])
+    raise SystemExit(0 if out.get('ok') else 1)
+except (OSError,ValueError) as exc:
+    print('No se pudo contactar al agente del puesto:',exc,file=sys.stderr);raise SystemExit(1)

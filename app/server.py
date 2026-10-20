@@ -6,6 +6,7 @@ import os
 import sqlite3
 import time
 import uuid
+import sys
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
@@ -17,7 +18,8 @@ from . import ai
 
 ROOT=Path(__file__).resolve().parents[1]
 DB=Path(os.environ.get('LAB_DB','/state/mission.db'))
-CONTROL_KEY=os.environ.get('LAB_CONTROL_KEY','synthetic-control-key-not-for-production')
+from .secure import secret
+CONTROL_KEY=secret('control')
 
 def connect():
     DB.parent.mkdir(parents=True,exist_ok=True)
@@ -29,6 +31,9 @@ def records(kind):
     with connect() as c:return [json.loads(r['body']) for r in c.execute('SELECT body FROM records WHERE kind=? ORDER BY rowid',(kind,))]
 
 def save(kind,body):
+    if kind in ['decision','ai','review','portfolio','triage','control','scan','note']:
+        runs=records('game_campaign')
+        if runs:body={**body,'game_run':runs[-1]['id']}
     item={**body,'id':body.get('id') or kind.upper()+'-'+uuid.uuid4().hex[:10],
           'created_at':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())}
     with connect() as c:c.execute('INSERT OR REPLACE INTO records VALUES (?,?,?,?)',(item['id'],kind,item['created_at'],json.dumps(item,ensure_ascii=False)))
@@ -41,12 +46,12 @@ def request_target(url,data=None,headers=None):
     try:
         with urlopen(req,timeout=4) as r:status=r.status;body=json.load(r)
     except HTTPError as e:status=e.code;body=json.load(e)
-    except (OSError,ValueError):status=0;body={'error':'Servicio no disponible. Puede estar pausado para el perfil IA.'}
+    except (OSError,ValueError):status=0;body={'error':'Servicio no disponible. Revisa el estado del laboratorio.'}
     return {'status':status,'body':body,'elapsed_ms':round((time.monotonic()-start)*1000)}
 
 def export_bundle():
     bundle={'format':'vulncorp-evidence/1.0','synthetic':True,'exported_at':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
-            **{k:records(k) for k in ['evidence','decision','note','ai','review','triage','control','scan','context','portfolio']}}
+            **{k:records(k) for k in ['evidence','decision','note','ai','review','triage','control','scan','context','portfolio','station','game_campaign','game_activation','game_award','game_analysis']}}
     canonical=json.dumps(bundle,sort_keys=True,ensure_ascii=False).encode()
     return {**bundle,'content_sha256':hashlib.sha256(canonical).hexdigest()}
 
@@ -58,6 +63,12 @@ def nonempty(value,minlength=1,maxlength=4000):
 
 def dispatch(path,data):
     if not isinstance(data,dict):raise ValueError('Se esperaba un objeto JSON.')
+    if path=='/api/game/verify':
+        from . import game
+        return game.verify(sys.modules[__name__])
+    if path=='/api/game/analysis':
+        from . import game
+        return game.analysis(sys.modules[__name__],data)
     if path=='/api/inject':
         if data.get('client_id') not in {c['id'] for c in CLIENTS}:raise ValueError('Cliente inválido.')
         twists={'salud':'El dueño informa que el procedimiento manual solo atiende al 20% de la demanda y otro centro comenzará a depender de esta API en el próximo turno.',
@@ -160,21 +171,27 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path=urlsplit(self.path).path
-        if path=='/health':return self.send({'ok':True,'version':'0.1.0'})
+        if path.startswith('/desktop/'):
+            from .desktop_proxy import serve
+            return serve(self)
+        if path=='/api/game':
+            from . import game
+            return self.send(game.snapshot(sys.modules[__name__]))
+        if path=='/health':return self.send({'ok':True,'version':'0.2.0'})
         if path=='/api/bootstrap':
             intelligence=json.loads((ROOT/'data/intelligence.json').read_text())
             return self.send({'clients':CLIENTS,'findings':FINDINGS,'assets':ASSETS,'missions':MISSIONS,'corpus':CORPUS,
-                'intelligence':intelligence,'version':'0.1.0','ssvc_tree':'DT_DP v1.0.0',
-                'records':{k:records(k) for k in ['evidence','decision','note','ai','review','triage','control','scan','context','portfolio']}})
+                'intelligence':intelligence,'version':'0.2.0','ssvc_tree':'DT_DP v1.0.0',
+                'records':{k:records(k) for k in ['evidence','decision','note','ai','review','triage','control','scan','context','portfolio','station','game_campaign','game_activation','game_award','game_analysis']}})
         if path=='/api/ai/status':return self.send(ai.status())
         if path=='/api/targets':return self.send({r:request_target(f'http://{r}:{port}/_status') for r,port in [('gateway',8080),('records',8081),('backup',8082)]})
         if path=='/api/export':return self.send(export_bundle())
         if path.startswith('/api/'):return self.send({'error':'Ruta no encontrada'},404)
-        files={'/':'index.html','/app.js':'app.js','/style.css':'style.css','/favicon.svg':'favicon.svg','/anatomy.css':'anatomy.css','/context-figure.js':'context-figure.js'}
+        files={'/':'index.html','/favicon.svg':'favicon.svg','/anatomy.css':'anatomy.css','/context-figure.js':'context-figure.js','/game.js':'game.js','/game.css':'game.css'}
         if path not in files:return self.send({'error':'Archivo no encontrado'},404)
         f=ROOT/'web'/files[path];raw=f.read_bytes()
         self.send_response(200);self.send_header('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css; charset=utf-8','svg':'image/svg+xml'}[f.suffix[1:]])
-        self.send_header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'")
+        self.send_header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-src 'self'; frame-ancestors 'none'")
         self.send_header('X-Content-Type-Options','nosniff');self.send_header('Content-Length',str(len(raw)));self.end_headers();self.wfile.write(raw)
 
     def do_POST(self):

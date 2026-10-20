@@ -1,67 +1,22 @@
 <!doctype html>
 <html lang="es">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f6f7f9"><title>VulnCorp · Aula de práctica</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/anatomy.css"><link rel="stylesheet" href="/style.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f6f5f1"><title>VulnCorp · Operación continuidad</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/game.css"></head>
 <body>
-<a class="skip-link" href="#main-content">Saltar al contenido</a>
-<svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
- <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6C8 3 4 4 3 5v14c3-2 6-1 9 1 3-2 6-3 9-1V5c-1-1-5-2-9 1Zm0 0v14"/></symbol>
- <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-8h6v8"/></symbol>
- <symbol id="i-layers" viewBox="0 0 24 24"><path d="m3 7 9-4 9 4-9 4-9-4Zm0 5 9 4 9-4M3 17l9 4 9-4"/></symbol>
- <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
- <symbol id="i-decide" viewBox="0 0 24 24"><path d="M8 4v16m8-16v16M4 8h8m0 8h8"/><circle cx="8" cy="8" r="2.5"/><circle cx="16" cy="16" r="2.5"/></symbol>
- <symbol id="i-ai" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M9 10h.01M15 10h.01M9 15h6M9 1v3m6-3v3M9 20v3m6-3v3M1 9h3m16 0h3M1 15h3m16 0h3"/></symbol>
- <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H5v18h14V8l-5-5Zm0 0v5h5M8 12h8M8 16h6"/></symbol>
- <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
-</defs></svg>
-<aside class="sidebar">
- <a class="brand" href="#mapa"><span class="brand-mark"><svg class="icon"><use href="#i-book"/></svg></span><span>VulnCorp<small>Aula de práctica</small></span></a>
- <div class="course-label"><span>MAR303</span> Gestión de vulnerabilidades</div>
- <div class="side-label">ESPACIO DE APRENDIZAJE</div>
- <nav aria-label="Navegación principal">
-  <button data-view="mapa" class="nav active"><svg class="icon"><use href="#i-home"/></svg> Inicio y escenario</button>
-  <button data-view="misiones" class="nav"><svg class="icon"><use href="#i-layers"/></svg> Clases y actividades <small id="mission-count">0/12</small></button>
-  <button data-view="hallazgos" class="nav"><svg class="icon"><use href="#i-search"/></svg> Hallazgos</button>
-  <button data-view="decisiones" class="nav"><svg class="icon"><use href="#i-decide"/></svg> Decisiones</button>
-  <button data-view="ia" class="nav"><svg class="icon"><use href="#i-ai"/></svg> IA local <i class="new">CPU</i></button>
-  <button data-view="evidencias" class="nav"><svg class="icon"><use href="#i-file"/></svg> Evidencias</button>
- </nav>
- <div class="side-mission"><div class="eyebrow">APRENDER CON CRITERIO</div><p>Observar.<br>Comprender.<br>Justificar.</p><span class="quiet">El objetivo es explicar por qué una decisión protege el servicio.</span></div>
- <div class="side-bottom"><span class="status-dot"></span> Entorno de práctica<small>Tomás Vera · MAR303<br>Actividades sin calificación</small></div>
-</aside>
-<main id="main-content" tabindex="-1">
- <header class="topbar"><div class="breadcrumbs">Tu aula <span>/</span> <b id="page-label">Inicio y escenario</b></div><div class="top-right"><span class="local-tag"><span class="status-dot"></span> Laboratorio local</span><button id="export-top" class="button ghost small">Exportar cuaderno</button></div></header>
- <section class="client-strip" aria-label="Contexto de trabajo"><div class="client-choice"><span class="eyebrow">EMPRESA DEL CASO</span><select id="client-select" aria-label="Cliente"></select></div><div class="owner-line"><small>RESPONSABLE DEL SERVICIO</small><span id="owner-line"></span></div><div class="scenario-label">Caso simulado <span>08:10 · inicio de la jornada</span></div></section>
- <div id="content"><div class="loading">Preparando tu espacio de aprendizaje…</div></div>
- <footer>Aprender a gestionar es aprender a justificar. <span>MAR303 · Datos ficticios · Entorno local</span></footer>
-</main>
-<div id="toast" role="status" class="toast hidden"></div>
-<dialog id="decision-dialog" aria-labelledby="decision-title"><form id="decision-form">
- <div class="dialog-head"><div><div class="eyebrow">DECISIÓN TRAZABLE</div><h2 id="decision-title"></h2></div><button type="button" id="close-dialog" class="icon-button" aria-label="Cerrar">×</button></div>
- <input type="hidden" name="finding_id">
- <div class="notice">El índice es ordinal. SSVC usa su propio impacto humano, distinto del I máximo. Justifica los valores con el dueño y la evidencia.</div>
- <div class="form-grid"><label>Estado del riesgo<select name="state"><option value="inherent">Inherente / antes del control</option><option value="residual">Residual / control ya probado</option></select></label><label>Responsable<input name="owner" required minlength="3" maxlength="150"></label>
- <label>Plausibilidad contextual L<select name="likelihood" required><option value="">Elegir…</option><option value="1">1 · Sin ruta identificada tras pruebas</option><option value="2">2 · Ruta indirecta con condiciones</option><option value="3">3 · Ruta plausible / prueba parcial</option><option value="4">4 · Ruta reproducida en el caso</option><option value="5">5 · Explotación del activo observada</option></select></label><div class="score-preview"><small>ÍNDICE DOCENTE</small><b id="risk-preview">—</b><span>4 × L × I máximo</span></div></div>
- <h3>Consecuencias para este cliente <small>1 menor · 5 máxima según el BIA</small></h3>
- <div class="impact-grid" id="impact-inputs"></div>
- <h3>SSVC Deployer <small>DT_DP v1.0.0 · CERT/CC</small></h3>
- <div class="form-grid">
-  <label>Estado de explotación<select name="exploitation" required><option value="">Elegir…</option><option value="N">None · sin evidencia ni PoC público</option><option value="P">Public PoC · prueba o método conocido</option><option value="A">Active · evidencia creíble en el mundo real</option></select></label>
-  <label>Exposición del sistema<select name="exposure" required><option value="">Elegir…</option><option value="S">Small · superficie reducida</option><option value="C">Controlled · acceso restringido comprobado</option><option value="O">Open · red ampliamente accesible</option></select></label>
-  <label>Automatizable<select name="automatable" required><option value="">Elegir…</option><option value="N">No</option><option value="Y">Sí</option></select></label>
-  <label>Impacto humano SSVC<select name="human_impact" required><option value="">Elegir según misión y seguridad…</option><option value="L">Low</option><option value="M">Medium</option><option value="H">High</option><option value="VH">Very High</option></select></label>
+<a class="skip" href="#quest">Saltar al objetivo</a>
+<div class="game-shell">
+ <aside class="rail" aria-label="Espacio de juego"><a class="logo" href="#" aria-label="VulnCorp, volver a la ruta">v<span>c</span></a><div class="rail-links"><button class="rail-button selected" id="route-button"><span aria-hidden="true">⌘</span><small>Ruta</small></button><button class="rail-button" id="desk-button"><span aria-hidden="true">▱</span><small>Estación</small></button><button class="rail-button" id="notebook-button"><span aria-hidden="true">▤</span><small>Cuaderno</small></button></div><button class="help-button" id="help-button" aria-label="Cómo jugar">?</button></aside>
+ <div class="play-area">
+  <header class="game-header"><div class="identity"><span class="brand">VulnCorp<span>LAB</span></span><span class="campaign-title">Operación continuidad</span></div><div class="journey"><span id="progress-label">Preparando recorrido</span><div class="progress-track" aria-hidden="true"><i id="progress-fill"></i></div></div><div class="xp"><span aria-hidden="true">✧</span><b id="xp-value">0</b><small>PX</small></div></header>
+  <nav class="zone-nav" id="zones" aria-label="Zonas de la campaña"></nav>
+  <div class="game-body"><aside class="quest-list" aria-label="Desafíos de la zona"><div class="list-title">TU RUTA <span id="zone-count"></span></div><div id="levels"></div><div class="campaign-note">Los puntos reflejan práctica.<br>Aprender incluye volver a intentar.</div></aside><main id="quest" tabindex="-1"><div class="loading">Preparando tu siguiente objetivo…</div></main></div>
  </div>
- <details><summary>Cómo distinguir el impacto humano de SSVC</summary><p>Low: seguridad negligible/marginal y misión degradada o soporte de función esencial afectado. Medium: falla de función esencial con seguridad negligible/marginal, o misión degradada con seguridad crítica. High: seguridad crítica y soporte esencial afectado o función esencial fallida. Very High: seguridad catastrófica o falla de la misión. Consulta la tabla oficial y el dossier; no conviertas I=5 automáticamente en Very High.</p></details>
- <label>Evidencia y contexto usados<select name="evidence_ids" multiple size="4" required></select><small>Ctrl/Cmd para varias opciones. Un documento de contexto no equivale a una prueba ejecutada.</small></label>
- <label>Justificación, supuestos y criterio del dueño<textarea name="reason" rows="3" minlength="30" required placeholder="Este escenario afecta… La evidencia demuestra… Falta comprobar… El dueño acepta o solicita…"></textarea></label>
- <div class="dialog-actions"><button type="button" id="cancel-dialog" class="button ghost">Volver</button><button class="button primary" type="submit">Guardar decisión con evidencia ↗</button></div>
-</form></dialog>
-<dialog id="reason-dialog" aria-labelledby="reason-title"><form id="reason-form">
- <div class="dialog-head"><div><div class="eyebrow">RAZONAMIENTO Y EVIDENCIA</div><h2 id="reason-title"></h2></div><button type="button" class="icon-button" id="reason-close" aria-label="Cerrar">×</button></div>
- <p id="reason-description" class="quiet"></p>
- <label id="classification-label">Tu clasificación<select name="classification"></select></label>
- <label>Explica tu criterio<textarea name="reason" rows="5" minlength="30" maxlength="4000" required placeholder="Observé… Esto permite concluir… Falta comprobar…" autofocus></textarea><small>Al menos 30 caracteres. Relaciona una observación con tu conclusión.</small></label>
- <div class="dialog-actions"><button type="button" id="reason-cancel" class="button ghost">Volver</button><button type="submit" id="reason-submit" class="button primary">Guardar razonamiento</button></div>
-</form></dialog>
-<script src="/context-figure.js"></script>
-<script src="/app.js"></script>
+</div>
+<div class="workspace" id="workspace" hidden>
+ <header class="workspace-header"><button id="close-workspace" class="quiet-button">← Volver a la ruta</button><span><i class="connection-dot"></i><span id="connection-status">Conectando con el puesto…</span></span><button id="expand-workspace" class="quiet-button">Ampliar escritorio</button></header>
+ <div class="workspace-body"><aside id="workspace-guide" class="workspace-guide"></aside><section class="desktop-container" aria-label="Escritorio Linux de la empresa"><iframe id="desktop-frame" title="Puesto de análisis de VulnCorp, escritorio remoto Linux" allow="clipboard-read; clipboard-write"></iframe></section></div>
+</div>
+<dialog id="notebook" aria-labelledby="notebook-title"><div class="dialog-header"><div><span class="kicker">TU EXPEDIENTE</span><h2 id="notebook-title">Lo que ya puedes demostrar</h2></div><button class="close-icon" data-close="notebook" aria-label="Cerrar cuaderno">×</button></div><div id="notebook-content"></div><div class="dialog-footer"><button class="primary" id="export-button">Exportar expediente</button></div></dialog>
+<dialog id="help" aria-labelledby="help-title"><div class="dialog-header"><div><span class="kicker">CÓMO JUGAR</span><h2 id="help-title">Un objetivo a la vez</h2></div><button class="close-icon" data-close="help" aria-label="Cerrar ayuda">×</button></div><ol class="help-steps"><li>Lee el encargo y anticipa qué esperas observar.</li><li>Entra al puesto. Ejecuta el comando en la terminal y examina su salida.</li><li>El laboratorio comprueba la evidencia. Una tarea escrita o un clic no reemplazan una prueba.</li><li>Explica las decisiones cuando el objetivo lo pida. Los puntos no son una nota.</li></ol><p class="muted">Dentro del escritorio puedes entrar a <code>ops</code> y <code>appdesk</code> por SSH. Son puestos distintos, con redes distintas. Para salir, escribe <code>exit</code>.</p></dialog>
+<div id="toast" role="status" class="toast" hidden></div>
+<script src="/game.js"></script>
 </body></html>

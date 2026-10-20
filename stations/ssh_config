@@ -1,0 +1,8 @@
+Host ops appdesk
+    User student
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+    StrictHostKeyChecking accept-new
+    ForwardAgent no
+    ConnectTimeout 5

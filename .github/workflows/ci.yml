@@ -8,21 +8,26 @@ permissions:
 jobs:
   core-and-docker:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Pruebas de decisiones y contratos
         run: python3 -m unittest discover -s tests -v
-      - name: Figura didáctica y sintaxis de la interfaz
+      - name: Sintaxis de interfaz y recurso visual complementario
         run: |
-          node --check web/app.js
+          node --check web/game.js
+          node --check tests/ui.mjs
           node scripts/build-context-figure.mjs --audit
       - name: Contrato de aislamiento
         run: docker compose --profile '*' config --format json | python3 scripts/verify_compose.py
-      - name: Iniciar targets aislados
+      - name: Iniciar empresa y puestos internos
+        env:
+          LAB_SKIP_AI: "1"
         run: ./lab.sh up
       - name: Pruebas integradas reales
         run: ./lab.sh smoke
+      - name: Juego real sin modelo ni base de escáner
+        run: python3 tests/integration_game.py
       - name: Rutas desde dos zonas
         run: |
           ./lab.sh discover public > /tmp/public.json

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_config xmlns="http://openbox.org/3.4/rc">
+ <focus><focusNew>yes</focusNew><followMouse>no</followMouse></focus>
+ <desktops><number>1</number></desktops>
+ <keyboard><keybind key="A-F4"><action name="Close"/></keybind><keybind key="C-A-t"><action name="Execute"><command>xterm -fa 'DejaVu Sans Mono' -fs 12 -bg '#f8fafc' -fg '#25384a' -e bash --rcfile /app/stations/bashrc -i</command></action></keybind></keyboard>
+ <applications><application class="XTerm"><decor>no</decor><maximized>yes</maximized><focus>yes</focus></application></applications>
+</openbox_config>

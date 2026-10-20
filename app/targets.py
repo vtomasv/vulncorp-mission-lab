@@ -3,6 +3,7 @@ import json
 import os
 import threading
 import time
+import uuid
 import urllib.request
 import urllib.error
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -12,7 +13,10 @@ ROLE = os.environ.get('LAB_ROLE','gateway')
 PORTS = {'gateway':8080,'records':8081,'backup':8082}
 LOCK = threading.Lock()
 STATE = {'restrict_export':False,'isolate_support':False,'rotate_backup':False,'transactions':0}
-CONTROL_KEY = os.environ.get('LAB_CONTROL_KEY','synthetic-control-key-not-for-production')
+from .secure import secret
+CONTROL_KEY = secret('control')
+BOOT_ID=uuid.uuid4().hex
+AUDIT=[]
 
 
 class Target(BaseHTTPRequestHandler):
@@ -22,6 +26,11 @@ class Target(BaseHTTPRequestHandler):
         print(json.dumps({'time':time.time(),'role':ROLE,'path':self.path,'message':fmt%args}),flush=True)
 
     def reply(self, data, status=200):
+        if urlsplit(self.path).path not in ['/health','/_status','/_audit']:
+            with LOCK:
+                AUDIT.append({'id':'NET-'+uuid.uuid4().hex,'boot_id':BOOT_ID,'occurred_at':time.time(),
+                    'peer':self.client_address[0],'method':self.command,'path':urlsplit(self.path).path,'status':status,'body':json.loads(json.dumps(data))})
+                del AUDIT[:-1200]
         raw=json.dumps(data,ensure_ascii=False).encode()
         self.send_response(status);self.send_header('Content-Type','application/json; charset=utf-8')
         self.send_header('Content-Length',str(len(raw)));self.end_headers();self.wfile.write(raw)
@@ -29,7 +38,11 @@ class Target(BaseHTTPRequestHandler):
     def do_GET(self):
         path=urlsplit(self.path).path
         if path=='/health':return self.reply({'ok':True,'role':ROLE,'version':'0.1.0'})
-        if path=='/_status':return self.reply({'role':ROLE,'state':STATE})
+        if path=='/_status':return self.reply({'role':ROLE,'state':STATE,'boot_id':BOOT_ID})
+        if path=='/_audit':
+            if self.headers.get('X-Lab-Control')!=CONTROL_KEY:return self.reply({'error':'Canal de comprobación privado'},403)
+            with LOCK:rows=list(AUDIT)
+            return self.reply({'role':ROLE,'boot_id':BOOT_ID,'events':rows})
         if ROLE=='gateway':
             if path in ['/','/api/catalog']:
                 return self.reply({'service':'VulnCorp Trámites','synthetic':True,'items':['resultado-urgente','documento-operacional','transferencia-cliente'],'message':'Portal público simulado. No contiene datos reales.'})

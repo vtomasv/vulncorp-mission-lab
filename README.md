@@ -1,115 +1,54 @@
-# VulnCorp Mission Lab · Aula de práctica
+# VulnCorp LAB · Operación continuidad
 
-[![Laboratorios verificables](https://github.com/vtomasv/vulncorp-mission-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/vtomasv/vulncorp-mission-lab/actions/workflows/ci.yml)
+Un laboratorio de gestión de vulnerabilidades que se juega dentro de una empresa ficticia. Un objetivo a la vez: investigar en un escritorio Linux real, reunir evidencia, decidir con el dueño y demostrar que una medida protege sin interrumpir el servicio.
 
-**Gestionar vulnerabilidades es proteger un servicio y demostrar una decisión.**
+![Ruta de desafíos](docs/assets/mission-control.png)
 
-Tres laboratorios intensivos del curso MAR303, creados por **Tomás Vera**. Una experiencia práctica en español, para estudiantes desde principiante, con Docker, herramientas abiertas e IA local en CPU. Equipos de referencia: **16 GB RAM, sin GPU**.
+**15 desafíos · 3 zonas · noVNC + SSH · Syft + Grype · IA local en CPU.** La ruta se desbloquea con resultados comprobados. Los puntos son formativos: no hay notas intermedias ni clasificación por velocidad.
 
-![Aula de práctica: recorrido de aprendizaje y comparación de contexto](docs/assets/mission-control.png)
+| Zona | Lo que debes conseguir |
+|---|---|
+| Terreno | Reconstruir la función del servicio, observar exposición y comparar dos perspectivas de red. |
+| Señales | Generar inventarios reales, escanear, comprobar aplicabilidad e impugnar errores del proveedor. |
+| Continuidad | Comparar dos dueños, revisar una inferencia local, comprometer una cartera y verificar su efecto. |
 
-## En cinco minutos, después de descargar imágenes
+## Empezar
 
-Requisitos del host: Git, Docker Engine + Compose v2 o Docker Desktop con backend Linux, y navegador. No necesitas Python, Node, Syft, Grype ni Ollama instalados en el host. La primera preparación requiere Internet; sus tiempos de descarga no son cinco minutos garantizados.
-
-**macOS / Linux**
+Equipo de referencia: **16 GB RAM, sin GPU**, Docker con **8 GB asignados**, Compose **2.24.4 o superior**, navegador y 30 GB libres. La primera preparación necesita Internet. Las estaciones del juego quedan en redes internas.
 
 ```bash
 git clone https://github.com/vtomasv/vulncorp-mission-lab.git
 cd vulncorp-mission-lab
 ./lab.sh doctor
-./lab.sh up
+./lab.sh prepare-game
 ```
 
-**Windows PowerShell**
+Windows PowerShell: `.\lab.ps1 doctor` y `.\lab.ps1 prepare-game`. Abre [el laboratorio local](http://localhost:8095). Entra al puesto y ejecuta `lab iniciar`. La guía escribe el comando cuando se lo pides; tú lo revisas y pulsas Enter.
 
-```powershell
-git clone https://github.com/vtomasv/vulncorp-mission-lab.git
-cd vulncorp-mission-lab
-.\lab.ps1 doctor
-.\lab.ps1 up
-```
+En sesiones siguientes usa `./lab.sh up` o `.\lab.ps1 up`. `down` detiene este proyecto y conserva progreso, bases y modelos. La [guía de inicio](docs/INICIO.md) explica cada paso.
 
-Abre **[http://localhost:8095](http://localhost:8095)**. Si Windows bloquea el script, consulta [Inicio para principiantes](docs/INICIO.md); también puedes usar directamente los comandos Docker que se documentan allí.
+## Lo que ocurre de verdad
 
-## Un aula para formar criterio
+El navegador conecta a un escritorio Linux mediante noVNC. Desde allí se entra por SSH a soporte y aplicaciones, sin puertos SSH o VNC publicados al host. Cada puesto tiene una perspectiva de red distinta. Syft y Grype trabajan con archivos reales copiados de las imágenes del caso; el alcance parcial se conserva en el reporte.
 
-Inicio con tres clases guiadas, lectura clara y formularios de razonamiento en español. La figura interactiva **Anatomy** explica cómo cambia el índice de referencia al cambiar el contexto del cliente; explorar no guarda una decisión. Observaciones, hipótesis y decisiones conservan su identidad en el cuaderno.
+Los servicios registran las solicitudes que reciben. Los agentes de los puestos firman los resultados de acciones acotadas y el verificador los vincula con la campaña. Un clic, una reflexión o un reporte subido manualmente no acreditan una ejecución. El último objetivo exige **403 en exportación + transacción completada después de la medida + residual con ambas referencias**.
 
-## El giro de la experiencia
+La IA usa Ollama y Qwen3 1.7B local, con CPU, fuentes recuperadas y revisión humana. No obtiene autoridad para ejecutar cambios o aceptar riesgos. Los cálculos de riesgo y SSVC son deterministas.
 
-1. **Una transacción real funciona.** Comprueba su dependencia y descubre una exportación sin autorización con expedientes completamente ficticios.
-2. **El escáner no decide por ti.** Syft y Grype inspeccionan paquetes realmente instalados. Contrasta sus resultados con un expediente docente que incluye un duplicado y un falso positivo.
-3. **Cambia el dueño, cambia la prioridad.** Salud, agua y servicios digitales comparten hallazgos, pero no consecuencias.
-4. **Cuatro horas de ingeniería. Quince minutos de ventana.** Elige y justifica una cartera; el sistema comprueba restricciones.
-5. **La IA necesita que la audites.** Ollama y Qwen3 proponen preguntas y tratamientos con fuentes locales. Un motor determinista calcula riesgo y SSVC.
-6. **Demuestra que sirvió.** Restringe la exportación pública. Comprueba HTTP 403 y, a continuación, una transacción legítima completada. El registro distingue mitigación de corrección de causa raíz.
+## Para enseñar y extender
 
-## Las tres clases
+- [Replanteamiento del juego](docs/REPLANTEAMIENTO_JUEGO.md): campaña, criterios y extensión.
+- [Uso docente: tres jornadas de siete horas](docs/DOCENCIA.md): trabajo cognitivo y discusión, fuera de la interfaz del jugador.
+- Guías paso a paso de [Terreno](labs/01-superficie/ESTUDIANTE.md), [Señales](labs/02-evidencia/ESTUDIANTE.md) y [Continuidad](labs/03-priorizacion/ESTUDIANTE.md).
+- [Arquitectura y confianza de la evidencia](docs/ARQUITECTURA.md), [IA local](docs/IA_LOCAL.md), [validación y límites](docs/VALIDACION.md), [soluciones](docs/SOLUCIONES.md).
+- [Hechos reales y fuentes](docs/CASOS_Y_FUENTES.md), [licencias](NOTICE.md).
 
-| Clase | Pregunta central | Guía del estudiante |
-|---|---|---|
-| 1 · Lo que no ves también decide | ¿Qué necesita seguir funcionando y desde dónde es accesible? | [Superficie, negocio y evidencia](labs/01-superficie/ESTUDIANTE.md) |
-| 2 · El ruido y la señal | ¿Qué demuestra un scanner y qué requiere investigación? | [SBOM, CVEs y aplicabilidad](labs/02-evidencia/ESTUDIANTE.md) |
-| 3 · La prioridad cambia de dueño | ¿Qué hacemos primero para este cliente y cómo lo comprobamos? | [Riesgo, SSVC, IA y tratamiento](labs/03-priorizacion/ESTUDIANTE.md) |
+El catálogo `data/campaign.json` define zonas, requisitos, puntos, pasos y pistas. Para ampliar la duración se agregan desafíos con su comprobación en `app/game.py`; la navegación deriva del catálogo. No se agregan menús de clases al jugador.
 
-Cada jornada tiene **420 minutos de actividad**, incluidos dos bloques de laboratorio de 110 minutos y 80 minutos de contraste y decisión. Pausas y colación se programan aparte. Hay guías de instructor y ayudas progresivas. **Ningún laboratorio tiene nota, bono ni ponderación**; esta edición del curso contempla solo examen final, fuera de este repositorio de clases 1-3.
+## Alcance
 
-## IA local, de verdad
+Es una instalación **individual y local**, con datos y empresas ficticias. El índice `4 × L × impacto máximo` es una política docente ordinal; no es porcentaje ni fórmula normativa. Los controles y referencias MITRE/ISO/leyes requieren interpretación y evidencia de alcance. La plataforma comprueba resultados, relaciones y restricciones; **no califica automáticamente el criterio profesional**.
 
-```bash
-./lab.sh ai-prepare   # primera vez: descarga el motor y Qwen3 1.7B
-./lab.sh ai-on        # inferencia CPU; pausa los tres targets
-```
+Los límites configurados apuntan al equipo de 16 GB. La validación funcional disponible se ejecutó en ARM64 con más RAM; falta el piloto en un equipo físico de 16 GB y la validación de Windows. No es un sistema de examen resistente al propietario administrador de Docker ni un servicio multiusuario de producción.
 
-En Windows reemplaza `./lab.sh` por `.\lab.ps1`. En el aula de práctica abre **IA local**. Para volver al escenario:
-
-```bash
-./lab.sh ai-off
-```
-
-La inferencia usa **un modelo a la vez, dos CPU y un límite de 4 GB**. Las evidencias permanecen disponibles cuando los targets están pausados. Al volver, los targets reinician su estado: hay que volver a comprobar las mitigaciones. No se usa un servicio de IA cloud. El sistema muestra claramente si el modelo no está disponible; no genera respuestas ficticias en su lugar. [Cómo funciona, medición y límites](docs/IA_LOCAL.md).
-
-## Herramientas y evidencia
-
-```bash
-./lab.sh discover public
-./lab.sh discover support
-./lab.sh probe public transaction
-./lab.sh probe public export
-./lab.sh sbom
-./lab.sh scan
-./lab.sh export
-```
-
-- **Syft / Grype:** ejecución real en contenedores, imágenes exportadas como archivo, sin Docker socket en un escáner.
-- **Componentes legacy reales:** Django 3.2 y requests 2.31.0 en `/opt/legacy` de `records`; no son importados por el servicio activo. No se simula el descubrimiento de esos paquetes.
-- **Expediente docente:** siete tarjetas curadas, rotuladas como caso; no se atribuyen a Grype. Las fallas locales no inventan IDs CVE.
-- **Inteligencia:** snapshot real de FIRST EPSS y CISA KEV con fecha de consulta y origen. No se presenta EPSS como probabilidad de compromiso local.
-- **Decisión:** índice ordinal `4 × L × max(impactos)` y tabla oficial **SSVC Deployer DT_DP v1.0.0**, conservada con licencia y procedencia. Las salidas de ambos modelos no se confunden.
-- **Persistencia:** decisiones y reflexiones se guardan en SQLite, en un volumen del proyecto. La exportación incluye trazabilidad de IA y un hash del contenido.
-
-## Aislamiento y alcance
-
-Contiene fallas educativas intencionales. Ejecutar en el equipo de prácticas, **sin exposición a Internet**. Solo se publica la UI en `127.0.0.1`; los targets usan redes `internal: true`, sin privilegios generales ni socket Docker. Las sondas aceptan únicamente los tres nombres del caso. Todo dato y toda credencial de entrenamiento son sintéticos.
-
-El escáner Grype tiene una red separada para actualizar su base. Ollama solo obtiene una red temporal durante la descarga del modelo; después se recrea con red interna. El plano de gestión accede a los targets para comprobarlos y aplicar las medidas del simulador; no es un diseño de producción ni un aislamiento frente a un administrador del host. [Arquitectura y modelo de amenaza](docs/ARQUITECTURA.md).
-
-## Recursos, validación y continuidad
-
-El caso base limita los cuatro servicios a **736 MiB combinados**; cada escáner corre por separado con límite de 1 GiB. Ollama suma un máximo de 4 GiB y se usa con targets pausados. Son límites configurados, no mediciones universales. Disco recomendado: **25 GB libres** como punto de partida; depende de arquitectura, imágenes y modelo.
-
-```bash
-./lab.sh test         # pruebas unitarias, incluidas las 72 ramas SSVC
-./lab.sh smoke        # flujo real; deja evidencia de prueba y restablece targets
-./lab.sh status
-./lab.sh down        # conserva volúmenes y evidencia
-```
-
-[Validación de esta release](docs/VALIDACION.md) · [Solución de problemas](docs/SOLUCIONES.md) · [Plan docente](docs/DOCENCIA.md) · [Fuentes y licencias](NOTICE.md).
-
-## Casos que inspiran las misiones
-
-El fallo de inventario y verificación de parcheo se discute a partir de **Equifax**; la transferencia y exposición de datos, a partir del patrón de **MOVEit/CL0P**; la confianza en herramientas, a partir del incidente de **Trivy de marzo de 2026**. Son analogías documentadas: este repositorio no reproduce MOVEit, no atribuye sus CVEs a la aplicación del curso y no ejecuta herramientas comprometidas. [Hechos y adaptación](docs/CASOS_Y_FUENTES.md).
-
-Código del curso: MIT, copyright 2026 Tomás Vera. La tabla SSVC y el software de terceros conservan sus propias licencias. No se incluyen pesos de modelos en Git. Empresas y condición OIV: **ficticias**. Mapeos ISO/MITRE/Chile: propuestas didácticas con evidencia, no equivalencias oficiales ni certificación.
+Autor: **Tomás Vera · vtomasv**. Código y material original bajo MIT.

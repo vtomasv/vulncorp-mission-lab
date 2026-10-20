@@ -1,69 +1,54 @@
-# Validación de la release 0.1.0
+# Validación de la campaña · versión 0.2.0
 
-Fecha de la edición: **20 de octubre de 2026**. Este archivo distingue el contrato configurado de las comprobaciones realmente ejecutadas. Los siguientes resultados corresponden a ejecución real, con datos sintéticos; no son objetivos estimados.
+Fecha: **20 de octubre de 2026**. Se distingue configuración, ejecución funcional y pilotaje pendiente.
 
-## Contrato de recursos
-
-- Base: mission 256 MiB, tres targets de 160 MiB cada uno; límite combinado 736 MiB.
-- Syft y Grype: un proceso por turno, 1 GiB cada uno; extracción de imágenes y preparación de bases en volúmenes temporales de disco, no tmpfs de RAM.
-- Inferencia: Qwen3 1.7B, 2 CPU, límite 4 GiB, sin GPU, máximo un modelo y una consulta.
-- Targets pausados durante la inferencia. Centro de misión y evidencia disponibles.
-- Los límites de contenedor no incluyen sobrecarga de la VM Docker, caché de páginas del host ni otras aplicaciones. Se recomienda pilotar el equipo completo de 16 GB antes de dictar.
-
-## Resultados observados
-
-Entorno local: Docker Desktop Linux **arm64**, motor 29, con más RAM disponible que el equipo objetivo. Los límites anteriores sí estuvieron activos. **No se ha pilotado una máquina física de 16 GB**, Windows PowerShell ni una cohorte; esa validación sigue pendiente.
+## Comprobaciones realizadas
 
 | Comprobación | Resultado |
 |---|---|
-| Pruebas unitarias en host y contenedor | 25 correctas; incluyen las 72 combinaciones oficiales SSVC, cambio de contexto, restricciones de cartera, evidencia y trazabilidad de IA. |
-| Flujo integrado | Transacción completada, exportación inicialmente 200, control aplicado, exportación 403 y transacción todavía completada. Rotación rechaza la llave previa. |
-| Dos perspectivas de red | Desde public solo gateway; desde support solo backup. Contrato Compose: targets/IA internos, publicación loopback, sin socket Docker. |
-| Syft real | Django 3.2 y requests 2.31.0 presentes en records; ausentes en mission. |
-| Grype real | 330 coincidencias totales, 41 de Django/requests en la base consultada. Se encontraron los alias CVE-2021-35042 y CVE-2024-35195 y se importaron en la aplicación. El conteo no es estable entre fechas. |
-| Base Grype | v6.1.10, construida 2026-10-20 06:29:49 UTC; estado válido. |
-| IA local | Qwen3 1.7B, digest verificado contra el lock; solicitud completa guardada; 20,66 s y 277 tokens de salida en la consulta de referencia. |
-| RAM de IA | Pico cgroup de Ollama: 2.067.271.680 bytes, aproximadamente 1,93 GiB; máximo muestreado por Docker Stats: 1,858 GiB. Son métricas distintas; no incluyen toda la VM del host. |
-| Revisión humana | Se corrigió la afirmación no justificada «riesgo alto» y la confusión de hipótesis con observación. El validador estructural había pasado. |
-| Interfaz | Navegación, prueba real, guardado de reflexión/decisión, cambio de cliente y vista IA en navegador de escritorio y móvil; sin errores de consola ni desborde horizontal global. |
-| Persistencia | Las decisiones y evidencias sobrevivieron a la recreación del contenedor mission. Las pruebas también comprueban reapertura de SQLite e integridad del hash exportado. |
+| Pruebas unitarias | 43 correctas: 72 ramas SSVC oficiales, contexto, presupuesto, referencias IA y de evidencia; además desbloqueos, puntos únicos, campañas separadas, firma alterada, actor incorrecto y pruebas posteriores al cambio. |
+| Campaña integrada | Los 15 objetivos completados con 1370 PX; reintentos sin duplicar puntos. Comandos reales desde análisis y por SSH, Syft/Grype, IA local, revisión y residual. |
+| Escritorio real | Chrome → noVNC → Linux UID 1000 → evidencia recogida → avance. SSH con terminal interactiva probado en soporte y aplicaciones. |
+| Perspectivas | Análisis: gateway. Soporte: gateway/backup. Aplicaciones: gateway/records. También se comprobó denegación por IP directa desde análisis hacia redes que no comparte. |
+| Protección de procedencia | student no puede leer secretos ni diario privado. Pruebas del plano de gestión no acreditan al puesto. La identidad firmada incluye todas sus interfaces, no solo la IP que resuelve el DNS. |
+| Inventario real | Syft 1.55.0 encuentra Django 3.2 y requests 2.31.0 en el snapshot parcial de records, ausentes en el snapshot del runtime mission. |
+| Escaneo real | Grype 0.121.0 recibe un SBOM recién generado y encuentra los alias CVE-2021-35042 y CVE-2024-35195; conserva descriptor/base, hash y reporte. No se exige un conteo fijo. |
+| IA local | Qwen3 1.7B real, digest verificado, CPU sin GPU. Consultas de 23,28 s y 20,85 s en ejecuciones de esta campaña; no son una promesa de latencia. |
+| Cierre | Exportación 403, transacción completed posteriores al cambio, restricción vigente y residual con ambas referencias. Un 403 aislado no basta. |
+| Compatibilidad funcional | El smoke previo sigue pasando: transacción, exposición, mitigación, continuidad, rotación, decisiones y exportación. |
 
-La consulta y su revisión completas están en [el ejemplo capturado](ejemplos/inferencia-cpu.json). Es una captura de validación, no una respuesta que la aplicación use para aparentar inferencia.
+La revisión de navegador cubre los comandos a través de noVNC y los formularios de proveedor, expediente, dos dueños, revisión IA, cartera y residual. Las capturas de [ruta](assets/mission-control.png), [puesto](assets/workstation-proof.png) y [móvil](assets/game-mobile.png) acompañan esta edición. El registro de desarrollo se conserva localmente en `artifacts/`; esos archivos de ejecución no se publican automáticamente.
 
-La automatización pública ejecuta las pruebas funcionales en Linux **amd64** sin descargar el modelo. La [primera ejecución](https://github.com/vtomasv/vulncorp-mission-lab/actions/runs/39467440045) pasó: pruebas unitarias, contrato Compose, construcción, flujo integrado y descubrimiento desde dos zonas. Consulta las [ejecuciones posteriores](https://github.com/vtomasv/vulncorp-mission-lab/actions/workflows/ci.yml) para el estado actual; una insignia verde no acredita pruebas de IA, Windows ni hardware de 16 GB.
+## Recursos
 
-## Rediseño del aula · comprobaciones adicionales
+Presupuesto configurado del juego con IA: **6752 MiB** de límites combinados, más sobrecarga Docker. Referencia: Docker con 8 GiB en host de 16 GB; dos CPU para IA, un modelo y una consulta. Puestos y targets permanecen activos durante la inferencia.
 
-- Pantallas de inicio, clases, hallazgos, decisiones, IA y evidencias revisadas en escritorio y a 390 px de ancho. Tablas amplias contenidas en su propia zona de desplazamiento.
-- Flujo de clasificación en español; guardado y recuperación del foco. Medida solicitada desde el diálogo: exportación 403 y transacción completada; después se restableció el caso.
-- Comparador Anatomy: valores de referencia 64/32/80; movimiento reducido; sin escritura de decisiones al explorar.
-- Geometría: 50 sólidos, soporte y orden sin problemas en cinco posiciones; orden de profundidad resuelto en 17 posiciones. Revisión de ampliaciones 4×. Comprobación de extremos de líneas: cero extremos flotantes en los tres contextos.
-- Contraste de tokens: texto principal 11,81:1; secundario 5,08:1; botón principal 6,56:1; navegación activa 5,84:1; borde de campos 3,20:1. Son mediciones de esas combinaciones concretas.
-- Navegador: sin errores de consola. La verificación de UI usa Chrome de desarrollo; no se afirma una matriz completa de navegadores.
+Entorno de validación: Docker Desktop Linux **ARM64**, motor 29, con más RAM física que el equipo objetivo. En las mediciones, escritorio alrededor de 79 MiB en reposo y aproximadamente 98 MiB de pico cgroup; soporte y aplicaciones alrededor de 19 MiB antes del escaneo. El cgroup de aplicaciones alcanzó su límite de 1280 MiB durante el escaneo, con reclamación de caché y **cero eventos OOM/oom_kill**. Ollama registró un pico cgroup de 3.420.774.400 bytes, aproximadamente 3,19 GiB, bajo su límite de 4 GiB. Las métricas de cgroup incluyen memoria que Docker Stats puede descontar como caché; no se suman picos de fases distintas como si fueran simultáneos.
 
-## Pruebas reproducibles
+**Pendiente:** piloto en equipo físico de 16 GB, Windows PowerShell, matriz completa de navegadores y prueba con principiantes para ajustar los tiempos. El éxito técnico no acredita comprensión ni duración pedagógica.
+
+## Reproducir
+
+Preparar antes con `./lab.sh prepare-game`. Luego, para desarrollo:
 
 ```bash
-./lab.sh test
+python3 -m unittest discover -s tests -v
 docker compose --profile '*' config --format json | python3 scripts/verify_compose.py
-./lab.sh up
 ./lab.sh smoke
-./lab.sh discover public
-./lab.sh discover support
-./lab.sh sbom
-./lab.sh scan
-./lab.sh ai-prepare
-./lab.sh ai-on
+python3 tests/integration_game.py
+python3 tests/integration_game.py --full
 ```
 
-El segundo comando es una verificación de desarrollo/CI: usa Python en el host. No es requisito para los alumnos; las pruebas funcionales se ejecutan en Docker con el lanzador.
+El núcleo de integración no descarga IA ni base de escáner. `--full` requiere ambas preparadas y ejecuta las quince metas. Crea una **nueva campaña**, preservando las anteriores; no ejecutarlo durante una partida que quieras mantener activa.
 
-`smoke` crea observaciones de entrenamiento y devuelve los targets a su estado inicial. El reporte real de Grype no tiene un conteo estable entre fechas. El test de UI opcional requiere Playwright en el equipo de desarrollo, no en el equipo del estudiante.
+La prueba de UI opcional requiere Playwright en el equipo de desarrollo:
 
-## Plataformas
+```bash
+LAB_UI_FULL=1 PLAYWRIGHT_CHANNEL=chrome node tests/ui.mjs
+```
 
-Las imágenes fijadas anuncian soporte Linux amd64/arm64. Anunciar una arquitectura no equivale a haber probado toda la guía en ese sistema operativo. La validación de PowerShell y el pilotaje pedagógico en una cohorte se deben registrar por separado; el cumplimiento técnico no prueba duración ni comprensión del alumno.
+Puede indicarse `PLAYWRIGHT_PATH` para una instalación existente. Los alumnos no necesitan Node o Playwright. El test crea una campaña y conserva captura en caso de fallo. Comprueba progreso desde la red real y no desde un terminal simulado con texto HTML.
 
-## Datos que se conservan con una comprobación
+La [automatización pública](https://github.com/vtomasv/vulncorp-mission-lab/actions/workflows/ci.yml) prueba Linux AMD64: unidades, contrato de red, construcción de puestos, smoke, cinco objetivos con evidencia real, SSH interactivo y perspectivas de red. No descarga el modelo ni acredita inferencia en CI; esa ejecución se valida localmente por separado.
 
-Versiones y digests; sistema/arquitectura; límite de recursos; pico observado y fase; estado de base Grype; reporte; modelo/digest; latencia de inferencia, salida y revisión; pruebas antes/después de un control; captura de escritorio y móvil; estado de CI.
+La figura Anatomy se conserva como recurso complementario, fuera de la ruta principal. Su auditoría de geometría sigue pasando; no se confunde con la comprobación del juego.

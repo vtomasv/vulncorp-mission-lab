@@ -15,11 +15,11 @@ Windows: `.\lab.ps1 ai-prepare`, `.\lab.ps1 ai-on`. Antes debe haberse ejecutado
 
 `ai-prepare` descarga el motor y pesos mediante una red temporal, luego recrea Ollama desde el Compose base para retirarla, incluso si falla la descarga. Si interrumpiste el proceso de forma forzada, ejecuta el modo normal `docker compose --profile ai up -d --force-recreate ollama` para comprobar que se retiró la red temporal antes de continuar. No se configura un proveedor cloud ni se publica el puerto 11434.
 
-`ai-on` pausa gateway, records y backup para contener el consumo. La evidencia anterior sigue disponible en SQLite. **Volver con `ai-off` reinicia targets en estado inicial**: una mitigación pasada necesita repetición y nueva prueba.
+`ai-on` mantiene puestos y servicios activos. `ai-off` detiene únicamente Ollama y libera su memoria; no reinicia targets ni elimina medidas. El presupuesto combinado del juego con IA es 6752 MiB en límites de contenedor; usa Docker con 8 GiB y una herramienta pesada a la vez.
 
 ## Qué hace la consulta
 
-1. El estudiante selecciona cliente y uno o dos hallazgos.
+1. En el objetivo «Una segunda mirada», el estudiante ejecuta `lab ia` desde aplicaciones. Esta consulta guiada usa salud y F-02; la API admite uno o dos hallazgos como extensión.
 2. Recuperación local simple: IDs relacionados y coincidencia léxica, máximo cuatro fragmentos.
 3. El modelo recibe la pregunta, parte del dossier y evidencia rotulada como no confiable.
 4. Devuelve resumen, hechos candidatos con IDs, preguntas, opciones y límites.
@@ -30,7 +30,7 @@ Es un flujo RAG pequeño y visible, no una búsqueda exhaustiva ni un sistema de
 
 ## Lo que queda fuera de su autoridad
 
-No hay tools, shell, Docker socket, credenciales reales ni endpoints de cambio concedidos al modelo. La respuesta solo se presenta como texto escapado. Los cambios se solicitan por un formulario distinto, y riesgo/SSVC se calculan mediante código determinista. El control principal es capacidad y permisos, no confiar en que un prompt detendrá todas las instrucciones adversarias.
+No hay tools, shell, Docker socket, credenciales reales ni endpoints de cambio concedidos al modelo. La respuesta solo se presenta como texto escapado. Los cambios se solicitan desde el puesto mediante una acción separada, y riesgo/SSVC se calculan mediante código determinista. El control principal es capacidad y permisos, no confiar en que un prompt detendrá todas las instrucciones adversarias.
 
 ## Auditoría
 
@@ -42,7 +42,7 @@ Para medir valor registra tiempo de análisis **más tiempo de revisión**, afir
 
 ## Si la inferencia falla
 
-El panel muestra apagado/sin modelo o error de inferencia. La aplicación no inventa una respuesta para aparentar IA. Hay un ejemplo sintético explícito para discutir errores, que no se registra como inferencia real. Conserva tu decisión manual y repite la consulta cuando el motor esté disponible.
+El terminal muestra el error y el objetivo espera una consulta real. La aplicación no inventa una respuesta para aparentar IA. El objetivo permanece pendiente si no hubo inferencia real. La captura histórica de docs/ejemplos sirve para discusión, no concede puntos. Conserva tu decisión manual y repite la consulta cuando el motor esté disponible.
 
 Consulta de estado:
 
