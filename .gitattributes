@@ -1,2 +1,9 @@
 # Preserve vendored official SSVC data and license byte for byte.
 data/ssvc/* -whitespace
+
+# Docker entrypoints and OpenSSH credentials must survive Windows Git checkout unchanged.
+*.sh text eol=lf
+*.ps1 text eol=lf
+stations/lab text eol=lf
+training/ssh/vulncorp_student_ed25519 -text
+training/ssh/vulncorp_student_ed25519.pub text eol=lf
