@@ -4,11 +4,13 @@ Core: real SSH, segmentation, target audit and XP. --full additionally needs pre
 import argparse
 import json
 import subprocess
+import shlex
 from pathlib import Path
 from urllib.request import Request,urlopen
 
 ROOT=Path(__file__).resolve().parents[1]
 BASE='http://127.0.0.1:8095'
+USE_SSH=False
 
 def dc(*args,input=None,timeout=300):
     result=subprocess.run(['docker','compose',*args],cwd=ROOT,input=input,text=True,capture_output=True,timeout=timeout)
@@ -19,7 +21,11 @@ def api(path,data=None):
     request=Request(BASE+path,data=json.dumps(data).encode() if data is not None else None,headers={'Content-Type':'application/json'})
     with urlopen(request,timeout=300) as response:return json.load(response)
 
-def station(*args,input=None):return dc('exec','-T','-u','1000','workstation',*args,input=input)
+def station(*args,input=None):
+    if not USE_SSH:return dc('exec','-T','-u','1000','workstation',*args,input=input)
+    result=subprocess.run(['./lab.sh','ssh',shlex.join(args)],cwd=ROOT,input=input,text=True,capture_output=True,timeout=300)
+    if result.returncode:raise AssertionError(result.stderr[-1800:]+'\n'+result.stdout[-1800:])
+    return result.stdout
 
 def fresh(label='Verificación técnica'):
     dc('exec','-T','mission','python','-c',"import time;from app.server import save;save('game_campaign',{'started':time.time(),'catalog_version':'2.0','purpose':"+repr(label)+"})")
@@ -53,7 +59,7 @@ def main(full=False):
     for path in ['/secrets/analyst.key','/journal/events.jsonl']:
         denied=subprocess.run(['docker','compose','exec','-T','-u','1000','workstation','cat',path],cwd=ROOT,capture_output=True)
         assert denied.returncode!=0,path
-    appnets=json.loads(dc('exec','-T','-u','1000','workstation','ssh','appdesk','lab red').split('Evidencia registrada:')[0].split('evidencia.\n',1)[1])
+    appnets=json.loads(station('ssh','appdesk','lab red').split('Evidencia registrada:')[0].split('evidencia.\n',1)[1])
     assert {t['target'] for t in appnets['targets'] if t['result']=='reachable'}=={'gateway','records'}
     if full:
         station('ssh','appdesk','lab inventario');credit('inventario')
@@ -80,7 +86,7 @@ def main(full=False):
         result['validated_ai']={k:audit[k] for k in ['id','model','model_digest','elapsed_seconds','validation_errors']}
     (ROOT/'artifacts').mkdir(exist_ok=True)
     (ROOT/'artifacts/validation-game.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
-    print('PASS campaña completa con Grype e IA local' if full else 'PASS núcleo real: 5 objetivos, tres puestos, aislamiento y permisos')
+    print(('PASS campaña completa con Grype e IA local' if full else 'PASS núcleo real: 5 objetivos, tres puestos, aislamiento y permisos')+(' · entrada SSH desde el host' if USE_SSH else ' · entrada de verificación Docker'))
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--full',action='store_true');args=parser.parse_args();main(args.full)
+    parser=argparse.ArgumentParser();parser.add_argument('--full',action='store_true');parser.add_argument('--ssh',action='store_true');args=parser.parse_args();USE_SSH=args.ssh;main(args.full)

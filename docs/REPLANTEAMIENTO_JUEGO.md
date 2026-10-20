@@ -30,11 +30,11 @@ La implementación conserva el progreso con registros de comprobación e identif
 
 ## Puestos y redes
 
-- **Análisis:** escritorio Linux ligero, accesible por noVNC dentro de la plataforma; solo ve la zona pública del caso.
+- **Análisis:** escritorio Linux ligero accesible por noVNC o SSH desde la terminal del alumno; ambos entran al mismo puesto, que solo ve la zona pública del caso.
 - **Soporte:** estación SSH interna con acceso a las copias. Se alcanza desde el puesto de análisis; no publica SSH al host.
 - **Aplicaciones:** otra estación SSH con acceso a la aplicación y a archivos de inventario de solo lectura; ejecuta Syft y Grype sin socket Docker.
 - **Servicios:** entrada pública simulada, aplicación y copias mantienen redes separadas. Los puestos no actúan como routers.
-- **Plano educativo:** comprueba resultados y guarda el expediente. La interfaz solo publica una dirección loopback. noVNC se entrega mediante un proxy fijo al escritorio; no hay un proxy abierto a otros destinos.
+- **Plano educativo:** comprueba resultados y guarda el expediente. La plataforma publica web y SSH solo en loopback. noVNC y SSH se entregan mediante reenvíos de destino fijo al escritorio; no hay un proxy abierto a otros destinos.
 
 Los puestos no tienen egreso a Internet durante el juego. Las descargas de imágenes, bases y modelos corresponden a la preparación. El host Docker sigue bajo control de su propietario: esta edición local no es un sistema de examen resistente a un administrador malicioso ni un despliegue multiusuario de producción.
 

@@ -43,3 +43,7 @@ La figura de comparación de contexto, conservada como recurso complementario y 
 - Normativa chilena: enlaces a BCN y ANCI, con alcance OIV exclusivamente simulado.
 
 Los dossiers, costos, impactos, expedientes y fallas de la aplicación del curso son sintéticos. Los reportes de proveedor `VENDOR-06/07` son trampas didácticas, no reportes reales de terceros.
+
+## Credencial pública de entrenamiento
+
+El par Ed25519 en `training/ssh` es material original generado exclusivamente para la práctica y publicado por diseño. No contiene llaves de una instalación real, de GitHub ni del docente. Su privada se ofrece también en la interfaz; solo se autoriza para student en la entrada local del laboratorio. Las privadas internas por instalación y secretos de verificación no forman parte del repositorio.

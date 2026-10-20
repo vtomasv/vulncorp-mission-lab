@@ -23,13 +23,13 @@ cd vulncorp-mission-lab
 ./lab.sh prepare-game
 ```
 
-Windows PowerShell: `.\lab.ps1 doctor` y `.\lab.ps1 prepare-game`. Abre [el laboratorio local](http://localhost:8095). Entra al puesto y ejecuta `lab iniciar`. La guía escribe el comando cuando se lo pides; tú lo revisas y pulsas Enter.
+Windows PowerShell: `.\lab.ps1 doctor` y `.\lab.ps1 prepare-game`. Abre [el laboratorio local](http://localhost:8095). Elige **Entrar al puesto** para noVNC o **Conectar por SSH** para tu terminal. Ejecuta `lab iniciar`; ambos accesos registran la misma evidencia y progreso. El usuario es `student`, se autentica por llave y no usa contraseña. El [par de entrenamiento, incluida su privada](training/ssh/README.md) está publicado también en la interfaz.
 
 En sesiones siguientes usa `./lab.sh up` o `.\lab.ps1 up`. `down` detiene este proyecto y conserva progreso, bases y modelos. La [guía de inicio](docs/INICIO.md) explica cada paso.
 
 ## Lo que ocurre de verdad
 
-El navegador conecta a un escritorio Linux mediante noVNC. Desde allí se entra por SSH a soporte y aplicaciones, sin puertos SSH o VNC publicados al host. Cada puesto tiene una perspectiva de red distinta. Syft y Grype trabajan con archivos reales copiados de las imágenes del caso; el alcance parcial se conserva en el reporte.
+Puedes entrar al mismo puesto de análisis por noVNC o con `./lab.sh ssh` / `.\lab.ps1 ssh` desde tu terminal. La plataforma publica web en `127.0.0.1:8095` y un reenvío SSH fijo hacia análisis en `127.0.0.1:2222`. Desde análisis se entra por SSH a soporte y aplicaciones, que no publican puertos al host. El escritorio VNC permanece interno. Cada puesto tiene una perspectiva de red distinta. Syft y Grype trabajan con archivos reales copiados de las imágenes del caso; el alcance parcial se conserva en el reporte.
 
 Los servicios registran las solicitudes que reciben. Los agentes de los puestos firman los resultados de acciones acotadas y el verificador los vincula con la campaña. Un clic, una reflexión o un reporte subido manualmente no acreditan una ejecución. El último objetivo exige **403 en exportación + transacción completada después de la medida + residual con ambas referencias**.
 
@@ -40,6 +40,7 @@ La IA usa Ollama y Qwen3 1.7B local, con CPU, fuentes recuperadas y revisión hu
 - [Replanteamiento del juego](docs/REPLANTEAMIENTO_JUEGO.md): campaña, criterios y extensión.
 - [Uso docente: tres jornadas de siete horas](docs/DOCENCIA.md): trabajo cognitivo y discusión, fuera de la interfaz del jugador.
 - Guías paso a paso de [Terreno](labs/01-superficie/ESTUDIANTE.md), [Señales](labs/02-evidencia/ESTUDIANTE.md) y [Continuidad](labs/03-priorizacion/ESTUDIANTE.md).
+- [Acceso SSH y credenciales de práctica](docs/SSH.md).
 - [Arquitectura y confianza de la evidencia](docs/ARQUITECTURA.md), [IA local](docs/IA_LOCAL.md), [validación y límites](docs/VALIDACION.md), [soluciones](docs/SOLUCIONES.md).
 - [Hechos reales y fuentes](docs/CASOS_Y_FUENTES.md), [licencias](NOTICE.md).
 

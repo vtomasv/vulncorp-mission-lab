@@ -32,8 +32,8 @@ Si PowerShell bloquea scripts, consulta la política del equipo con el docente. 
 ## Jugar
 
 1. Abre [localhost:8095](http://localhost:8095).
-2. Lee **Primer contacto** y pulsa **Entrar al puesto**.
-3. Haz clic dentro de la terminal Linux. Pulsa **Pegar en el puesto**: aparecerá `lab iniciar`.
+2. Lee **Primer contacto**. Puedes pulsar **Entrar al puesto** para noVNC o **Conectar por SSH** para ver usuario, llaves y comandos. El usuario es `student` y no se usa contraseña. En el diálogo SSH, **Usar mi terminal y ver los pasos** muestra las instrucciones junto al objetivo sin abrir el escritorio.
+3. En noVNC, haz clic dentro de la terminal Linux y pulsa **Pegar en el puesto**. Para usar tu terminal ejecuta `./lab.sh ssh` o `.\lab.ps1 ssh` en la carpeta del proyecto y escribe `lab iniciar` una vez conectado.
 4. Revisa el comando y pulsa **Enter**. Verás `uid=1000(student)`, el nombre del puesto y un ID de evidencia.
 5. En unos segundos aparece **Objetivo comprobado · +40 PX**. Continúa al siguiente objetivo.
 
@@ -45,7 +45,7 @@ El botón de pegar solo escribe una línea; no la ejecuta. Si un comando queda e
 
 En análisis, `ssh ops` entra a soporte y `ssh appdesk` a aplicaciones. El prompt cambia. `exit` vuelve al puesto anterior. No entres a aplicaciones desde soporte: vuelve primero a análisis. Si ejecutas un comando en la perspectiva incorrecta, puede no haber evidencia válida; revisa la ubicación que indica la guía.
 
-Estos son computadores Linux en contenedores distintos. noVNC transmite pantalla y teclado del puesto de análisis. SSH permite usar los otros puestos. El host no publica sus puertos.
+Estos son computadores Linux en contenedores distintos. noVNC y tu cliente SSH acceden al mismo puesto de análisis. Soporte y aplicaciones siguen siendo internos. El [par de llaves de práctica](../training/ssh/README.md) es intencionalmente público y está disponible en la interfaz; la [guía SSH](SSH.md) explica permisos, huellas y conexión manual.
 
 ## Guardar y volver
 
@@ -54,6 +54,7 @@ El cuaderno muestra objetivos acreditados, decisiones y procedencia. **Exportar 
 | Acción desde la carpeta del proyecto | macOS/Linux | Windows |
 |---|---|---|
 | Volver a iniciar | `./lab.sh up` | `.\lab.ps1 up` |
+| Entrar desde tu terminal | `./lab.sh ssh` | `.\lab.ps1 ssh` |
 | Ver estado | `./lab.sh status` | `.\lab.ps1 status` |
 | Detener sin borrar | `./lab.sh down` | `.\lab.ps1 down` |
 | Exportar a artifacts | `./lab.sh export` | `.\lab.ps1 export` |

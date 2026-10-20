@@ -26,8 +26,10 @@ jobs:
         run: ./lab.sh up
       - name: Pruebas integradas reales
         run: ./lab.sh smoke
-      - name: Juego real sin modelo ni base de escáner
-        run: python3 tests/integration_game.py
+      - name: Llaves, autenticación y límites del acceso SSH
+        run: python3 -m tests.integration_ssh
+      - name: Juego real por SSH desde la terminal del alumno
+        run: python3 tests/integration_game.py --ssh
       - name: Rutas desde dos zonas
         run: |
           ./lab.sh discover public > /tmp/public.json

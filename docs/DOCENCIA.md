@@ -6,9 +6,9 @@ Solo el examen final del curso genera nota. Los PX son hitos de práctica sin po
 
 ## Preparación docente
 
-Ejecutar `prepare-game` antes de la jornada; comprobar noVNC, SSH, Grype e inferencia en cada equipo. Precargar imágenes, base y pesos. Probar las guías con una persona principiante y registrar tiempos: no hay todavía piloto físico de 16 GB ni validación de duración en una cohorte.
+Ejecutar `prepare-game` antes de la jornada; comprobar noVNC, SSH desde el host, los saltos internos, Grype e inferencia en cada equipo. Precargar imágenes, base y pesos. Probar las guías con una persona principiante y registrar tiempos: no hay todavía piloto físico de 16 GB ni validación de duración en una cohorte.
 
-Cada estudiante dispone de su instalación. Se puede discutir en tríos, rotando analista, dueño y auditor cada 25 minutos, pero cada persona opera su puesto y conserva sus decisiones. El curso no requiere instalar herramientas de seguridad en el host.
+Cada estudiante dispone de su instalación. Puede elegir noVNC o su propia terminal SSH; los dos accesos comparten puesto y progreso. El par de entrenamiento es público, con usuario student y autenticación por llave; no debe usarse en servidores reales. Se puede discutir en tríos, rotando analista, dueño y auditor cada 25 minutos, pero cada persona opera su puesto y conserva sus decisiones. El curso no requiere instalar herramientas de seguridad en el host.
 
 ## Distribución de cada jornada
 

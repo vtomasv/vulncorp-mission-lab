@@ -17,3 +17,6 @@ PermitTunnel no
 PrintMotd no
 StrictModes yes
 Subsystem sftp internal-sftp
+
+PermitUserRC no
+DisableForwarding yes

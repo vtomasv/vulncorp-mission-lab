@@ -174,6 +174,13 @@ class Handler(BaseHTTPRequestHandler):
         if path.startswith('/desktop/'):
             from .desktop_proxy import serve
             return serve(self)
+        if path=='/api/access':
+            from .access import metadata
+            return self.send(metadata(sys.modules[__name__]))
+        if path.startswith('/training/ssh/'):
+            from .access import DOWNLOADS,serve_key
+            if path in DOWNLOADS:return serve_key(self,path)
+            return self.send({'error':'Archivo no disponible'},404)
         if path=='/api/game':
             from . import game
             return self.send(game.snapshot(sys.modules[__name__]))
@@ -213,4 +220,6 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__=='__main__':
     connect().close()
+    from .ssh_proxy import start
+    start()
     ThreadingHTTPServer(('0.0.0.0',8000),Handler).serve_forever()

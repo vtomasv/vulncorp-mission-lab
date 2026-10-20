@@ -1,10 +1,10 @@
 # Terreno · reconstruye antes de decidir
 
-Tu misión es conocer el servicio y las perspectivas de acceso. Abre el laboratorio, entra al puesto y sigue un objetivo a la vez. Todo ocurre dentro de la empresa ficticia. Los datos son sintéticos y los puntos no son una nota.
+Tu misión es conocer el servicio y las perspectivas de acceso. Abre el laboratorio, entra al puesto por **noVNC** o **SSH** y sigue un objetivo a la vez. Para SSH, pulsa **Conectar por SSH** o ejecuta `./lab.sh ssh` / `.\lab.ps1 ssh` desde tu equipo: usuario `student`, llave de práctica publicada, sin contraseña. Ambos accesos comparten progreso. Consulta [la guía SSH](../../docs/SSH.md). Todo ocurre dentro de la empresa ficticia. Los datos son sintéticos y los puntos no son una nota.
 
 ## 1. Primer contacto
 
-Predice con qué identidad trabajarás. En la terminal del escritorio ejecuta:
+Predice con qué identidad trabajarás. En la terminal del puesto (noVNC o SSH) ejecuta:
 
 ```bash
 lab iniciar

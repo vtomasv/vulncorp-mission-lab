@@ -4,6 +4,9 @@ import fs from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
 const {chromium}=await import(process.env.PLAYWRIGHT_PATH||'playwright');
 const full=process.env.LAB_UI_FULL==='1';
+// A fresh test starts at the analysis prompt; real SSH/noVNC sessions remain independent.
+execFileSync('docker',['compose','restart','workstation'],{stdio:'pipe'});
+execFileSync('docker',['compose','up','-d','--wait','workstation','ops','appdesk'],{stdio:'pipe'});
 execFileSync('docker',['compose','exec','-T','mission','python','-c',"import time;from app.server import save,dispatch;save('game_campaign',{'started':time.time(),'catalog_version':'2.0','purpose':'Validación de navegador'});dispatch('/api/control',{'action':'reset','reason':'Preparar validación real de interfaz conservando todo el historial.'})"]);
 const browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHANNEL?{channel:process.env.PLAYWRIGHT_CHANNEL}:{})});
 const page=await browser.newPage({viewport:{width:1440,height:1000},deviceScaleFactor:1});
@@ -21,7 +24,24 @@ assert.equal(await page.locator('body').innerText().then(t=>/clase\s*\d|califica
 await page.screenshot({path:'docs/assets/mission-control.png',fullPage:false});
 // Locked previews explain a prerequisite and cannot open a workstation for that goal.
 await page.locator('[data-zone=senales]').click();assert.equal(await page.locator('.locked-panel').isVisible(),true);await page.locator('[data-action=current]').click();
-await desk();await page.frameLocator('#desktop-frame').locator('canvas').focus();await page.keyboard.press('Control+u');await page.keyboard.press('Control+l');await page.getByRole('button',{name:'Pegar en el puesto',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#desktop-frame').dataset.lastTyped==='lab iniciar');await page.frameLocator('#desktop-frame').locator('canvas').focus();await page.keyboard.press('Enter');await completed('contacto');await page.waitForTimeout(500);await page.screenshot({path:'docs/assets/workstation-proof.png'});
+// Entry from the student's own terminal must advance this same visible campaign.
+await page.getByRole('button',{name:'Conectar por SSH',exact:true}).click();
+const accessDialog=page.getByRole('dialog',{name:'Conecta desde tu terminal'});
+await accessDialog.getByText('Vacía · no se solicita',{exact:true}).waitFor();
+assert.ok((await accessDialog.innerText()).includes('student'));
+await accessDialog.getByText('Llaves publicadas y conexión manual',{exact:true}).click();
+const downloading=page.waitForEvent('download');await accessDialog.getByRole('link',{name:'Descargar llave privada de práctica',exact:true}).click();
+const download=await downloading;await download.saveAs('artifacts/ui-training-key');
+assert.equal(await fs.readFile('artifacts/ui-training-key','utf8'),await fs.readFile('training/ssh/vulncorp_student_ed25519','utf8'));
+await page.screenshot({path:'docs/assets/ssh-access.png'});
+await page.getByRole('button',{name:'Usar mi terminal y ver los pasos',exact:true}).click();
+await page.locator('#ssh-steps').waitFor();assert.ok((await page.locator('#ssh-steps').innerText()).includes('lab iniciar'));assert.equal((await getGame()).xp,0);
+assert.match(execFileSync('./lab.sh',['ssh','lab iniciar'],{encoding:'utf8'}),/uid=1000\(student\)/);
+await completed('contacto');
+// Repeating the same action in noVNC cannot award a second 40 PX.
+await page.locator('#desk-button').click();await page.locator('#workspace.connected').waitFor({timeout:30000});
+await command('lab iniciar');await page.waitForTimeout(900);
+assert.equal((await getGame()).xp,40);await page.screenshot({path:'docs/assets/workstation-proof.png'});
 await next();await command('curl -s http://gateway:8080/api/transaction | jq');await completed('funcion');
 await next();await command('lab red');await completed('segmento');
 await next();await command('curl -s http://gateway:8080/api/export | jq');await page.waitForTimeout(650);await command('curl -s http://gateway:8080/api/diagnostics | jq');await completed('exposicion');
@@ -47,7 +67,7 @@ if(full){
  for(const[k,v]of Object.entries({exploitation:'P',exposure:'C',automatable:'Y',human_impact:'H'}))await page.selectOption(`[name=${k}]`,v);await page.waitForFunction(()=>document.querySelectorAll('[data-evidence-picker=residual] input').length>=2);for(const checkbox of await page.locator('[name=evidence]').all())await checkbox.check();await fillReason();await page.locator('#risk-form [type=submit]').click();await completed('continuidad');const final=await getGame();assert.equal(final.xp,1370);assert.equal(final.completed,15);await page.screenshot({path:'artifacts/game-complete.png'});
 }
 await route();await page.getByRole('button',{name:'Cuaderno',exact:true}).click();await page.getByRole('dialog',{name:'Lo que ya puedes demostrar'}).waitFor();await page.getByRole('button',{name:'Cerrar cuaderno',exact:true}).click();
-await page.setViewportSize({width:390,height:844});await page.locator('#route-button').click();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2));await page.screenshot({path:'docs/assets/game-mobile.png',fullPage:true});
+await page.setViewportSize({width:390,height:844});await page.locator('#route-button').click();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2));await page.emulateMedia({reducedMotion:'reduce'});await page.waitForTimeout(650);await page.screenshot({path:'docs/assets/game-mobile.png',fullPage:true});await page.locator('#help-button').click();await page.getByRole('button',{name:'Conectar por SSH desde mi terminal',exact:true}).click();await page.getByText('Vacía · no se solicita',{exact:true}).waitFor();assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2));await page.screenshot({path:'artifacts/ssh-access-mobile.png',fullPage:true});await page.getByRole('button',{name:'Cerrar acceso SSH',exact:true}).click();
 await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.evaluate(()=>getComputedStyle(document.body).colorScheme),'light');assert.deepEqual(errors,[]);
 } catch(error) {await page.screenshot({path:'artifacts/game-ui-failure.png',fullPage:true});console.error('Visible errors:',await page.locator('.form-error').allTextContents());await browser.close();throw error;}
-await browser.close();console.log(`PASS: noVNC real, ${full?'15':'5'} objetivos, rutas y ${full?'formularios, IA y residual, ':''}escritorio/móvil sin desborde ni errores de consola.`);
+await browser.close();console.log(`PASS: SSH del alumno + noVNC real, descarga de llave, ${full?'15':'5'} objetivos, rutas y ${full?'formularios, IA y residual, ':''}escritorio/móvil sin desborde ni errores de consola.`);

@@ -7,10 +7,13 @@ COPY app ./app
 COPY data ./data
 COPY web ./web
 COPY tests ./tests
+COPY stations/sshd* ./stations/
+# Only this intentionally public training pair is distributed by the student UI.
+COPY --chmod=644 training/ssh/vulncorp_student_ed25519* ./training/ssh/
 COPY requirements-legacy.txt ./requirements-legacy.txt
 COPY LICENSE NOTICE.md ./
 COPY scripts/vendor/anatomy/LICENSE ./licenses/anatomy.txt
-RUN mkdir -p /state /secrets && chown 10001:10001 /state /secrets
+RUN mkdir -p /state /secrets && chown 10001:10001 /state /secrets && chmod 755 /app/training /app/training/ssh
 USER 10001:10001
 CMD ["python", "-m", "app.server"]
 
@@ -34,6 +37,7 @@ FROM station-os AS station-base
 COPY app ./app
 COPY data ./data
 COPY stations ./stations
+COPY training/ssh/vulncorp_student_ed25519.pub ./training/ssh/
 RUN install -m 755 stations/lab /usr/local/bin/lab && chmod 755 stations/*.sh
 ENV LAB_SECRET_DIR=/secrets LAB_STATION=ops
 ENTRYPOINT ["/app/stations/entrypoint.sh"]

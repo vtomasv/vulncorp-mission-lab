@@ -6,7 +6,7 @@ Fecha: **20 de octubre de 2026**. Se distingue configuración, ejecución funcio
 
 | Comprobación | Resultado |
 |---|---|
-| Pruebas unitarias | 43 correctas: 72 ramas SSVC oficiales, contexto, presupuesto, referencias IA y de evidencia; además desbloqueos, puntos únicos, campañas separadas, firma alterada, actor incorrecto y pruebas posteriores al cambio. |
+| Pruebas unitarias | 49 correctas: 72 ramas SSVC oficiales, contexto, presupuesto, referencias IA y de evidencia; además desbloqueos, puntos únicos, campañas separadas, firma alterada, actor incorrecto y pruebas posteriores al cambio. |
 | Campaña integrada | Los 15 objetivos completados con 1370 PX; reintentos sin duplicar puntos. Comandos reales desde análisis y por SSH, Syft/Grype, IA local, revisión y residual. |
 | Escritorio real | Chrome → noVNC → Linux UID 1000 → evidencia recogida → avance. SSH con terminal interactiva probado en soporte y aplicaciones. |
 | Perspectivas | Análisis: gateway. Soporte: gateway/backup. Aplicaciones: gateway/records. También se comprobó denegación por IP directa desde análisis hacia redes que no comparte. |
@@ -18,6 +18,22 @@ Fecha: **20 de octubre de 2026**. Se distingue configuración, ejecución funcio
 | Compatibilidad funcional | El smoke previo sigue pasando: transacción, exposición, mitigación, continuidad, rotación, decisiones y exportación. |
 
 La revisión de navegador cubre los comandos a través de noVNC y los formularios de proveedor, expediente, dos dueños, revisión IA, cartera y residual. Las capturas de [ruta](assets/mission-control.png), [puesto](assets/workstation-proof.png) y [móvil](assets/game-mobile.png) acompañan esta edición. El registro de desarrollo se conserva localmente en `artifacts/`; esos archivos de ejecución no se publican automáticamente.
+
+## Acceso dual: noVNC y SSH
+
+La entrada SSH del alumno usa el par Ed25519 de entrenamiento publicado en `training/ssh` y descargable desde la interfaz. Usuario student; contraseña deshabilitada y llave sin frase de paso. El puerto es 127.0.0.1:2222 por defecto, configurable con LAB_SSH_PORT. La plataforma reenvía el flujo únicamente a workstation:2222 para conservar análisis solo en edge; la autenticación y el cifrado terminan en sshd del puesto.
+
+La campaña completa de quince objetivos pasó también con comandos enviados por el cliente SSH del host, incluyendo Syft, Grype, IA local y el cierre residual: 1370 PX. Los formularios se registran en la plataforma; no se afirma que exista una CLI para todas las decisiones. Las nuevas unidades comprueban metadatos, huellas, identidad firmada, lista exacta de descargas y llave autorizada por rol.
+
+Pruebas reproducibles adicionales:
+
+```bash
+python3 -m tests.integration_ssh
+python3 tests/integration_game.py --ssh
+python3 tests/integration_game.py --ssh --full
+```
+
+`integration_ssh` descarga el par real por HTTP, deriva su pública con OpenSSH, verifica la huella del servidor y el UID de la sesión y su terminal interactiva, y exige rechazo de root, contraseña, llave ajena, forwarding y rutas de archivos internos. También se verificó el puerto alternativo 2244 y se restauró 2222. La prueba de navegador descarga la llave y comprueba el avance producido por SSH en la misma campaña que luego continúa por noVNC, sin duplicar PX.
 
 ## Recursos
 
@@ -49,6 +65,6 @@ LAB_UI_FULL=1 PLAYWRIGHT_CHANNEL=chrome node tests/ui.mjs
 
 Puede indicarse `PLAYWRIGHT_PATH` para una instalación existente. Los alumnos no necesitan Node o Playwright. El test crea una campaña y conserva captura en caso de fallo. Comprueba progreso desde la red real y no desde un terminal simulado con texto HTML.
 
-La [automatización pública](https://github.com/vtomasv/vulncorp-mission-lab/actions/workflows/ci.yml) prueba Linux AMD64: unidades, contrato de red, construcción de puestos, smoke, cinco objetivos con evidencia real, SSH interactivo y perspectivas de red. No descarga el modelo ni acredita inferencia en CI; esa ejecución se valida localmente por separado.
+La [automatización pública](https://github.com/vtomasv/vulncorp-mission-lab/actions/workflows/ci.yml) prueba Linux AMD64: unidades, contrato de red, construcción de puestos, smoke, cinco objetivos con entrada SSH desde el host, autenticación/rechazos, SSH interactivo y perspectivas de red. No descarga el modelo ni acredita inferencia en CI; esa ejecución se valida localmente por separado.
 
 La figura Anatomy se conserva como recurso complementario, fuera de la ruta principal. Su auditoría de geometría sigue pasando; no se confunde con la comprobación del juego.

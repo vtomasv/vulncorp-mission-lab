@@ -2,6 +2,7 @@
 const $ = (s, root = document) => root.querySelector(s);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let game, boot, selected, zone, step = 0, busy = false, connected = false, riskClient = 0, riskStep = 0, riskDraft = {};
+let accessMode='novnc';try{accessMode=localStorage.getItem('vulncorp-access-mode')==='ssh'?'ssh':'novnc';}catch(error){}
 const stationNames = {analyst:'Puesto de análisis',ops:'Estación de soporte',appdesk:'Estación de aplicaciones'};
 const api = async (url, data) => {
   const r = await fetch(url, data === undefined ? {} : {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
@@ -37,10 +38,20 @@ function renderQuest() {
   let body;
   if (state === 'locked') body = `<div class="locked-panel"><h2>Primero, la evidencia anterior</h2><p>Este desafío se abre al comprobar «${esc(game.catalog.challenges.find(x=>x.id===c.requires[0])?.title || 'el objetivo anterior')}».</p>${primary('Volver al objetivo activo','current')}</div>`;
   else if (state === 'done') body = `<div class="success-panel"><span class="complete-mark" aria-hidden="true">✓</span><h2>Objetivo comprobado</h2><p>+${c.xp} PX de práctica. Tu evidencia quedó en el cuaderno.</p>${game.current?primary('Continuar el recorrido →','current'):primary('Ver mi expediente','notebook')}</div><div class="objectives">${checksHTML(c)}</div>${!game.current?'<p class="muted">Has cerrado este tramo de Operación continuidad. El caso puede extenderse con nuevas zonas y desafíos.</p>':''}`;
-  else body = `${c.steps.length?`<div class="task-scene"><div><span class="station-tag">LINUX REAL · RED DE LA EMPRESA</span><h3>${esc(stationNames[c.station])}</h3><p>Entra al escritorio. La guía te acompaña mientras investigas en la terminal.</p>${primary('Entrar al puesto →','desk')}</div>${stationArt()}</div>`:''}<div id="challenge-form">${c.form?formHTML(c):''}</div><div id="quest-checks" class="objectives" aria-live="polite">${checksHTML(c)}</div><div class="task-tools">${hints(c)}<p id="verification-note">La evidencia se comprueba automáticamente.</p></div>`;
+  else body = `${c.steps.length?taskHTML(c):''}<div id="challenge-form">${c.form?formHTML(c):''}</div><div id="quest-checks" class="objectives" aria-live="polite">${checksHTML(c)}</div><div class="task-tools">${hints(c)}<p id="verification-note">La evidencia se comprueba automáticamente.</p></div>`;
   $('#quest').innerHTML = `<div class="quest-frame"><div class="quest-top"><span class="kicker">${esc(z.short.toUpperCase())} / OBJETIVO ${String(index).padStart(2,'0')}</span><span class="reward">✧ ${c.xp} PX</span></div><h1>${esc(c.title)}</h1><p class="quest-brief">${esc(c.brief)}</p>${body}</div>`;
   wireForms(); if (!$('#workspace').hidden) renderGuide();
 }
+function sshSteps(c) {
+  const s=c.steps[step];
+  return `<div class="guide-step-counter">PASO ${step+1} DE ${c.steps.length}</div><div class="guide-location">${esc(s.where)}</div><pre>${esc(s.command)}</pre><p class="step-reason">${esc(s.why)}</p><button class="secondary" data-action="copy-step">Copiar comando del paso</button><div class="step-navigation"><button class="quiet-button" data-action="step-back" ${step===0?'disabled':''}>← Anterior</button><button class="quiet-button" data-action="step-next" ${step===c.steps.length-1?'disabled':''}>Siguiente paso →</button></div>`;
+}
+function taskHTML(c) {
+  if(accessMode==='ssh')return `<section class="form-card ssh-task"><span class="station-tag">TU TERMINAL · LA MISMA CAMPAÑA</span><h3>Guía para ${esc(stationNames[c.station].toLowerCase())}</h3><p>Ejecuta cada paso dentro del puesto indicado. La conexión SSH inicial siempre entra a análisis.${c.station!=='analyst'?` Si abriste una sesión nueva, continúa con <code>ssh ${esc(c.station)}</code>; sal primero de otro puesto con <code>exit</code>.`:' Si estás en otro puesto, vuelve con exit.'}</p><div id="ssh-steps">${sshSteps(c)}</div><div class="ssh-task-links"><button class="quiet-button" data-action="ssh-access">Acceso y llaves SSH</button><button class="quiet-button" data-action="desk">Usar escritorio noVNC</button></div></section>`;
+  return `<div class="task-scene"><div><span class="station-tag">LINUX REAL · RED DE LA EMPRESA</span><h3>${esc(stationNames[c.station])}</h3><p>Entra al escritorio. La guía te acompaña mientras investigas en la terminal.</p>${primary('Entrar al puesto →','desk')}<button class="quiet-button access-alternative" data-action="ssh-access">Conectar por SSH</button></div>${stationArt()}</div>`;
+}
+function setAccessMode(mode){accessMode=mode;try{localStorage.setItem('vulncorp-access-mode',mode);}catch(error){}}
+function refreshSteps(){if($('#ssh-steps'))$('#ssh-steps').innerHTML=sshSteps(challenge());if(!$('#workspace').hidden)renderGuide();}
 function evidenceOptions(predicate = ()=>true) {
   return [...new Map(runRecords('evidence').filter(predicate).map(x=>[x.actor+':'+x.action+':'+x.result.status,x])).values()].map(x=>`<label class="evidence-option"><input type="checkbox" name="evidence" value="${esc(x.id)}">${esc(x.action)} · HTTP ${x.result.status} · ${esc(stationNames[x.actor]||x.actor)}<small>${esc(x.id)}</small></label>`).join('') || '<p class="muted">Aún no hay pruebas de esta campaña. Ejecuta las comprobaciones en la estación y vuelve aquí.</p>';
 }
@@ -118,6 +129,7 @@ function renderGuide() {
 }
 function openDesk() {
   if(game.states[selected]==='locked')return toast('Completa primero el objetivo activo.');
+  if(accessMode!=='novnc'){setAccessMode('novnc');renderQuest();}
   $('#workspace').hidden=false;$('#desk-button').classList.add('selected');$('#route-button').classList.remove('selected');document.body.style.overflow='hidden';
   if(!$('#desktop-frame').getAttribute('src'))$('#desktop-frame').src='/desktop/desk.html';renderGuide();$('#close-workspace').focus();
 }
@@ -132,6 +144,21 @@ async function verify() {
   } catch(error) {if($('#verification-note'))$('#verification-note').textContent='Sin conexión con el laboratorio. Reconectando…';}
   finally{busy=false;}
 }
+async function sshAccess() {
+  if($('#help').open)$('#help').close();
+  $('#ssh-content').innerHTML='<p class="muted">Consultando el acceso a tu puesto…</p>';
+  $('#ssh-access').showModal();
+  try {
+    const access=await api('/api/access');
+    $('#ssh-content').innerHTML=`<p class="muted">Tu terminal y noVNC entran al mismo puesto de análisis. Los comandos cuentan para la misma campaña; las decisiones y el progreso siguen en esta plataforma.</p>
+      <dl class="access-facts"><div><dt>Usuario</dt><dd><code>${esc(access.username)}</code></dd></div><div><dt>Destino local</dt><dd><code>${esc(access.host)}:${access.port}</code></dd></div><div><dt>Contraseña SSH</dt><dd>No se usa · acceso por llave</dd></div><div><dt>Frase de paso de la llave</dt><dd>Vacía · no se solicita</dd></div></dl>
+      <div class="access-command"><span class="station-tag">DESDE LA CARPETA DEL REPOSITORIO</span><p>macOS / Linux</p><pre>${esc(access.mac_linux_command)}</pre><button class="quiet-button" data-copy-access="${esc(access.mac_linux_command)}">Copiar comando macOS / Linux</button><p>Windows PowerShell</p><pre>${esc(access.powershell_command)}</pre><button class="quiet-button" data-copy-access="${esc(access.powershell_command)}">Copiar comando Windows</button></div>
+      <p class="access-note">El lanzador prepara los permisos de la llave y verifica el servidor de tu instalación. Al entrar, ejecuta <code>lab iniciar</code>. Después puedes usar <code>ssh ops</code> o <code>ssh appdesk</code>.</p>
+      <details class="source"><summary>Llaves publicadas y conexión manual</summary><p>Este par es público e idéntico para el entrenamiento local. Úsalo solo en este laboratorio.</p><div class="access-downloads"><a class="secondary" href="${esc(access.private_key_url)}" download>Descargar llave privada de práctica</a><a class="secondary" href="${esc(access.public_key_url)}" download>Descargar llave pública</a></div><p>En macOS / Linux, desde la raíz del repositorio:</p><pre>chmod 600 training/ssh/vulncorp_student_ed25519
+${esc(access.direct_command)}</pre><p>Si descargaste la llave, reemplaza su ruta por la ubicación del archivo. La primera conexión manual pregunta por la identidad del servidor. Compara esta huella antes de aceptar:</p><p class="host-fingerprint"><b>Servidor:</b> ${esc(access.host_fingerprint||'Aún no disponible. Comprueba el puesto y vuelve a abrir este acceso.')}</p><p class="host-fingerprint"><b>Llave del alumno:</b> ${esc(access.key_fingerprint)}</p><details><summary>Ver llave pública del alumno</summary><pre>${esc(access.public_key)}</pre></details></details>
+      <div class="dialog-footer"><button class="primary" data-action="use-ssh">Usar mi terminal y ver los pasos</button></div><p class="access-note">Cada alumno usa su instalación local. Soporte y aplicaciones conservan sus redes internas; entrar por SSH no abre conexiones directas desde tu equipo a esos servicios.</p>`;
+  } catch(error) {$('#ssh-content').innerHTML=`<p class="form-error">${esc(error.message)}</p><button class="secondary" data-action="retry-ssh-access">Volver a consultar</button>`;}
+}
 async function notebook() {
   boot=await api('/api/bootstrap');
   const awards=game.awards.map(x=>`<article class="notebook-item"><span class="station-tag">+${x.xp} PX · COMPROBADO</span><h3>${esc(game.catalog.challenges.find(c=>c.id===x.challenge_id)?.title)}</h3><p>${x.checks.map(c=>esc(c.label)).join('<br>')}</p><small>${esc(x.created_at)}</small></article>`).join('');
@@ -143,14 +170,19 @@ document.addEventListener('click',async e=>{
   if(zoneButton){zone=zoneButton.dataset.zone;const options=game.catalog.challenges.filter(c=>c.zone===zone);selected=(options.find(c=>game.states[c.id]==='active')||options[0]).id;step=0;render();}
   if(level)choose(level.dataset.level);
   if(close)$('#'+close.dataset.close).close();
+  const copy=e.target.closest('[data-copy-access]');if(copy){try{await navigator.clipboard.writeText(copy.dataset.copyAccess);toast('Comando copiado. Ejecútalo en la terminal de tu equipo.');}catch(error){toast('Selecciona el comando del recuadro y cópialo con el teclado.');}}
   const a=e.target.closest('[data-action]');if(!a)return;
   const action=a.dataset.action;
   if(action==='desk')openDesk();
+  if(action==='ssh-access')sshAccess();
+  if(action==='use-ssh'){setAccessMode('ssh');$('#ssh-access').close();renderQuest();$('#quest').focus();}
+  if(action==='copy-step'){try{await navigator.clipboard.writeText(challenge().steps[step].command);toast('Comando copiado. Ejecútalo dentro del puesto indicado.');}catch(error){toast('Selecciona el comando y cópialo con el teclado.');}}
+  if(action==='retry-ssh-access'){$('#ssh-access').close();sshAccess();}
   if(action==='close-desk')closeDesk();
   if(action==='current'){choose(game.current||game.catalog.challenges.at(-1).id);if(!$('#workspace').hidden){if(challenge().steps.length)renderGuide();else closeDesk();}$('#quest').focus();}
   if(action==='notebook')notebook();
-  if(action==='step-back'){step=Math.max(0,step-1);renderGuide();}
-  if(action==='step-next'){step=Math.min(challenge().steps.length-1,step+1);renderGuide();}
+  if(action==='step-back'){step=Math.max(0,step-1);refreshSteps();}
+  if(action==='step-next'){step=Math.min(challenge().steps.length-1,step+1);refreshSteps();}
   if(action==='type'){const text=challenge().steps[step].command;$('#desktop-frame').contentWindow.postMessage({type:'lab:type',text},location.origin);}
   if(action==='risk-next'||action==='risk-back'){retainRisk();riskStep+=action==='risk-next'?1:-1;refreshForm();}
 });

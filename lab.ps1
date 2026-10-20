@@ -8,7 +8,7 @@ Set-Location $PSScriptRoot
 function DC { & docker compose @args; if ($LASTEXITCODE -ne 0) { throw 'Docker Compose no pudo completar el paso. Revisa docs/SOLUCIONES.md.' } }
 function Write-Utf8($Path, $Lines) { [IO.File]::WriteAllText((Join-Path $PSScriptRoot $Path), ($Lines -join "`n"), (New-Object System.Text.UTF8Encoding($false))) }
 if ($Command -eq 'help') {
-  Write-Host '.\lab.ps1 up | prepare-game | doctor | status | down | sbom | scan | ai-prepare | ai-on | ai-off | test | smoke | export | reset-targets'
+  Write-Host '.\lab.ps1 up | prepare-game | ssh | doctor | status | down | sbom | scan | ai-prepare | ai-on | ai-off | test | smoke | export | reset-targets'
   Write-Host '.\lab.ps1 discover public     .\lab.ps1 discover support'
   Write-Host '.\lab.ps1 probe public export     .\lab.ps1 probe public transaction'
   return
@@ -21,6 +21,30 @@ switch ($Command) {
   doctor { docker version --format 'Motor: {{.Server.Version}} / {{.Server.Os}} / {{.Server.Arch}}'; docker info --format 'RAM Docker (bytes): {{.MemTotal}}'; DC version; Write-Host 'Referencia: 16 GB RAM, Docker 8 GB, CPU sin GPU. Ver docs/INICIO.md.' }
   up { DC build mission records workstation ops appdesk; DC up -d --wait mission records gateway backup workstation ops appdesk; if ($env:LAB_SKIP_AI -ne '1') { DC --profile ai up -d --wait ollama }; Write-Host 'Abre http://localhost:8095 (o LAB_PORT de .env).' }
   prepare-game { & $PSCommandPath up; DC run --rm --no-deps grype db update; DC run --rm --no-deps prepare-cache; & $PSCommandPath ai-prepare; Write-Host 'Campaña preparada. Abre http://localhost:8095.' }
+  ssh {
+    if (-not (Get-Command ssh -ErrorAction SilentlyContinue)) { throw 'Habilita el cliente OpenSSH de Windows.' }
+    New-Item -ItemType Directory -Force artifacts/ssh | Out-Null
+    $KeyPath = Join-Path $PSScriptRoot 'artifacts/ssh/student_ed25519'
+    # Repeated connections must also work after the prior copy was made read-only for this user.
+    if (Test-Path $KeyPath) { Remove-Item -Force $KeyPath }
+    Copy-Item 'training/ssh/vulncorp_student_ed25519' $KeyPath
+    if ([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) {
+      $Acl = Get-Acl $KeyPath
+      $Acl.SetAccessRuleProtection($true, $false)
+      foreach ($Rule in @($Acl.Access)) { $Acl.RemoveAccessRuleSpecific($Rule) }
+      $Identity = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+      $Acl.SetOwner(([Security.Principal.NTAccount]::new($Identity)))
+      $Acl.AddAccessRule(([Security.AccessControl.FileSystemAccessRule]::new($Identity, 'Read', 'Allow')))
+      Set-Acl -Path $KeyPath -AclObject $Acl
+    } else { & chmod 600 $KeyPath }
+    $Endpoint = (DC port mission 2222 | Out-String).Trim()
+    if ($Endpoint -notmatch '^127\.0\.0\.1:(\d+)$') { throw 'SSH debe estar publicado solo en 127.0.0.1. Ejecuta up.' }
+    $SshPort = $Matches[1]
+    $HostPublicKey = (DC exec -T workstation cat /journal/host_ed25519.pub | Out-String).Trim()
+    Write-Utf8 'artifacts/ssh/known_hosts' @("[127.0.0.1]:$SshPort $HostPublicKey")
+    & ssh -i $KeyPath -p $SshPort -o IdentitiesOnly=yes -o ForwardAgent=no -o StrictHostKeyChecking=yes -o UserKnownHostsFile=artifacts/ssh/known_hosts student@127.0.0.1
+    if ($LASTEXITCODE -ne 0) { throw 'No se pudo abrir SSH. Revisa docs/SSH.md.' }
+  }
   down { DC --profile ai --profile tools --profile scanners down }
   status { DC --profile ai ps }
   discover { if ($Zone -notin @('public','support')) { throw 'Zona: public o support' }; DC run --rm --no-deps "probe-$Zone" discover }

@@ -1647,3 +1647,21 @@ legend {
 .workspace-guide .success-panel h3 {
   font-size:16px
 }
+/* Access methods are contextual, so the route keeps a single primary action. */
+.access-alternative { display: block; margin-top: 10px; padding-left: 0; color: var(--purple); }
+.access-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; }
+.access-facts div { padding: 12px 15px; border: 1px solid var(--line); border-radius: 8px; }
+.access-facts dt { font-size: 10px; color: var(--muted); }
+.access-facts dd { margin: 3px 0 0; font-size: 13px; }
+.access-command { margin: 18px 0; padding: 15px; border: 1px solid var(--line); border-radius: 9px; }
+.access-command pre { margin: 7px 0; background: transparent; padding: 0; }
+.access-command .quiet-button { padding-left: 0; color: var(--purple); }
+.access-downloads { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+.access-note { font-size: 11px; color: var(--muted); line-height: 1.8; }
+.host-fingerprint { font-size: 10px; overflow-wrap: anywhere; }
+@media (max-width:650px) { .access-facts { grid-template-columns: 1fr; gap: 8px; } .access-downloads { flex-direction: column; } }
+
+.ssh-task-links { display:flex; flex-wrap:wrap; gap:16px; border-top:1px solid var(--line); padding-top:12px; }
+.ssh-task-links .quiet-button { padding-left:0; color:var(--purple); }
+.ssh-task pre { max-height:none; font-size:12px; }
+.ssh-task .step-reason { font-size:12px; }

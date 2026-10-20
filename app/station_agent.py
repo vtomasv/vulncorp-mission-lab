@@ -158,12 +158,15 @@ def identity():
                 value=fcntl.ioctl(sock.fileno(),0x8915,struct.pack('256s',name[:15].encode()))
                 addresses.append(socket.inet_ntoa(value[20:24]))
             except OSError:pass
-    event={'id':'station-identity','station':ROLE,'addresses':addresses,'occurred_at':time.time()}
+    public_key=Path('/journal/host_ed25519.pub')
+    event={'id':'station-identity','station':ROLE,'addresses':addresses,'occurred_at':time.time(),
+        'ssh_host_key':public_key.read_text().strip() if public_key.is_file() else None}
     return {'event':event,'signature':sign(event)}
 
 class Reader(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path=='/health':value={'ok':True,'station':ROLE}
+        elif self.path=='/identity' and hmac.compare_digest(self.headers.get('X-Station-Key',''),KEY):value=identity()
         elif self.path=='/evidence' and hmac.compare_digest(self.headers.get('X-Station-Key',''),KEY):
             with LOCK:value={'station':ROLE,'identity':identity(),'proofs':[json.loads(line) for line in JOURNAL.read_text().splitlines()] if JOURNAL.exists() else []}
         else:self.send_error(403);return

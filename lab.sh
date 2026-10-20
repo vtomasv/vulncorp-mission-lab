@@ -8,6 +8,7 @@ VulnCorp Mission Lab · sin herramientas de seguridad instaladas en el host
   ./lab.sh doctor                    comprobar el equipo
   ./lab.sh up                        construir e iniciar los puestos
   ./lab.sh prepare-game              preparar puestos, base Grype e IA (Internet)
+  ./lab.sh ssh                       entrar por llave desde tu terminal
   ./lab.sh down                      detener solo este proyecto; conserva evidencia
   ./lab.sh discover public|support    observar rutas desde una zona
   ./lab.sh probe public export        prueba acotada (transaction/diagnostics/backup)
@@ -41,6 +42,21 @@ case "$cmd" in
   dc run --rm --no-deps prepare-cache
   ./lab.sh ai-prepare
   echo 'Campaña preparada. Abre http://localhost:8095 y entra al puesto.';;
+ ssh)
+  command -v ssh >/dev/null || { echo 'Instala o habilita el cliente OpenSSH de tu equipo.'; exit 1; }
+  mkdir -p artifacts/ssh
+  chmod 700 artifacts/ssh
+  cp training/ssh/vulncorp_student_ed25519 artifacts/ssh/student_ed25519
+  chmod 600 artifacts/ssh/student_ed25519
+  endpoint=$(dc port mission 2222)
+  [[ "$endpoint" == 127.0.0.1:* ]] || { echo 'SSH debe estar publicado solo en 127.0.0.1. Ejecuta up y revisa Compose.'; exit 1; }
+  ssh_port=${endpoint##*:}
+  # Trust the host PUBLIC key read from our own container, never disable host verification.
+  host_public_key=$(dc exec -T workstation cat /journal/host_ed25519.pub </dev/null)
+  printf '%s %s\n' "[127.0.0.1]:$ssh_port" "$host_public_key" > artifacts/ssh/known_hosts
+  chmod 600 artifacts/ssh/known_hosts
+  shift
+  exec ssh -i artifacts/ssh/student_ed25519 -p "$ssh_port" -o IdentitiesOnly=yes -o ForwardAgent=no -o StrictHostKeyChecking=yes -o UserKnownHostsFile=artifacts/ssh/known_hosts student@127.0.0.1 "$@";;
  down) dc --profile ai --profile tools --profile scanners down;;
  status) dc --profile ai ps; ids=$(dc ps -q); if [[ -n "$ids" ]]; then docker stats --no-stream $ids; fi;;
  discover|probe)
