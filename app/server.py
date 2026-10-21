@@ -39,6 +39,9 @@ def save(kind,body):
           'created_at':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())}
     with closing(connect()) as c:
         with c:c.execute('INSERT OR REPLACE INTO records VALUES (?,?,?,?)',(item['id'],kind,item['created_at'],json.dumps(item,ensure_ascii=False)))
+    if kind=='game_campaign':
+        # Resuming an older run creates a new active interval, without changing its original start.
+        save('game_session',{'run_id':item['id'],'started':time.time()})
     return item
 
 def request_target(url,data=None,headers=None):
@@ -54,7 +57,7 @@ def request_target(url,data=None,headers=None):
 def export_bundle():
     bundle={'format':'vulncorp-evidence/1.1','synthetic':True,'legal_submission':False,'exported_at':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
             **{k:records(k) for k in ['evidence','decision','note','ai','review','triage','control','scan','context','portfolio','station','game_campaign','game_activation','game_award','game_analysis']}}
-    bundle.update(lab_event=records('lab_event'),lab_record=records('lab_record'))
+    bundle.update(lab_event=records('lab_event'),lab_record=records('lab_record'),game_session=records('game_session'))
     canonical=json.dumps(bundle,sort_keys=True,ensure_ascii=False).encode()
     return {**bundle,'content_sha256':hashlib.sha256(canonical).hexdigest()}
 

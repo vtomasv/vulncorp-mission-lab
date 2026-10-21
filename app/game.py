@@ -25,11 +25,18 @@ def verified_envelope(envelope,station):
 
 def campaign(store):
     runs=store.records('game_campaign')
-    if runs:return runs[-1]
+    if runs:
+        if not store.records('game_session'):store.save('game_session',{'run_id':runs[-1]['id'],'started':time.time()})
+        return runs[-1]
     return store.save('game_campaign',{'started':time.time(),'catalog_version':CATALOG['version']})
+
+def proof_run(sessions,occurred_at):
+    active=[r for r in sessions if r['started']<=occurred_at]
+    return max(active,key=lambda r:r['started'])['run_id'] if active else None
 
 def collect(store):
     known={x['id'] for x in store.records('station')};live={};addresses={}
+    sessions=store.records('game_session')
     def station_read(pair):
         role,host=pair
         try:
@@ -47,7 +54,9 @@ def collect(store):
                     if verified_envelope(envelope,role):
                         event=envelope['event']
                         if event['id'] not in known:
-                            store.save('station',{**event,'signature':envelope['signature'],'provenance':'station-agent'});known.add(event['id'])
+                            owner=event.get('result',{}).get('campaign') or proof_run(sessions,event.get('occurred_at',0))
+                            scope={'game_run':owner} if owner else {}
+                            store.save('station',{**event,**scope,'signature':envelope['signature'],'provenance':'station-agent'});known.add(event['id'])
     existing={x['id'] for x in store.records('evidence')}
     for target,port in [('gateway',8080),('records',8081),('backup',8082)]:
         response=store.request_target(f'http://{target}:{port}/_audit',headers={'X-Lab-Control':store.CONTROL_KEY})
@@ -57,7 +66,8 @@ def collect(store):
             route=event['path'];action={'/api/transaction':'transaction','/api/export':'export','/api/diagnostics':'diagnostics','/catalog':'backup'}.get(route)
             if not action:continue
             result={'status':event['status'],'body':event['body']}
-            store.save('evidence',{'id':event['id'],'actor':role,'occurred_at':event['occurred_at'],'boot_id':event['boot_id'],
+            owner=proof_run(sessions,event['occurred_at']);scope={'game_run':owner} if owner else {}
+            store.save('evidence',{'id':event['id'],**scope,'actor':role,'occurred_at':event['occurred_at'],'boot_id':event['boot_id'],
                 'action':action,'zone':role,'source':f'http://{target}:{port}{route}','result':result,'observed':True,
                 'provenance':'target-audit','content_sha256':hashlib.sha256(canonical(result)).hexdigest()})
             existing.add(event['id'])
@@ -74,7 +84,10 @@ def activation(store,run,challenge):
     return found[-1] if found else store.save('game_activation',{'run_id':run['id'],'challenge_id':challenge['id'],'started':time.time()})
 
 def conditions(store,challenge,run,active):
-    records=lambda kind:[x for x in store.records(kind) if x.get('occurred_at',0)>=run['started'] or x.get('game_run')==run['id']]
+    # Legacy unscoped records remain readable. New observations cannot leak from another run,
+    # including when an older campaign is resumed after a later test campaign.
+    records=lambda kind:[x for x in store.records(kind) if x.get('game_run')==run['id'] or
+                         ('game_run' not in x and x.get('occurred_at',0)>=run['started'])]
     station=records('station');evidence=records('evidence')
     def command(action,role=None):return [x for x in station if x['action']==action and (not role or x['station']==role)]
     def observed(action,status,role='analyst',since=None):return [x for x in evidence if x.get('actor')==role and x['action']==action and x['result']['status']==status and (since is None or x['occurred_at']>=since)]

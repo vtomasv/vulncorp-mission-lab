@@ -4,7 +4,7 @@
 
 | Comprobación | Resultado |
 |---|---|
-| Pruebas unitarias del repositorio | 62 aprobadas, incluyendo plazos, referencias inventadas, episodios históricos, causalidad y persistencia |
+| Pruebas unitarias del repositorio | 64 aprobadas, incluyendo plazos, referencias inventadas, episodios históricos, causalidad y persistencia |
 | Recorrido nuevo por SSH desde el host | 18/18 objetivos nuevos, gateway real, API vulnerable/corregida y colector real |
 | ZAP oficial | 2.17.0, cuatro solicitudes reales y análisis pasivo, reporte con hash |
 | Marcador | Subproceso fijo real y recibo del colector correlacionado; no reproducción de CVE |
@@ -43,3 +43,5 @@ python3 -m tests.integration_advanced --full
 Sin `--full`, la prueba de continuación recorre 17 objetivos y deja sin ejecutar la inferencia real final. La integración continua usa esa modalidad; no declara una inferencia local en el runner si no descargó sus pesos. Los archivos bajo `artifacts/` quedan fuera del repositorio por ser salidas de ejecución, no material precargado para simular resultados.
 
 El código de pruebas es para desarrollo/docencia. Las guías del alumno no otorgan PX mediante fixture. La plataforma comprueba fuentes, estados y estructura; la comprensión, proporcionalidad del argumento y autoridad del dueño se revisan en discusión. No hay nota por estos hitos.
+
+Una prueba de restauración detectó y corrigió una debilidad del núcleo anterior: observaciones posteriores podían completar una campaña más antigua al retomarla. Los registros nuevos se vinculan al intervalo activo de campaña y el verificador exige coincidencia de campaña cuando existe esa asociación. Se conservaron los registros de prueba y se restauraron los hitos de la campaña original desde el respaldo previo.

@@ -31,6 +31,15 @@ class CampaignTests(unittest.TestCase):
     def test_old_proof_cannot_complete_new_campaign(self):
         self.station('iniciar',result={'uid':1000},when=self.run['started']-5)
         self.assertFalse(self.checks('contacto')[0]['ok'])
+    def test_later_scoped_proof_cannot_complete_resumed_older_campaign(self):
+        server.save('station',{'action':'iniciar','station':'analyst','occurred_at':time.time(),
+                               'game_run':'another-test-run','result':{'uid':1000}})
+        self.assertFalse(self.checks('contacto')[0]['ok'])
+    def test_session_interval_attributes_delayed_collection_to_actual_run(self):
+        sessions=[{'run_id':'original','started':10},{'run_id':'test','started':20},{'run_id':'original','started':30}]
+        self.assertEqual(game.proof_run(sessions,25),'test')
+        self.assertEqual(game.proof_run(sessions,35),'original')
+        self.assertIsNone(game.proof_run(sessions,5))
     def test_identity_and_role_are_required(self):
         self.station('iniciar','ops',{'uid':1000});self.station('iniciar',result={'uid':0})
         self.assertFalse(self.checks('contacto')[0]['ok'])

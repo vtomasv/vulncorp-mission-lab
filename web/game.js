@@ -10,7 +10,7 @@ const api = async (url, data) => {
 };
 function toast(text) { $('#toast').textContent = text; $('#toast').hidden = false; clearTimeout(toast.timer); toast.timer = setTimeout(() => $('#toast').hidden = true, 6500); }
 function challenge() { return game.catalog.challenges.find(c => c.id === selected); }
-function runRecords(kind) { return (boot.records[kind] || []).filter(x => x.game_run === game.run.id || x.occurred_at >= game.run.started); }
+function runRecords(kind) { return (boot.records[kind] || []).filter(x => x.game_run === game.run.id || (!('game_run' in x) && x.occurred_at >= game.run.started)); }
 function primary(text, action, extra = '') { return `<button class="primary" data-action="${action}" ${extra}>${text}</button>`; }
 function choose(id) { selected = id; zone = challenge().zone; step = 0; riskStep = 0; riskDraft = {}; render(); }
 function render() {
