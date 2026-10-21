@@ -17,6 +17,7 @@ jobs:
         run: |
           node --check web/game.js
           node --check web/advanced.js
+          node tests/advanced-ui.mjs
           node --check tests/ui.mjs
           node scripts/build-context-figure.mjs --audit
       - name: Contrato de aislamiento
