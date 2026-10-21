@@ -46,7 +46,8 @@ La IA usa Ollama y Qwen3 1.7B local, con CPU, fuentes recuperadas y revisión hu
 - [Uso docente: tres jornadas de siete horas](docs/DOCENCIA.md): trabajo cognitivo y discusión, fuera de la interfaz del jugador.
 - Guías paso a paso de [Terreno](labs/01-superficie/ESTUDIANTE.md), [Señales](labs/02-evidencia/ESTUDIANTE.md) y [Continuidad](labs/03-priorizacion/ESTUDIANTE.md).
 - Nuevas guías de [Validación](labs/04-validacion/ESTUDIANTE.md), [Trazabilidad](labs/05-trazabilidad/ESTUDIANTE.md) y [Gobierno](labs/06-gobierno/ESTUDIANTE.md), con cuadernos y orientaciones del instructor.
-- [Continuación docente 4–6](docs/CONTINUACION_4_6.md): resultados, precondiciones, fuentes y límites; las PPT se prepararán después de estos talleres.
+- [Continuación docente 4–6](docs/CONTINUACION_4_6.md): resultados, precondiciones, fuentes y límites de los talleres.
+- [Propuesta de misión PHP2Shell](docs/PROPUESTA_PHP2SHELL.md): continuidad para IA, remediación y operación, con fuentes primarias, pruebas y criterios de avance. Es un diseño futuro, aún no implementado.
 - [Acceso SSH y credenciales de práctica](docs/SSH.md).
 - [Arquitectura y confianza de la evidencia](docs/ARQUITECTURA.md), [IA local](docs/IA_LOCAL.md), [validación y límites](docs/VALIDACION.md), [soluciones](docs/SOLUCIONES.md).
 - [Hechos reales y fuentes](docs/CASOS_Y_FUENTES.md), [licencias](NOTICE.md).
