@@ -81,7 +81,7 @@ def main(full=False):
         station('curl','-s','http://gateway:8080/api/export');station('curl','-fsS','http://gateway:8080/api/transaction');api('/api/game/verify',{})
         records=api('/api/bootstrap')['records']['evidence'];denied=next(x for x in reversed(records) if x.get('actor')=='analyst' and x['action']=='export' and x['result']['status']==403);business=next(x for x in reversed(records) if x.get('actor')=='analyst' and x['action']=='transaction' and x['result']['body'].get('status')=='completed')
         api('/api/decisions',payload('salud',[4,3,4,3],[denied['id'],business['id']],'residual',2));result=credit('continuidad')
-        assert result['completed']==result['total'] and result['xp']==result['total_xp']
+        assert all(result['states'][c['id']]=='done' for c in result['catalog']['challenges'][:15]) and result['current']=='alcance'
         for _ in range(3):assert api('/api/game/verify',{})['xp']==result['xp']
         result['validated_ai']={k:audit[k] for k in ['id','model','model_digest','elapsed_seconds','validation_errors']}
     (ROOT/'artifacts').mkdir(exist_ok=True)

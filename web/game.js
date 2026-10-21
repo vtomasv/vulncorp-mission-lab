@@ -70,6 +70,7 @@ function refreshEvidencePicker() {
 const reason = (label='Fundamento y límites de tu conclusión') => `<label>${label}<textarea name="reason" required minlength="40" maxlength="4000" placeholder="Relaciona lo observado con tu conclusión. Explica qué falta por demostrar."></textarea></label>`;
 const select = (name,label,options) => `<label>${label}<select name="${name}" required><option value="">Elige una conclusión…</option>${options.map(([v,t])=>`<option value="${v}">${esc(t)}</option>`).join('')}</select></label>`;
 function formHTML(c) {
+  if(c.form==='advanced')return AdvancedUI.render(c);
   if (c.form==='proveedor') return `<form class="form-card" id="analysis-form"><h3>Contrasta el reporte</h3><p>F-01: records · Django 3.2 · CVE-2021-35042.<br>VENDOR-06: records · Django 3.2 · misma CVE.<br>VENDOR-07: mission · requests 2.31.0.</p>${select('duplicate','¿Qué registro duplica F-01?',[['VENDOR-06','VENDOR-06'],['VENDOR-07','VENDOR-07']])}${select('misattributed','¿Qué registro atribuye el componente al activo equivocado?',[['VENDOR-06','VENDOR-06'],['VENDOR-07','VENDOR-07']])}${reason()}${primary('Guardar mi conclusión','submit','type="submit"')}<p class="form-error" role="alert"></p></form>`;
   if (c.form==='expediente') return `<form class="form-card" id="analysis-form"><h3>Presencia, uso y falla reproducida</h3>${select('component','F-01 · Django en records',[['confirmed','Explotabilidad confirmada por la presencia'],['present_not_reachable','Presente; ruta de uso no demostrada'],['false_positive','El componente no existe']])}${select('local','F-02 · Exportación sin autorización',[['confirmed','Falla de autorización reproducida'],['false_positive','Sin CVE, no hay vulnerabilidad']])}<fieldset><legend>Prueba de exportación desde análisis</legend><div data-evidence-picker="export">${evidenceOptions(evidenceFilter('export'))}</div></fieldset>${reason()}${primary('Conservar el expediente','submit','type="submit"')}<p class="form-error" role="alert"></p></form>`;
   if (['contexto','residual'].includes(c.form)) return riskHTML(c);
@@ -96,6 +97,7 @@ function retainRisk() { const f=$('#risk-form'); if(f) for (const [k,v] of new F
 function refreshForm() { $('#challenge-form').innerHTML=formHTML(challenge()); wireForms(); }
 function wireForms() {
   const form=$('#quest form'); if (!form) return;
+  if(form.id==='advanced-form'){AdvancedUI.wire(form,challenge());return;}
   if(form.id==='risk-form') {
     for(const [key,value] of Object.entries(riskDraft)) if(form.elements[key]) form.elements[key].value=value;
     const preview=()=>{const data=new FormData(form);if($('#risk-preview'))$('#risk-preview').textContent=4*Number(data.get('likelihood'))*Math.max(...['operation','people','data','financial'].map(k=>Number(data.get(k))));}; form.addEventListener('change',preview);preview();
@@ -139,7 +141,7 @@ async function verify() {
   try {
     const oldXP=game.xp, oldDone=game.completed;game=await api('/api/game/verify',{});boot=await api('/api/bootstrap');
     if(game.completed!==oldDone){render();if(game.xp>oldXP)toast(`Objetivo comprobado · +${game.xp-oldXP} PX`);}
-    else {refreshEvidencePicker();if($('#quest-checks'))$('#quest-checks').innerHTML=checksHTML(challenge());if($('#workspace-checks'))$('#workspace-checks').innerHTML=checksHTML(challenge());if($('#ai-wait')&&runRecords('ai').some(x=>x.mode==='live-local'))refreshForm();}
+    else {AdvancedUI.refresh();refreshEvidencePicker();if($('#quest-checks'))$('#quest-checks').innerHTML=checksHTML(challenge());if($('#workspace-checks'))$('#workspace-checks').innerHTML=checksHTML(challenge());if($('#ai-wait')&&runRecords('ai').some(x=>x.mode==='live-local'))refreshForm();}
     if($('#verification-note'))$('#verification-note').textContent='Comprobación automática activa · sin marcar tareas a mano.';
   } catch(error) {if($('#verification-note'))$('#verification-note').textContent='Sin conexión con el laboratorio. Reconectando…';}
   finally{busy=false;}
@@ -163,7 +165,7 @@ async function notebook() {
   boot=await api('/api/bootstrap');
   const awards=game.awards.map(x=>`<article class="notebook-item"><span class="station-tag">+${x.xp} PX · COMPROBADO</span><h3>${esc(game.catalog.challenges.find(c=>c.id===x.challenge_id)?.title)}</h3><p>${x.checks.map(c=>esc(c.label)).join('<br>')}</p><small>${esc(x.created_at)}</small></article>`).join('');
   const decisions=runRecords('decision').map(d=>`<article class="notebook-item"><h3>${esc(boot.clients.find(c=>c.id===d.client_id)?.name)} · ${d.state==='residual'?'Residual':'Inherente'}</h3><p>F-02 · índice ${d.calculation.index} · SSVC ${esc(d.calculation.ssvc.outcome)}<br>${esc(d.reason)}</p></article>`).join('');
-  $('#notebook-content').innerHTML=`<p class="muted">${game.completed} objetivos · ${game.xp} PX. Son hitos de práctica, sin efecto en la nota.</p>${awards||'<p>Tu primera evidencia aparecerá al completar el primer contacto.</p>'}${decisions}<details class="source"><summary>Pruebas y procedencia</summary>${runRecords('station').map(p=>`<p><b>${esc(p.action)}</b> · ${esc(p.station)}<br><small>${esc(p.id)}</small></p>`).join('')}${runRecords('evidence').map(p=>`<p><b>${esc(p.action)} · HTTP ${p.result.status}</b> · ${esc(p.actor)}<br><small>${esc(p.id)}</small></p>`).join('')}</details>`;$('#notebook').showModal();
+  $('#notebook-content').innerHTML=`<p class="muted">${game.completed} objetivos · ${game.xp} PX. Son hitos de práctica, sin efecto en la nota.</p>${awards||'<p>Tu primera evidencia aparecerá al completar el primer contacto.</p>'}${decisions}${runRecords('lab_record').map(r=>`<article class="notebook-item"><h3>${esc(game.catalog.challenges.find(c=>c.id===r.challenge_id)?.title)}</h3><p>${esc(r.answers.reason)}</p><details class="source"><summary>Ver análisis y fuentes</summary><pre>${esc(JSON.stringify(r,null,2))}</pre></details></article>`).join('')}<details class="source"><summary>Pruebas y procedencia</summary>${runRecords('station').map(p=>`<p><b>${esc(p.action)}</b> · ${esc(p.station)}<br><small>${esc(p.id)}</small></p>`).join('')}${runRecords('evidence').map(p=>`<p><b>${esc(p.action)} · HTTP ${p.result.status}</b> · ${esc(p.actor)}<br><small>${esc(p.id)}</small></p>`).join('')}</details>`;$('#notebook').showModal();
 }
 document.addEventListener('click',async e=>{
   const zoneButton=e.target.closest('[data-zone]'),level=e.target.closest('[data-level]'),close=e.target.closest('[data-close]');

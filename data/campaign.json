@@ -1,6 +1,6 @@
 {
   "id": "operacion-continuidad",
-  "version": "2.0",
+  "version": "3.0",
   "title": "Operación continuidad",
   "zones": [
     {
@@ -23,6 +23,27 @@
       "short": "Continuidad",
       "story": "Decide con el dueño y demuestra el efecto de tu medida.",
       "badge": "Servicio protegido"
+    },
+    {
+      "id": "validacion",
+      "name": "Comprueba la ruta",
+      "short": "Validación",
+      "story": "Diseña una prueba acotada y distingue lo que demuestra cada señal.",
+      "badge": "Dictamen sustentado"
+    },
+    {
+      "id": "trazabilidad",
+      "name": "Reconstruye y comprueba",
+      "short": "Trazabilidad",
+      "story": "Correlaciona la conducta y prueba controles complementarios.",
+      "badge": "Ruta contenida"
+    },
+    {
+      "id": "gobierno",
+      "name": "Responde ante el dueño",
+      "short": "Gobierno",
+      "story": "Convierte pruebas en decisiones, reportes y límites explícitos.",
+      "badge": "Expediente revisado"
     }
   ],
   "challenges": [
@@ -377,6 +398,424 @@
       "form": "residual",
       "requires": [
         "medida"
+      ]
+    },
+    {
+      "id": "alcance",
+      "zone": "validacion",
+      "title": "Un permiso para probar",
+      "xp": 120,
+      "brief": "Autoriza un alcance acotado. Abre un episodio nuevo sin modificar la restricción que aplicaste al servicio anterior.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "ssh appdesk",
+          "where": "Desde el puesto de análisis",
+          "why": "Entra a aplicaciones antes de abrir el rango. Si ya estás en appdesk, continúa con el siguiente paso sin abrir otro salto."
+        },
+        {
+          "command": "lab abrir",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Entra primero con ssh appdesk desde análisis. Si ya estás dentro, permanece allí. Apertura idempotente: repetir no reinicia el episodio."
+        }
+      ],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "continuidad"
+      ]
+    },
+    {
+      "id": "callback",
+      "zone": "validacion",
+      "title": "Una señal desde dentro",
+      "xp": 120,
+      "brief": "Genera una conexión real a un colector interno. Determina qué acredita y qué todavía no puedes afirmar.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab callback",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "La aplicación llama únicamente al colector interno. Busca el mismo correlation en ambos registros."
+        }
+      ],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "alcance"
+      ]
+    },
+    {
+      "id": "marcador",
+      "zone": "validacion",
+      "title": "La diferencia está en la prueba",
+      "xp": 120,
+      "brief": "Compara la conexión con un subproceso fijo observado. El banco de medición no reproduce una CVE.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab marcador",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "El proceso ejecuta un marcador fijo. No admite comandos, rutas ni destinos elegidos por el alumno."
+        }
+      ],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "callback"
+      ]
+    },
+    {
+      "id": "tenants",
+      "zone": "validacion",
+      "title": "Tu identidad, los datos de otro",
+      "xp": 120,
+      "brief": "Comprueba una falla real de autorización entre clientes y su gemelo corregido, conservando el uso legítimo.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab transferencia",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Compara Agua→Salud vulnerable 200, corregida 403, Salud legítimo 200 y anónimo 401."
+        }
+      ],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "marcador"
+      ]
+    },
+    {
+      "id": "contraste-zap",
+      "zone": "validacion",
+      "title": "El escáner no conoce al dueño",
+      "xp": 120,
+      "brief": "Haz pasar cuatro solicitudes acotadas por ZAP y contrasta sus alertas pasivas con la prueba de negocio.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab zap",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Requiere ZAP preparado por el docente. No se ejecuta spider ni escaneo activo. Conserva versión, cuatro respuestas, alertas reales y hash."
+        },
+        {
+          "command": "jq '{version,mode,alerts: [.alerts[] | {name,risk,url}]}' ~/evidence/zap-report.json",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Lee el archivo real guardado por la herramienta. Conserva su procedencia y contrástalo con la guía."
+        }
+      ],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "tenants"
+      ]
+    },
+    {
+      "id": "dictamen",
+      "zone": "validacion",
+      "title": "Lo que puedes sostener",
+      "xp": 160,
+      "brief": "Redacta un dictamen para el dueño. Separa falla reproducida, banco de medición, alertas y lo que falta investigar.",
+      "station": "appdesk",
+      "steps": [],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "contraste-zap"
+      ]
+    },
+    {
+      "id": "simulacion",
+      "zone": "trazabilidad",
+      "title": "Un incidente declarado",
+      "xp": 120,
+      "brief": "Ejecuta un guion controlado de acceso indebido. Las identidades y el supuesto de compromiso son ficticios.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab simular",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Reproduce tres solicitudes autorizadas por el ejercicio: acceso entre clientes, identidad comprometida sintética y anónimo."
+        }
+      ],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "dictamen"
+      ]
+    },
+    {
+      "id": "cronologia",
+      "zone": "trazabilidad",
+      "title": "Tres eventos, una historia",
+      "xp": 120,
+      "brief": "Reconstruye los tres eventos del último guion. Usa secuencia y correlación; explica un límite de visibilidad.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab cronologia",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Guarda eventos reales del servidor. Los IDs, secuencias y correlaciones no se inventan."
+        },
+        {
+          "command": "jq 'sort_by(.sequence) | .[] | {id,sequence,correlation,identity,status}' ~/evidence/cronologia.json",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Lee el archivo real guardado por la herramienta. Conserva su procedencia y contrástalo con la guía."
+        }
+      ],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "simulacion"
+      ]
+    },
+    {
+      "id": "mapeo",
+      "zone": "trazabilidad",
+      "title": "Mapea lo observado",
+      "xp": 160,
+      "brief": "Relaciona dos conductas con sus fuentes y descarta una técnica que no tiene evidencia.",
+      "station": "appdesk",
+      "steps": [],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "cronologia"
+      ]
+    },
+    {
+      "id": "autorizacion",
+      "zone": "trazabilidad",
+      "title": "Cierra la frontera del objeto",
+      "xp": 120,
+      "brief": "Ensaya antes de cambiar, corrige la autorización y repite. Comprueba también la identidad comprometida.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab ensayar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Prueba tres identidades contra la ruta live. Los resultados cambian con cada control y quedan fechados."
+        },
+        {
+          "command": "lab corregir",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Corrige el vínculo entre cliente y objeto. No revoca la identidad comprometida."
+        },
+        {
+          "command": "lab ensayar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Prueba tres identidades contra la ruta live. Los resultados cambian con cada control y quedan fechados."
+        }
+      ],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "mapeo"
+      ]
+    },
+    {
+      "id": "revocacion",
+      "zone": "trazabilidad",
+      "title": "Una identidad todavía sirve",
+      "xp": 120,
+      "brief": "Revoca solo la credencial comprometida del guion y repite el ensayo. El usuario legítimo debe seguir trabajando.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab revocar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Revoca la credencial del guion; conserva al usuario Salud legítimo."
+        },
+        {
+          "command": "lab ensayar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Prueba tres identidades contra la ruta live. Los resultados cambian con cada control y quedan fechados."
+        }
+      ],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "autorizacion"
+      ]
+    },
+    {
+      "id": "capa",
+      "zone": "trazabilidad",
+      "title": "Una capa que se puede auditar",
+      "xp": 120,
+      "brief": "Genera una capa compatible con Navigator con dos conductas y sus IDs. No es una declaración de cobertura completa.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab capa",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Escribe una capa JSON con los IDs de tu mapeo revisado. No requiere navegar por Internet."
+        },
+        {
+          "command": "jq '{name,versions,techniques}' ~/evidence/attack-layer.json",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Lee el archivo real guardado por la herramienta. Conserva su procedencia y contrástalo con la guía."
+        }
+      ],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "revocacion"
+      ]
+    },
+    {
+      "id": "ambito",
+      "zone": "gobierno",
+      "title": "El servicio tiene un dueño",
+      "xp": 120,
+      "brief": "Delimita función esencial, responsabilidad y supuesto OIV de la empresa ficticia.",
+      "station": "appdesk",
+      "steps": [],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "capa"
+      ]
+    },
+    {
+      "id": "matriz",
+      "zone": "gobierno",
+      "title": "Del hallazgo a la obligación",
+      "xp": 120,
+      "brief": "Construye cinco relaciones entre evidencia, objetivo de control ISO y estado real. Una asociación no acredita cumplimiento.",
+      "station": "appdesk",
+      "steps": [],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "ambito"
+      ]
+    },
+    {
+      "id": "incidente",
+      "zone": "gobierno",
+      "title": "Una vulnerabilidad no basta",
+      "xp": 120,
+      "brief": "Contrasta tres casos: función esencial afectada, confidencialidad sin caída y componente presente sin incidente demostrado.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab incidente",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Abre el dossier de negocio ficticio y sus horas UTC. Distingue el guion de los efectos medidos."
+        },
+        {
+          "command": "cat ~/evidence/incidente-oiv.json",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Lee el archivo real guardado por la herramienta. Conserva su procedencia y contrástalo con la guía."
+        }
+      ],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "matriz"
+      ]
+    },
+    {
+      "id": "reportes",
+      "zone": "gobierno",
+      "title": "El reloj empieza con un hecho",
+      "xp": 160,
+      "brief": "Calcula plazos del caso con zona horaria y ensaya los reportes. Todo queda en esta instalación; no se envía a ANCI.",
+      "station": "appdesk",
+      "steps": [],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "incidente"
+      ]
+    },
+    {
+      "id": "excepcion",
+      "zone": "gobierno",
+      "title": "Una decisión que vence",
+      "xp": 120,
+      "brief": "Propón una excepción acotada para legacy con dueño, vencimiento, controles probados y disparadores de revisión.",
+      "station": "appdesk",
+      "steps": [],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "reportes"
+      ]
+    },
+    {
+      "id": "auditoria",
+      "zone": "gobierno",
+      "title": "El expediente vuelve a tus manos",
+      "xp": 160,
+      "brief": "Pide una síntesis al modelo local sobre pruebas actuales, contrasta una afirmación y entrega lo pendiente al dueño.",
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab ia-expediente",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Inferencia real en CPU. El modelo recibe tres pruebas posteriores a los controles y una paráfrasis identificada del art. 9."
+        }
+      ],
+      "hints": [
+        "Puedes usar noVNC o tu terminal SSH: ambas rutas conservan el mismo puesto, archivos y avance.",
+        "Las fuentes del episodio aparecen en el formulario. Los PX verifican estructura y pruebas, no califican el fundamento."
+      ],
+      "form": "advanced",
+      "requires": [
+        "excepcion"
       ]
     }
   ],

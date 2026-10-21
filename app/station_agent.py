@@ -73,6 +73,11 @@ def packages(bom):
 
 def execute(data):
     action=data.get('action')
+    from . import advanced_station
+    if ROLE=='appdesk' and action in advanced_station.ACTIONS:
+        import sys
+        result,text=advanced_station.execute(action,sys.modules[__name__])
+        return {'ok':True,'stdout':text,'proof_id':emit(action,result)}
     allowed={'analyst':{'iniciar','red'},'ops':{'iniciar','red'},
         'appdesk':{'iniciar','red','inventario','escanear','revisar','contrastar','ia','proteger'}}
     if action not in allowed.get(ROLE,set()):raise ValueError('Ese comando pertenece a otro puesto. Escribe lab ayuda y revisa el objetivo.')

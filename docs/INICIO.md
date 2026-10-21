@@ -2,7 +2,7 @@
 
 ## Preparar una vez
 
-Necesitas 16 GB de RAM física, Docker Engine/Desktop con contenedores Linux, Compose **2.24.4+**, Git y navegador. Asigna **8 GB a Docker**; deja 30 GB libres para imágenes, escritorio, base de Grype y modelo. Sin GPU. En Windows usa Docker Desktop con WSL2.
+Necesitas 16 GB de RAM física, Docker Engine/Desktop con contenedores Linux, Compose **2.24.4+**, Git y navegador. Asigna **8 GB a Docker**; deja 40 GB libres recomendados para imágenes, escritorio, base de Grype, ZAP y modelo. Sin GPU. En Windows usa Docker Desktop con WSL2.
 
 Abre una terminal en la carpeta donde guardarás el proyecto:
 
@@ -64,3 +64,5 @@ El cuaderno muestra objetivos acreditados, decisiones y procedencia. **Exportar 
 Apagar IA conserva puestos y medidas. Reiniciar los servicios vulnerables devuelve sus fallas iniciales: sus controles son volátiles. El expediente histórico se conserva; una evidencia pasada no garantiza estado actual. No uses `down -v` para una pausa: elimina los volúmenes del proyecto.
 
 Continúa con [Terreno](../labs/01-superficie/ESTUDIANTE.md). Ante un problema consulta [Soluciones](SOLUCIONES.md).
+
+Para los nuevos talleres consulta la [continuación 4–6](CONTINUACION_4_6.md). En una instalación ya preparada basta actualizar, ejecutar `up` y activar ZAP con `webscan-on` cuando corresponda. La campaña conserva los hitos anteriores.

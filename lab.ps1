@@ -8,7 +8,7 @@ Set-Location $PSScriptRoot
 function DC { & docker compose @args; if ($LASTEXITCODE -ne 0) { throw 'Docker Compose no pudo completar el paso. Revisa docs/SOLUCIONES.md.' } }
 function Write-Utf8($Path, $Lines) { [IO.File]::WriteAllText((Join-Path $PSScriptRoot $Path), ($Lines -join "`n"), (New-Object System.Text.UTF8Encoding($false))) }
 if ($Command -eq 'help') {
-  Write-Host '.\lab.ps1 up | prepare-game | ssh | doctor | status | down | sbom | scan | ai-prepare | ai-on | ai-off | test | smoke | export | reset-targets'
+  Write-Host '.\lab.ps1 up | prepare-game | ssh | doctor | status | down | sbom | scan | ai-prepare | ai-on | ai-off | webscan-on | webscan-off | test | smoke | export | reset-targets'
   Write-Host '.\lab.ps1 discover public     .\lab.ps1 discover support'
   Write-Host '.\lab.ps1 probe public export     .\lab.ps1 probe public transaction'
   return
@@ -19,8 +19,8 @@ if ($LASTEXITCODE -ne 0) { throw 'Abre Docker Desktop y espera a que el motor te
 New-Item -ItemType Directory -Force artifacts/images | Out-Null
 switch ($Command) {
   doctor { docker version --format 'Motor: {{.Server.Version}} / {{.Server.Os}} / {{.Server.Arch}}'; docker info --format 'RAM Docker (bytes): {{.MemTotal}}'; DC version; Write-Host 'Referencia: 16 GB RAM, Docker 8 GB, CPU sin GPU. Ver docs/INICIO.md.' }
-  up { DC build mission records workstation ops appdesk; DC up -d --wait mission records gateway backup workstation ops appdesk; if ($env:LAB_SKIP_AI -ne '1') { DC --profile ai up -d --wait ollama }; Write-Host 'Abre http://localhost:8095 (o LAB_PORT de .env).' }
-  prepare-game { & $PSCommandPath up; DC run --rm --no-deps grype db update; DC run --rm --no-deps prepare-cache; & $PSCommandPath ai-prepare; Write-Host 'Campaña preparada. Abre http://localhost:8095.' }
+  up { DC build mission records workstation ops appdesk; DC up -d --wait mission records gateway backup validation collector workstation ops appdesk; if ($env:LAB_SKIP_AI -ne '1') { DC --profile ai up -d --wait ollama }; Write-Host 'Abre http://localhost:8095 (o LAB_PORT de .env).' }
+  prepare-game { & $PSCommandPath up; DC run --rm --no-deps grype db update; DC run --rm --no-deps prepare-cache; & $PSCommandPath ai-prepare; & $PSCommandPath webscan-on; Write-Host 'Campaña preparada. Abre http://localhost:8095.' }
   ssh {
     if (-not (Get-Command ssh -ErrorAction SilentlyContinue)) { throw 'Habilita el cliente OpenSSH de Windows.' }
     New-Item -ItemType Directory -Force artifacts/ssh | Out-Null
@@ -45,7 +45,7 @@ switch ($Command) {
     & ssh -i $KeyPath -p $SshPort -o IdentitiesOnly=yes -o ForwardAgent=no -o StrictHostKeyChecking=yes -o UserKnownHostsFile=artifacts/ssh/known_hosts student@127.0.0.1
     if ($LASTEXITCODE -ne 0) { throw 'No se pudo abrir SSH. Revisa docs/SSH.md.' }
   }
-  down { DC --profile ai --profile tools --profile scanners down }
+  down { DC --profile ai --profile tools --profile scanners --profile webscan down }
   status { DC --profile ai ps }
   discover { if ($Zone -notin @('public','support')) { throw 'Zona: public o support' }; DC run --rm --no-deps "probe-$Zone" discover }
   probe { if ($Zone -notin @('public','support')) { throw 'Zona: public o support' }; DC run --rm --no-deps "probe-$Zone" probe $Action }
@@ -75,6 +75,8 @@ switch ($Command) {
   }
   ai-on { DC --profile ai up -d --wait mission ollama; Write-Host 'IA CPU activa; puestos y servicios siguen activos.' }
   ai-off { DC --profile ai stop ollama; Write-Host 'IA detenida; puestos, servicios y medidas permanecen activos.' }
+  webscan-on { DC --profile webscan up -d --wait webscan }
+  webscan-off { DC --profile webscan stop webscan }
   test { DC run --rm --no-deps check }
   smoke { DC exec -T mission python -m tests.smoke }
   export { $Lines = @(DC exec -T mission python -c 'import json; from app.server import export_bundle; print(json.dumps(export_bundle(),ensure_ascii=False,indent=2))'); Write-Utf8 'artifacts/expediente.json' $Lines; Write-Host 'Expediente guardado.' }

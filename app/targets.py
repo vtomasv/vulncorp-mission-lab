@@ -44,6 +44,16 @@ class Target(BaseHTTPRequestHandler):
             with LOCK:rows=list(AUDIT)
             return self.reply({'role':ROLE,'boot_id':BOOT_ID,'events':rows})
         if ROLE=='gateway':
+            if path.startswith('/range/'):
+                # Discard any learner-supplied origin/key. The target sees the actual peer.
+                request=urllib.request.Request('http://validation:8083'+self.path[len('/range'):],headers={
+                    'Authorization':self.headers.get('Authorization',''),
+                    'X-Correlation-ID':self.headers.get('X-Correlation-ID','')[:80],
+                    'X-Training-Origin':self.client_address[0],'X-Gateway-Key':CONTROL_KEY})
+                try:
+                    with urllib.request.urlopen(request,timeout=8) as r:return self.reply(json.load(r),r.status)
+                except urllib.error.HTTPError as exc:return self.reply(json.load(exc),exc.code)
+                except (OSError,ValueError):return self.reply({'error':'Rango de validación no disponible'},503)
             if path in ['/','/api/catalog']:
                 return self.reply({'service':'VulnCorp Trámites','synthetic':True,'items':['resultado-urgente','documento-operacional','transferencia-cliente'],'message':'Portal público simulado. No contiene datos reales.'})
             if path=='/api/diagnostics':

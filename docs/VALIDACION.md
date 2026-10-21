@@ -68,3 +68,5 @@ Puede indicarse `PLAYWRIGHT_PATH` para una instalación existente. Los alumnos n
 La [automatización pública](https://github.com/vtomasv/vulncorp-mission-lab/actions/workflows/ci.yml) prueba Linux AMD64: unidades, contrato de red, construcción de puestos, smoke, cinco objetivos con entrada SSH desde el host, autenticación/rechazos, SSH interactivo y perspectivas de red. No descarga el modelo ni acredita inferencia en CI; esa ejecución se valida localmente por separado.
 
 La figura Anatomy se conserva como recurso complementario, fuera de la ruta principal. Su auditoría de geometría sigue pasando; no se confunde con la comprobación del juego.
+
+La validación posterior de la ampliación a seis zonas y treinta y tres objetivos se documenta por separado en [VALIDACION_4_6.md](VALIDACION_4_6.md), distinguiendo fixtures de desarrollo, acciones reales y plataformas aún pendientes de piloto.

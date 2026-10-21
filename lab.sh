@@ -17,6 +17,8 @@ VulnCorp Mission Lab · sin herramientas de seguridad instaladas en el host
   ./lab.sh ai-prepare                 descargar motor y modelo (Internet)
   ./lab.sh ai-on                      iniciar IA aislada; puestos siguen activos
   ./lab.sh ai-off                     liberar RAM de IA; conserva puestos y controles
+  ./lab.sh webscan-on                iniciar ZAP interno (solo cuando se usa)
+  ./lab.sh webscan-off               detener ZAP y liberar memoria
   ./lab.sh test                       pruebas unitarias en Docker
   ./lab.sh smoke                      pruebas integradas contra el entorno
   ./lab.sh export                     guardar expediente en artifacts/
@@ -33,14 +35,15 @@ case "$cmd" in
   docker version --format 'Motor: {{.Server.Version}} / {{.Server.Os}} / {{.Server.Arch}}'
   docker info --format 'Memoria asignada a Docker (bytes): {{.MemTotal}}'
   docker compose version
-  echo 'Referencia: equipo de 16 GB, Docker con 8 GB, 2 CPU para IA; 30 GB de disco libre mínimo recomendado.'
+  echo 'Referencia: equipo de 16 GB, Docker con 8 GB, 2 CPU para IA; 40 GB de disco libre mínimo recomendado.'
   echo 'El caso funciona sin GPU. Primera preparación requiere Internet; después se usan cachés.';;
- up) dc build mission records workstation ops appdesk; dc up -d --wait mission records gateway backup workstation ops appdesk; if [[ "${LAB_SKIP_AI:-0}" != 1 ]]; then dc --profile ai up -d --wait ollama; fi; echo 'Abre http://localhost:8095 (o el LAB_PORT de .env).';;
+ up) dc build mission records workstation ops appdesk; dc up -d --wait mission records gateway backup validation collector workstation ops appdesk; if [[ "${LAB_SKIP_AI:-0}" != 1 ]]; then dc --profile ai up -d --wait ollama; fi; echo 'Abre http://localhost:8095 (o el LAB_PORT de .env).';;
  prepare-game)
   ./lab.sh up
   dc run --rm --no-deps grype db update
   dc run --rm --no-deps prepare-cache
   ./lab.sh ai-prepare
+  ./lab.sh webscan-on
   echo 'Campaña preparada. Abre http://localhost:8095 y entra al puesto.';;
  ssh)
   command -v ssh >/dev/null || { echo 'Instala o habilita el cliente OpenSSH de tu equipo.'; exit 1; }
@@ -57,7 +60,7 @@ case "$cmd" in
   chmod 600 artifacts/ssh/known_hosts
   shift
   exec ssh -i artifacts/ssh/student_ed25519 -p "$ssh_port" -o IdentitiesOnly=yes -o ForwardAgent=no -o StrictHostKeyChecking=yes -o UserKnownHostsFile=artifacts/ssh/known_hosts student@127.0.0.1 "$@";;
- down) dc --profile ai --profile tools --profile scanners down;;
+ down) dc --profile ai --profile tools --profile scanners --profile webscan down;;
  status) dc --profile ai ps; ids=$(dc ps -q); if [[ -n "$ids" ]]; then docker stats --no-stream $ids; fi;;
  discover|probe)
   zone=${2:-public}; [[ "$zone" == public || "$zone" == support ]] || { echo 'Zona: public o support'; exit 1; }
@@ -90,6 +93,8 @@ case "$cmd" in
  ai-off)
   dc --profile ai stop ollama
   echo 'IA detenida y memoria liberada. Puestos, servicios y medidas permanecen activos.';;
+ webscan-on) dc --profile webscan up -d --wait webscan;;
+ webscan-off) dc --profile webscan stop webscan;;
  test) dc run --rm --no-deps check;;
  smoke) dc exec -T mission python -m tests.smoke;;
  export) dc exec -T mission python -c 'import json; from app.server import export_bundle; print(json.dumps(export_bundle(),ensure_ascii=False,indent=2))' > artifacts/expediente.json; echo 'Guardado: artifacts/expediente.json';;

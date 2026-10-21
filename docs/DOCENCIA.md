@@ -1,6 +1,6 @@
 # Tres jornadas de siete horas; una campaña continua
 
-La interfaz del jugador habla de zonas y objetivos. La organización académica vive en estas guías: no se transforma cada jornada en un menú del producto. Esta edición usa tres zonas y quince objetivos; el curso completo puede prolongar la misma campaña.
+La interfaz del jugador habla de zonas y objetivos. La organización académica vive en estas guías: no se transforma cada jornada en un menú del producto. La campaña incorpora ahora seis zonas y treinta y tres objetivos. Esta guía conserva el diseño del primer tramo; la [continuación 4–6](CONTINUACION_4_6.md) detalla los nuevos talleres.
 
 Solo el examen final del curso genera nota. Los PX son hitos de práctica sin ponderación, bonos ni penalización. El tablero comprueba evidencias técnicas y restricciones; no certifica comprensión ni califica automáticamente el criterio.
 

@@ -16,6 +16,7 @@ jobs:
       - name: Sintaxis de interfaz y recurso visual complementario
         run: |
           node --check web/game.js
+          node --check web/advanced.js
           node --check tests/ui.mjs
           node scripts/build-context-figure.mjs --audit
       - name: Contrato de aislamiento
@@ -30,6 +31,10 @@ jobs:
         run: python3 -m tests.integration_ssh
       - name: Juego real por SSH desde la terminal del alumno
         run: python3 tests/integration_game.py --ssh
+      - name: Continuación real con ZAP y controles causales
+        run: |
+          ./lab.sh webscan-on
+          python3 -m tests.integration_advanced
       - name: Rutas desde dos zonas
         run: |
           ./lab.sh discover public > /tmp/public.json
@@ -42,4 +47,4 @@ jobs:
           PY
       - name: Detener proyecto
         if: always()
-        run: docker compose --profile ai --profile tools --profile scanners down
+        run: docker compose --profile ai --profile tools --profile scanners --profile webscan down

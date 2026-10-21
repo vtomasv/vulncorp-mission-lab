@@ -7,6 +7,9 @@ import sys
 args=sys.argv[1:]
 if not args or args[0] in ['help','ayuda','--help']:
     print('lab iniciar | red | inventario | escanear | revisar | contrastar | ia | proteger')
+    print('Validación: lab abrir | callback | marcador | transferencia | zap')
+    print('Trazabilidad: lab simular | cronologia | ensayar | corregir | revocar | capa')
+    print('Gobierno: lab incidente | ia-expediente')
     print('Los comandos ejecutan herramientas reales y conservan evidencia verificable.')
     raise SystemExit(0)
 data={'action':args[0]}

@@ -1,0 +1,1317 @@
+{
+  "version": "3.0",
+  "exercises": {
+    "alcance": {
+      "title": "Autoriza una prueba que puedas detener",
+      "pages": [
+        {
+          "title": "Contrato de la prueba",
+          "fields": [
+            {
+              "key": "scope",
+              "label": "Destino permitido",
+              "options": [
+                [
+                  "internal",
+                  "Solo gateway:8080/range y servicios internos del caso"
+                ],
+                [
+                  "external",
+                  "Cualquier destino que aparezca en Internet"
+                ]
+              ],
+              "expected": "internal",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "mode",
+              "label": "Método de trabajo",
+              "options": [
+                [
+                  "bounded",
+                  "Identidades sintéticas, cuatro solicitudes y sin escaneo activo"
+                ],
+                [
+                  "unbounded",
+                  "Exploración sin límite de tráfico"
+                ]
+              ],
+              "expected": "bounded",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "authorization",
+              "label": "Autorización del ejercicio y Ley 21.459",
+              "options": [
+                [
+                  "explicit",
+                  "Permiso expreso y acotado del titular del entorno de entrenamiento; no se extiende a terceros"
+                ],
+                [
+                  "any",
+                  "Un escáner instalado autoriza a probar cualquier empresa"
+                ]
+              ],
+              "expected": "explicit",
+              "feedback": "El permiso debe delimitar titular, sistema y alcance; una herramienta no autoriza acceso a terceros."
+            },
+            {
+              "key": "stop",
+              "label": "Criterio de detención: efecto observable y a quién avisas",
+              "min": 30,
+              "max": 1800,
+              "type": "textarea"
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "callback": {
+      "title": "¿Qué acaba de ocurrir?",
+      "pages": [
+        {
+          "title": "Interpretación de la señal",
+          "fields": [
+            {
+              "key": "claim",
+              "label": "Un recibo en el colector acredita…",
+              "options": [
+                [
+                  "execution",
+                  "Ejecución remota y control del sistema"
+                ],
+                [
+                  "connection",
+                  "Conexión saliente correlacionada; ejecución todavía no demostrada"
+                ]
+              ],
+              "expected": "connection",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "marcador": {
+      "title": "Una evidencia más fuerte y acotada",
+      "pages": [
+        {
+          "title": "Límite del experimento",
+          "fields": [
+            {
+              "key": "claim",
+              "label": "El marcador fijo demuestra…",
+              "options": [
+                [
+                  "marker",
+                  "Un subproceso fijo ejecutado por el banco de medición"
+                ],
+                [
+                  "log4j",
+                  "Explotación confirmada de Log4Shell"
+                ]
+              ],
+              "expected": "marker",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "tenants": {
+      "title": "Autenticar y autorizar son decisiones distintas",
+      "pages": [
+        {
+          "title": "Comparación de cuatro respuestas",
+          "fields": [
+            {
+              "key": "cause",
+              "label": "Causa de que Agua lea SALUD-001",
+              "options": [
+                [
+                  "authz",
+                  "Falta comprobar que el objeto pertenece al cliente autorizado"
+                ],
+                [
+                  "cvss",
+                  "El CVSS de un componente instalado es alto"
+                ]
+              ],
+              "expected": "authz",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "regression",
+              "label": "¿Cuál es la prueba de continuidad correcta?",
+              "options": [
+                [
+                  "legitimate",
+                  "Salud obtiene 200; Agua obtiene 403; sin identidad obtiene 401"
+                ],
+                [
+                  "all403",
+                  "Todo acceso devuelve 403"
+                ]
+              ],
+              "expected": "legitimate",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "contraste-zap": {
+      "title": "El reporte de ZAP necesita un analista",
+      "pages": [
+        {
+          "title": "Contraste con la prueba manual",
+          "fields": [
+            {
+              "key": "claim",
+              "label": "Si ZAP no etiqueta el acceso entre clientes…",
+              "options": [
+                [
+                  "safe",
+                  "La autorización es correcta"
+                ],
+                [
+                  "manual",
+                  "El acceso manual 200 entre clientes sigue siendo evidencia de la falla"
+                ]
+              ],
+              "expected": "manual",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "alert",
+              "label": "Describe una alerta real del reporte, o documenta explícitamente cero alertas y el alcance pasivo",
+              "min": 30,
+              "max": 1800,
+              "type": "textarea"
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "dictamen": {
+      "title": "Un dictamen proporcional a las pruebas",
+      "pages": [
+        {
+          "title": "Entrega a quien gestiona el servicio",
+          "fields": [
+            {
+              "key": "state",
+              "label": "Estado de la falla de autorización en el gemelo vulnerable",
+              "options": [
+                [
+                  "confirmed",
+                  "Confirmada por acceso entre clientes con identidad válida"
+                ],
+                [
+                  "cve",
+                  "Confirmada porque se encontró una CVE"
+                ]
+              ],
+              "expected": "confirmed",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "next",
+              "label": "Recomendación al dueño: tratamiento, prueba de aceptación y dato todavía faltante",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "simulacion": {
+      "title": "Una conducta observada dentro de un guion",
+      "pages": [
+        {
+          "title": "Declara el alcance",
+          "fields": [
+            {
+              "key": "claim",
+              "label": "La credencial training-stolen-salud…",
+              "options": [
+                [
+                  "stolen",
+                  "Fue robada por un atacante real en el laboratorio"
+                ],
+                [
+                  "script",
+                  "Es pública y sintética; el guion declara su compromiso para ensayar su abuso"
+                ]
+              ],
+              "expected": "script",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "cronologia": {
+      "title": "Reconstruye lo ocurrido",
+      "pages": [
+        {
+          "title": "Relación temporal y causal",
+          "fields": [
+            {
+              "key": "order",
+              "label": "Pega los tres IDs RNG del último lab simular, uno por línea, en orden de secuencia",
+              "min": 20,
+              "max": 1800,
+              "type": "textarea"
+            },
+            {
+              "key": "gap",
+              "label": "Un hueco en los logs significa…",
+              "options": [
+                [
+                  "unknown",
+                  "Ausencia de visibilidad; no prueba que no ocurrió actividad"
+                ],
+                [
+                  "none",
+                  "Ausencia demostrada de ataque"
+                ]
+              ],
+              "expected": "unknown",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "mapeo": {
+      "title": "Dos técnicas, dos fuentes concretas",
+      "pages": [
+        {
+          "title": "Conducta de la simulación",
+          "fields": [
+            {
+              "key": "t1190",
+              "label": "ID RNG de la lectura entre clientes con identidad Agua (inclúyelo también entre las fuentes)",
+              "min": 5,
+              "max": 80,
+              "type": "textarea"
+            },
+            {
+              "key": "t1078",
+              "label": "ID RNG de la lectura usando la identidad comprometida del guion (inclúyelo entre las fuentes)",
+              "min": 5,
+              "max": 80,
+              "type": "textarea"
+            },
+            {
+              "key": "t1486",
+              "label": "¿Puedes colorear T1486 — cifrado para impacto?",
+              "options": [
+                [
+                  "no",
+                  "No: no se observó cifrado; no hay evidencia para esa técnica"
+                ],
+                [
+                  "yes",
+                  "Sí: toda vulnerabilidad lleva a ransomware"
+                ]
+              ],
+              "expected": "no",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "autorizacion": {
+      "title": "Un control cierra una ruta; otra permanece",
+      "pages": [
+        {
+          "title": "Prueba antes y después",
+          "fields": [
+            {
+              "key": "residual",
+              "label": "¿Por qué la credencial comprometida sigue obteniendo 200?",
+              "options": [
+                [
+                  "own",
+                  "Tiene acceso legítimo a su propio cliente; corregir el objeto no revoca su identidad"
+                ],
+                [
+                  "failed",
+                  "Toda la corrección de autorización falló"
+                ]
+              ],
+              "expected": "own",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "revocacion": {
+      "title": "Revoca sin romper al usuario legítimo",
+      "pages": [
+        {
+          "title": "Dos controles complementarios",
+          "fields": [
+            {
+              "key": "result",
+              "label": "Criterio de aceptación",
+              "options": [
+                [
+                  "balanced",
+                  "Agua 403, credencial comprometida 401 y usuario Salud 200"
+                ],
+                [
+                  "outage",
+                  "Todos reciben 401 y el servicio deja de funcionar"
+                ]
+              ],
+              "expected": "balanced",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "capa": {
+      "title": "Publica solo lo sustentado",
+      "pages": [
+        {
+          "title": "Revisa el formato intercambiable",
+          "fields": [
+            {
+              "key": "meaning",
+              "label": "La capa Navigator representa…",
+              "options": [
+                [
+                  "observed",
+                  "Dos conductas observadas en simulación con sus IDs; no toda la intrusión"
+                ],
+                [
+                  "coverage",
+                  "Cobertura completa de ATT&CK y cumplimiento de la organización"
+                ]
+              ],
+              "expected": "observed",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "ambito": {
+      "title": "El negocio define el alcance",
+      "pages": [
+        {
+          "title": "Empresa ficticia, función y autoridad",
+          "fields": [
+            {
+              "key": "client",
+              "label": "Dueño del expediente de incidente",
+              "options": [
+                [
+                  "salud",
+                  "Red Salud Sur ficticia: continuidad de resultados urgentes"
+                ],
+                [
+                  "vendor",
+                  "El proveedor del escáner, porque conoce los CVSS"
+                ]
+              ],
+              "expected": "salud",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "oiv",
+              "label": "Condición OIV del ejercicio",
+              "options": [
+                [
+                  "fiction",
+                  "Supuesto explícito del caso; una herramienta no designa una OIV real"
+                ],
+                [
+                  "automatic",
+                  "Automática por operar cualquier Docker"
+                ]
+              ],
+              "expected": "fiction",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "privacy",
+              "label": "Fecha del dossier: 21 octubre 2026. Régimen de datos que debes distinguir",
+              "options": [
+                [
+                  "current",
+                  "Ley 19.628 aplicable a la fecha; reforma Ley 21.719 entra el 1 diciembre 2026"
+                ],
+                [
+                  "future",
+                  "La reforma Ley 21.719 ya entró en vigor antes de la fecha del caso"
+                ]
+              ],
+              "expected": "current",
+              "feedback": "Revisa la vigencia y la fecha fija del caso. No adelantes un régimen futuro al incidente simulado."
+            },
+            {
+              "key": "owner",
+              "label": "Cargo del dueño y cargo del responsable de coordinar la respuesta",
+              "min": 20,
+              "max": 1800,
+              "type": "textarea"
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "matriz": {
+      "title": "Una matriz que conecte control y evidencia",
+      "pages": [
+        {
+          "title": "F-01 · Componente Django presente, ruta de uso no demostrada",
+          "fields": [
+            {
+              "key": "F-01_iso",
+              "label": "Objetivo de control ISO 27001:2022 (asociación, no certificación)",
+              "options": [
+                [
+                  "A.8.8",
+                  "A.8.8 · gestión de vulnerabilidades técnicas"
+                ],
+                [
+                  "A.8.13",
+                  "A.8.13 · copias de seguridad"
+                ],
+                [
+                  "A.8.26",
+                  "A.8.26 · seguridad de aplicaciones"
+                ],
+                [
+                  "A.8.9",
+                  "A.8.9 · configuración"
+                ]
+              ],
+              "expected": "A.8.8",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "F-01_state",
+              "label": "Estado que permite sostener la evidencia",
+              "options": [
+                [
+                  "investigate",
+                  "Investigar aplicabilidad y plan de actualización"
+                ],
+                [
+                  "compliant",
+                  "Cumplimiento integral y riesgo eliminado"
+                ]
+              ],
+              "expected": "investigate",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "F-01_law",
+              "label": "Marco de gestión del OIV ficticio para este hallazgo",
+              "options": [
+                [
+                  "L21663_8",
+                  "Ley 21.663 art. 8 · gestión, medidas y revisión según alcance"
+                ],
+                [
+                  "automatic_report",
+                  "Art. 9 · todo hallazgo obliga automáticamente a reportar un incidente"
+                ]
+              ],
+              "expected": "L21663_8",
+              "feedback": "Distingue gestionar un hallazgo de reportar un incidente con efectos significativos. Explica el deber concreto en el fundamento."
+            },
+            {
+              "key": "F-01_reason",
+              "label": "Fundamenta la relación y la prueba que falta. Cita el ID de una evidencia o fragmento del expediente",
+              "min": 30,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "title": "F-02 · Acceso entre clientes reproducido",
+          "fields": [
+            {
+              "key": "F-02_iso",
+              "label": "Objetivo de control ISO 27001:2022 (asociación, no certificación)",
+              "options": [
+                [
+                  "A.8.26",
+                  "A.8.26 · requisitos de seguridad de aplicaciones"
+                ],
+                [
+                  "A.8.13",
+                  "A.8.13 · copias de seguridad"
+                ],
+                [
+                  "A.8.9",
+                  "A.8.9 · configuración"
+                ],
+                [
+                  "A.8.8",
+                  "A.8.8 · vulnerabilidades técnicas"
+                ]
+              ],
+              "expected": "A.8.26",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "F-02_state",
+              "label": "Estado que permite sostener la evidencia",
+              "options": [
+                [
+                  "tested",
+                  "Mitigación HTTP anterior probada; causa raíz de /api/export sigue pendiente"
+                ],
+                [
+                  "compliant",
+                  "Cumplimiento integral y riesgo eliminado"
+                ]
+              ],
+              "expected": "tested",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "F-02_law",
+              "label": "Marco de gestión del OIV ficticio para este hallazgo",
+              "options": [
+                [
+                  "L21663_8",
+                  "Ley 21.663 art. 8 · gestión, medidas y revisión según alcance"
+                ],
+                [
+                  "automatic_report",
+                  "Art. 9 · todo hallazgo obliga automáticamente a reportar un incidente"
+                ]
+              ],
+              "expected": "L21663_8",
+              "feedback": "Distingue gestionar un hallazgo de reportar un incidente con efectos significativos. Explica el deber concreto en el fundamento."
+            },
+            {
+              "key": "F-02_reason",
+              "label": "Fundamenta la relación y la prueba que falta. Cita el ID de una evidencia o fragmento del expediente",
+              "min": 30,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "title": "F-03 · Llave de catálogo de copias",
+          "fields": [
+            {
+              "key": "F-03_iso",
+              "label": "Objetivo de control ISO 27001:2022 (asociación, no certificación)",
+              "options": [
+                [
+                  "A.8.13",
+                  "A.8.13 · copias de seguridad"
+                ],
+                [
+                  "A.8.26",
+                  "A.8.26 · seguridad de aplicaciones"
+                ],
+                [
+                  "A.8.9",
+                  "A.8.9 · configuración"
+                ],
+                [
+                  "A.8.8",
+                  "A.8.8 · vulnerabilidades técnicas"
+                ]
+              ],
+              "expected": "A.8.13",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "F-03_state",
+              "label": "Estado que permite sostener la evidencia",
+              "options": [
+                [
+                  "not_restore",
+                  "Catálogo observado; restauración todavía no acreditada"
+                ],
+                [
+                  "compliant",
+                  "Cumplimiento integral y riesgo eliminado"
+                ]
+              ],
+              "expected": "not_restore",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "F-03_law",
+              "label": "Marco de gestión del OIV ficticio para este hallazgo",
+              "options": [
+                [
+                  "L21663_8",
+                  "Ley 21.663 art. 8 · gestión, medidas y revisión según alcance"
+                ],
+                [
+                  "automatic_report",
+                  "Art. 9 · todo hallazgo obliga automáticamente a reportar un incidente"
+                ]
+              ],
+              "expected": "L21663_8",
+              "feedback": "Distingue gestionar un hallazgo de reportar un incidente con efectos significativos. Explica el deber concreto en el fundamento."
+            },
+            {
+              "key": "F-03_reason",
+              "label": "Fundamenta la relación y la prueba que falta. Cita el ID de una evidencia o fragmento del expediente",
+              "min": 30,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "title": "F-04 · Diagnóstico expone topología",
+          "fields": [
+            {
+              "key": "F-04_iso",
+              "label": "Objetivo de control ISO 27001:2022 (asociación, no certificación)",
+              "options": [
+                [
+                  "A.8.9",
+                  "A.8.9 · gestión de configuración"
+                ],
+                [
+                  "A.8.13",
+                  "A.8.13 · copias de seguridad"
+                ],
+                [
+                  "A.8.26",
+                  "A.8.26 · seguridad de aplicaciones"
+                ],
+                [
+                  "A.8.8",
+                  "A.8.8 · vulnerabilidades técnicas"
+                ]
+              ],
+              "expected": "A.8.9",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "F-04_state",
+              "label": "Estado que permite sostener la evidencia",
+              "options": [
+                [
+                  "pending",
+                  "Corregir configuración y comprobar exposición residual"
+                ],
+                [
+                  "compliant",
+                  "Cumplimiento integral y riesgo eliminado"
+                ]
+              ],
+              "expected": "pending",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "F-04_law",
+              "label": "Marco de gestión del OIV ficticio para este hallazgo",
+              "options": [
+                [
+                  "L21663_8",
+                  "Ley 21.663 art. 8 · gestión, medidas y revisión según alcance"
+                ],
+                [
+                  "automatic_report",
+                  "Art. 9 · todo hallazgo obliga automáticamente a reportar un incidente"
+                ]
+              ],
+              "expected": "L21663_8",
+              "feedback": "Distingue gestionar un hallazgo de reportar un incidente con efectos significativos. Explica el deber concreto en el fundamento."
+            },
+            {
+              "key": "F-04_reason",
+              "label": "Fundamenta la relación y la prueba que falta. Cita el ID de una evidencia o fragmento del expediente",
+              "min": 30,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "title": "F-05 · Componente requests presente",
+          "fields": [
+            {
+              "key": "F-05_iso",
+              "label": "Objetivo de control ISO 27001:2022 (asociación, no certificación)",
+              "options": [
+                [
+                  "A.8.8",
+                  "A.8.8 · gestión de vulnerabilidades técnicas"
+                ],
+                [
+                  "A.8.13",
+                  "A.8.13 · copias de seguridad"
+                ],
+                [
+                  "A.8.26",
+                  "A.8.26 · seguridad de aplicaciones"
+                ],
+                [
+                  "A.8.9",
+                  "A.8.9 · configuración"
+                ]
+              ],
+              "expected": "A.8.8",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "F-05_state",
+              "label": "Estado que permite sostener la evidencia",
+              "options": [
+                [
+                  "investigate",
+                  "Investigar uso y condiciones; no atribuir robo de credenciales"
+                ],
+                [
+                  "compliant",
+                  "Cumplimiento integral y riesgo eliminado"
+                ]
+              ],
+              "expected": "investigate",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "F-05_law",
+              "label": "Marco de gestión del OIV ficticio para este hallazgo",
+              "options": [
+                [
+                  "L21663_8",
+                  "Ley 21.663 art. 8 · gestión, medidas y revisión según alcance"
+                ],
+                [
+                  "automatic_report",
+                  "Art. 9 · todo hallazgo obliga automáticamente a reportar un incidente"
+                ]
+              ],
+              "expected": "L21663_8",
+              "feedback": "Distingue gestionar un hallazgo de reportar un incidente con efectos significativos. Explica el deber concreto en el fundamento."
+            },
+            {
+              "key": "F-05_reason",
+              "label": "Fundamenta la relación y la prueba que falta. Cita el ID de una evidencia o fragmento del expediente",
+              "min": 30,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "title": "Marco chileno y conducta",
+          "fields": [
+            {
+              "key": "law",
+              "label": "Ley 21.663 art. 8 orienta…",
+              "options": [
+                [
+                  "management",
+                  "El sistema de gestión, continuidad y revisión del OIV ficticio"
+                ],
+                [
+                  "certificate",
+                  "Una certificación automática por mapear controles ISO"
+                ]
+              ],
+              "expected": "management",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "attack",
+              "label": "¿Todas las CVE acreditan T1190 observado?",
+              "options": [
+                [
+                  "no",
+                  "No: exige conducta observada; presencia de paquete es insuficiente"
+                ],
+                [
+                  "yes",
+                  "Sí: es un mapeo automático"
+                ]
+              ],
+              "expected": "no",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "incidente": {
+      "title": "Separa vulnerabilidad, incidente y efecto significativo",
+      "pages": [
+        {
+          "title": "Califica cada caso",
+          "fields": [
+            {
+              "key": "A",
+              "label": "Caso A: acceso indebido y función esencial afectada, OIV",
+              "options": [
+                [
+                  "significant",
+                  "Incidente con efecto significativo; preparar reporte simulado"
+                ],
+                [
+                  "only_vuln",
+                  "Solo una vulnerabilidad sin incidente"
+                ]
+              ],
+              "expected": "significant",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "B",
+              "label": "Caso B: acceso indebido a datos, sin interrupción de la función esencial",
+              "options": [
+                [
+                  "still",
+                  "Puede ser significativo por confidencialidad o acceso no autorizado; no exige apagón"
+                ],
+                [
+                  "no",
+                  "No se reporta porque el servicio funciona"
+                ]
+              ],
+              "expected": "still",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "C",
+              "label": "Caso C: paquete vulnerable presente sin uso ni incidente demostrado",
+              "options": [
+                [
+                  "triage",
+                  "Gestionar vulnerabilidad y seguir investigando; no inventar un incidente observado"
+                ],
+                [
+                  "incident",
+                  "Incidente significativo demostrado"
+                ]
+              ],
+              "expected": "triage",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "reportes": {
+      "title": "Ensaya los reportes sin enviar nada fuera del lab",
+      "pages": [
+        {
+          "title": "Conocimiento y alerta",
+          "fields": [
+            {
+              "key": "early",
+              "label": "Caso A · vencimiento alerta temprana (UTC, formato 2026-10-21T15:00:00Z)",
+              "min": 15,
+              "max": 80,
+              "type": "textarea"
+            },
+            {
+              "key": "updateA",
+              "label": "Caso A · vencimiento actualización OIV + función esencial afectada",
+              "min": 15,
+              "max": 80,
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "title": "Excepciones que importan",
+          "fields": [
+            {
+              "key": "updateB",
+              "label": "Caso B · vencimiento actualización, sin afectación de función esencial",
+              "min": 15,
+              "max": 80,
+              "type": "textarea"
+            },
+            {
+              "key": "action",
+              "label": "Caso A · límite para adoptar plan de acción OIV (informar al adoptarlo)",
+              "min": 15,
+              "max": 80,
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "title": "Informe final y situación en curso",
+          "fields": [
+            {
+              "key": "final",
+              "label": "Caso A · vencimiento final, desde envío de alerta temprana",
+              "min": 15,
+              "max": 80,
+              "type": "textarea"
+            },
+            {
+              "key": "managed",
+              "label": "Caso D · final posterior a incidente gestionado, si continúa al primer vencimiento",
+              "min": 15,
+              "max": 80,
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "title": "Borradores: alerta y actualización",
+          "fields": [
+            {
+              "key": "early_draft",
+              "label": "Borrador de alerta: informante ficticio, servicio, hecho observado, hora de conocimiento y alcance incierto",
+              "min": 60,
+              "max": 1800,
+              "type": "textarea"
+            },
+            {
+              "key": "update_draft",
+              "label": "Borrador de actualización: efectos, evidencia y medidas; distingue datos confirmados de pendientes",
+              "min": 60,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "title": "Borradores: plan y final",
+          "fields": [
+            {
+              "key": "action_draft",
+              "label": "Plan de acción: responsables, hitos, pruebas de aceptación y continuidad",
+              "min": 60,
+              "max": 1800,
+              "type": "textarea"
+            },
+            {
+              "key": "final_draft",
+              "label": "Informe final: causa, impacto, mitigación, incertidumbre y condiciones para cierre",
+              "min": 60,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        },
+        {
+          "title": "Fundamenta el envío simulado",
+          "fields": [
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "excepcion": {
+      "title": "Una excepción tiene dueño y vencimiento",
+      "pages": [
+        {
+          "title": "Propuesta al dueño, todavía no aceptación",
+          "fields": [
+            {
+              "key": "owner",
+              "label": "Cargo del dueño con autoridad de decisión y responsable del tratamiento",
+              "min": 15,
+              "max": 1800,
+              "type": "textarea"
+            },
+            {
+              "key": "expiry",
+              "label": "Vencimiento UTC dentro de 30 días del conocimiento del caso",
+              "min": 15,
+              "max": 80,
+              "type": "textarea"
+            },
+            {
+              "key": "trigger",
+              "label": "Qué señal revoca la excepción y cuándo se revisará",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            },
+            {
+              "key": "scope",
+              "label": "Qué queda pendiente",
+              "options": [
+                [
+                  "legacy",
+                  "Aplicabilidad y actualización de legacy; no se exceptúa el acceso entre clientes corregido"
+                ],
+                [
+                  "all",
+                  "Todo el riesgo desapareció porque un botón quedó verde"
+                ]
+              ],
+              "expected": "legacy",
+              "feedback": "Revisa la evidencia y los límites explicados en la guía antes de continuar."
+            },
+            {
+              "key": "reason",
+              "label": "Explica tu conclusión: observación, fuente, límite y siguiente decisión",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    },
+    "auditoria": {
+      "title": "La IA redacta; tú respondes por el expediente",
+      "pages": [
+        {
+          "title": "Revisión humana de una consulta local real",
+          "fields": [
+            {
+              "key": "verdict",
+              "label": "Dictamen sobre la propuesta del modelo",
+              "options": [
+                [
+                  "correct",
+                  "Corregir"
+                ],
+                [
+                  "reject",
+                  "Rechazar"
+                ],
+                [
+                  "accept",
+                  "Aceptar con fundamento"
+                ]
+              ]
+            },
+            {
+              "key": "reason",
+              "label": "Cita un ID que recibió el modelo. Contrasta una afirmación con su fuente, corrige el exceso y explica un límite",
+              "min": 60,
+              "max": 1800,
+              "type": "textarea"
+            },
+            {
+              "key": "handoff",
+              "label": "Qué entregas al dueño y qué decisión sigue pendiente de su autoridad",
+              "min": 40,
+              "max": 1800,
+              "type": "textarea"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "legal_summary": "Ley 21.663, art. 9: alerta temprana hasta 3 horas desde conocimiento del incidente que pueda tener efecto significativo; actualización hasta 72 horas, o 24 horas para OIV cuando afecta el servicio esencial. Informe final hasta 15 días corridos desde el envío de la alerta temprana. Si sigue en curso, informe de situación y final hasta 15 días desde que se haya gestionado. OIV: informar el plan de acción al adoptarlo; adopción hasta 7 días corridos desde conocimiento. Son plazos de reporte, no SLA de parcheo. El Reglamento, arts. 2–4, incluye confidencialidad/acceso no autorizado sin exigir interrupción inmediata. La calificación OIV se supone en el ejercicio. Todo envío aquí es local y simulado.",
+  "incident": {
+    "synthetic": true,
+    "legal_submission": false,
+    "client": "Red Salud Sur ficticia",
+    "known_at": "2026-10-21T12:00:00Z",
+    "early_sent_at": "2026-10-21T14:00:00Z",
+    "caseA": "OIV ficticia. Acceso entre clientes observado en el rango. El guion de negocio agrega retraso de resultados urgentes y afectación de la función esencial; no es una caída medida por el simulador.",
+    "caseB": "Misma hora de conocimiento. OIV ficticia, acceso no autorizado a datos sensibles del guion, sin afectación de la función esencial. Analizar efecto significativo por confidencialidad, actualización general 72 h.",
+    "caseC": "Solo presencia del paquete legacy; no se demostró incidente por esa CVE.",
+    "caseD": "Variante A: incidente sigue en curso al vencimiento del final. Presentar informe de situación. Gestión informada en el guion: 2026-11-07T16:00:00Z. La decisión de cierre conforme al Reglamento no se sustituye por un clic del analista.",
+    "managed_at": "2026-11-07T16:00:00Z",
+    "exception_policy": "Política ficticia: propuesta de excepción máxima 30 días desde conocimiento, con dueño, justificación, evidencia de controles, revisión y disparador de revocación. No es un plazo de la ley."
+  },
+  "report_answers": {
+    "early": "2026-10-21T15:00:00Z",
+    "updateA": "2026-10-22T12:00:00Z",
+    "updateB": "2026-10-24T12:00:00Z",
+    "action": "2026-10-28T12:00:00Z",
+    "final": "2026-11-05T14:00:00Z",
+    "managed": "2026-11-22T16:00:00Z"
+  },
+  "sources": [
+    {
+      "id": "LAW-ART9",
+      "title": "Ley 21.663 · arts. 7, 8, 9 y 27",
+      "url": "https://www.bcn.cl/leychile/navegar?i=1202434"
+    },
+    {
+      "id": "DS295",
+      "title": "Decreto 295/2024 · Reglamento de reporte · DO 1 marzo 2025",
+      "url": "https://www.diariooficial.interior.gob.cl/publicaciones/2025/03/01/44088/01/2617387.pdf"
+    },
+    {
+      "id": "WSTG-IDOR",
+      "title": "OWASP WSTG v4.2 · autorización de objetos",
+      "url": "https://wstg.owasp.org/v4.2/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References/"
+    },
+    {
+      "id": "T1190",
+      "title": "MITRE ATT&CK T1190 v2.8",
+      "url": "https://attack.mitre.org/techniques/T1190/"
+    },
+    {
+      "id": "T1078",
+      "title": "MITRE ATT&CK T1078 v3.0",
+      "url": "https://attack.mitre.org/techniques/T1078/"
+    },
+    {
+      "id": "ISO27001",
+      "title": "ISO/IEC 27001:2022 · referencia oficial, sin reproducción del estándar",
+      "url": "https://www.iso.org/standard/27001"
+    },
+    {
+      "id": "ZAP",
+      "title": "OWASP ZAP · Docker oficial",
+      "url": "https://www.zaproxy.org/docs/docker/about/"
+    },
+    {
+      "id": "NAV",
+      "title": "MITRE Navigator · formato de capa 4.5",
+      "url": "https://github.com/mitre-attack/attack-navigator/blob/master/layers/spec/v4.5/layerformat.md"
+    },
+    {
+      "id": "LAW21459",
+      "title": "Ley 21.459 · alcance y autorización; revisar texto vigente",
+      "url": "https://www.bcn.cl/leychile/Navegar?idNorma=1177743&idVersion=2025-01-01"
+    },
+    {
+      "id": "LAW19628",
+      "title": "Ley 19.628 · versión aplicable antes de diciembre 2026",
+      "url": "https://www.bcn.cl/leychile/Navegar?idNorma=141599&idVersion=2023-05-09"
+    },
+    {
+      "id": "LAW21719",
+      "title": "Ley 21.719 · vigencia 1 diciembre 2026",
+      "url": "https://www.bcn.cl/balance-legislativo/detalle/ficha_LEY_21719_2024-12-13"
+    }
+  ],
+  "consulted_at": "2026-10-21",
+  "range_findings": [
+    {
+      "id": "R-01",
+      "title": "Autorización entre clientes del nuevo rango",
+      "limit": "Distinto de F-02 en /api/export. Se corrige solo /range/live; el gemelo /range/vuln conserva intencionalmente la falla para comparar."
+    },
+    {
+      "id": "R-02",
+      "title": "Credencial comprometida por supuesto del guion",
+      "limit": "El robo no se ejecuta ni se prueba. Se observa uso deliberado y se comprueba revocación de esa credencial sintética."
+    }
+  ]
+}

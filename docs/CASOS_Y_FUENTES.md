@@ -37,3 +37,5 @@ El índice ordinal `4×L×I` es una **política docente original**, no una fórm
 - OWASP: [Prompt Injection](https://genai.owasp.org/glossaries/prompt-injection/) y [Excessive Agency](https://genai.owasp.org/llmrisk/llm062025-excessive-agency/).
 
 Una técnica exige conducta observada; un control exige prueba; un artículo exige alcance y vigencia. No hay equivalencia automática entre CVE, ATT&CK, ISO y ley. Fecha editorial de la release: 20-10-2026; revisar normativa antes de otra edición.
+
+La [continuación 4–6](FUENTES_4_6.md) amplía los casos Log4Shell, MOVEit y Synnovis con fuentes primarias y límites explícitos de la analogía. Incluye las referencias legales con fecha de caso 21 octubre 2026 y la distinción de vigencia de Ley 21.719.

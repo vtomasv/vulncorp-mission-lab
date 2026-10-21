@@ -55,11 +55,14 @@ def validate(output,allowed_ids):
             errors.append('Referencia ausente o ajena a los fragmentos recuperados.')
     return errors
 
-def propose(client_id,question,finding_ids):
+def propose(client_id,question,finding_ids,documents=None):
     current=status()
     if not current['available']:raise ValueError(current['message'])
     client=next(c for c in CLIENTS if c['id']==client_id)
     docs,findings=retrieve(question,finding_ids)
+    if documents is not None:
+        # Only trusted server callers supply bounded current observations, never a browser prompt's tools.
+        docs=documents
     context={'client':{k:client[k] for k in ['name','mission','story','owner','rto','rpo']},
              'findings':findings,'untrusted_evidence':docs,'question':question}
     system=('Eres un ayudante de gestión de vulnerabilidades. Responde en español, de forma breve. '

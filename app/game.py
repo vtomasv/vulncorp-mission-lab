@@ -61,6 +61,8 @@ def collect(store):
                 'action':action,'zone':role,'source':f'http://{target}:{port}{route}','result':result,'observed':True,
                 'provenance':'target-audit','content_sha256':hashlib.sha256(canonical(result)).hexdigest()})
             existing.add(event['id'])
+    from . import advanced
+    advanced.collect(store,addresses)
     return live
 
 def current(store,run):
@@ -141,7 +143,8 @@ def conditions(store,challenge,run,active):
         denied_ids={x['id'] for x in denied};business_ids={x['id'] for x in business}
         residual=[x for x in records('decision') if x['finding_id']=='F-02' and x['state']=='residual' and denied_ids.intersection(x['evidence_ids']) and business_ids.intersection(x['evidence_ids'])]
         check('Residual registrado con ambas pruebas',residual,residual)
-    return checks
+    from . import advanced
+    return checks or advanced.conditions(store,challenge,run)
 
 def snapshot(store,live=None,feedback=None):
     run=campaign(store);awards=[x for x in store.records('game_award') if x['run_id']==run['id']]

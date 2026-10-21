@@ -1665,3 +1665,14 @@ legend {
 .ssh-task-links .quiet-button { padding-left:0; color:var(--purple); }
 .ssh-task pre { max-height:none; font-size:12px; }
 .ssh-task .step-reason { font-size:12px; }
+
+/* Extra zones preserve the same quiet route at narrow widths. */
+.zone-nav { overflow-x:auto; gap:18px; scrollbar-width:thin; }
+.zone-tab { flex-shrink:0; }
+.event-list { max-height:420px; overflow:auto; overscroll-behavior:contain; }
+.event-list article { padding:12px 0; border-bottom:1px solid var(--line,#e5e1e9); }
+.event-list p { margin:5px 0; font-size:13px; }
+.source pre { white-space:pre-wrap; overflow-wrap:anywhere; font-size:12px; max-width:100%; }
+#advanced-ref-picker { max-height:300px; overflow:auto; overscroll-behavior:contain; }
+#advanced-form textarea { display:block; width:100%; box-sizing:border-box; }
+#advanced-form .form-actions { margin-top:20px; }

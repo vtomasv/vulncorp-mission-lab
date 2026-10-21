@@ -7,6 +7,7 @@ import sqlite3
 import time
 import uuid
 import sys
+from contextlib import closing
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
@@ -28,15 +29,16 @@ def connect():
     return c
 
 def records(kind):
-    with connect() as c:return [json.loads(r['body']) for r in c.execute('SELECT body FROM records WHERE kind=? ORDER BY rowid',(kind,))]
+    with closing(connect()) as c:return [json.loads(r['body']) for r in c.execute('SELECT body FROM records WHERE kind=? ORDER BY rowid',(kind,))]
 
 def save(kind,body):
-    if kind in ['decision','ai','review','portfolio','triage','control','scan','note']:
+    if kind in ['decision','ai','review','portfolio','triage','control','scan','note','lab_record']:
         runs=records('game_campaign')
         if runs:body={**body,'game_run':runs[-1]['id']}
     item={**body,'id':body.get('id') or kind.upper()+'-'+uuid.uuid4().hex[:10],
           'created_at':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())}
-    with connect() as c:c.execute('INSERT OR REPLACE INTO records VALUES (?,?,?,?)',(item['id'],kind,item['created_at'],json.dumps(item,ensure_ascii=False)))
+    with closing(connect()) as c:
+        with c:c.execute('INSERT OR REPLACE INTO records VALUES (?,?,?,?)',(item['id'],kind,item['created_at'],json.dumps(item,ensure_ascii=False)))
     return item
 
 def request_target(url,data=None,headers=None):
@@ -50,8 +52,9 @@ def request_target(url,data=None,headers=None):
     return {'status':status,'body':body,'elapsed_ms':round((time.monotonic()-start)*1000)}
 
 def export_bundle():
-    bundle={'format':'vulncorp-evidence/1.0','synthetic':True,'exported_at':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
+    bundle={'format':'vulncorp-evidence/1.1','synthetic':True,'legal_submission':False,'exported_at':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
             **{k:records(k) for k in ['evidence','decision','note','ai','review','triage','control','scan','context','portfolio','station','game_campaign','game_activation','game_award','game_analysis']}}
+    bundle.update(lab_event=records('lab_event'),lab_record=records('lab_record'))
     canonical=json.dumps(bundle,sort_keys=True,ensure_ascii=False).encode()
     return {**bundle,'content_sha256':hashlib.sha256(canonical).hexdigest()}
 
@@ -63,6 +66,12 @@ def nonempty(value,minlength=1,maxlength=4000):
 
 def dispatch(path,data):
     if not isinstance(data,dict):raise ValueError('Se esperaba un objeto JSON.')
+    if path=='/api/advanced/record':
+        from . import advanced
+        return advanced.record(sys.modules[__name__],data)
+    if path=='/api/advanced/ai':
+        from . import advanced
+        return advanced.ai_dossier(sys.modules[__name__])
     if path=='/api/game/verify':
         from . import game
         return game.verify(sys.modules[__name__])
@@ -184,17 +193,21 @@ class Handler(BaseHTTPRequestHandler):
         if path=='/api/game':
             from . import game
             return self.send(game.snapshot(sys.modules[__name__]))
-        if path=='/health':return self.send({'ok':True,'version':'0.2.0'})
+        if path=='/health':return self.send({'ok':True,'version':'0.3.0'})
         if path=='/api/bootstrap':
+            from .advanced import CONFIG
             intelligence=json.loads((ROOT/'data/intelligence.json').read_text())
             return self.send({'clients':CLIENTS,'findings':FINDINGS,'assets':ASSETS,'missions':MISSIONS,'corpus':CORPUS,
-                'intelligence':intelligence,'version':'0.2.0','ssvc_tree':'DT_DP v1.0.0',
-                'records':{k:records(k) for k in ['evidence','decision','note','ai','review','triage','control','scan','context','portfolio','station','game_campaign','game_activation','game_award','game_analysis']}})
+                'intelligence':intelligence,'advanced':{k:v for k,v in CONFIG.items() if k!='report_answers'},'version':'0.3.0','ssvc_tree':'DT_DP v1.0.0',
+                'records':{k:records(k) for k in ['evidence','decision','note','ai','review','triage','control','scan','context','portfolio','station','game_campaign','game_activation','game_award','game_analysis','lab_event','lab_record']}})
+        if path=='/api/advanced/layer':
+            from . import advanced,game
+            return self.send(advanced.layer(sys.modules[__name__],game.campaign(sys.modules[__name__])))
         if path=='/api/ai/status':return self.send(ai.status())
         if path=='/api/targets':return self.send({r:request_target(f'http://{r}:{port}/_status') for r,port in [('gateway',8080),('records',8081),('backup',8082)]})
         if path=='/api/export':return self.send(export_bundle())
         if path.startswith('/api/'):return self.send({'error':'Ruta no encontrada'},404)
-        files={'/':'index.html','/favicon.svg':'favicon.svg','/anatomy.css':'anatomy.css','/context-figure.js':'context-figure.js','/game.js':'game.js','/game.css':'game.css'}
+        files={'/':'index.html','/favicon.svg':'favicon.svg','/anatomy.css':'anatomy.css','/context-figure.js':'context-figure.js','/game.js':'game.js','/advanced.js':'advanced.js','/game.css':'game.css'}
         if path not in files:return self.send({'error':'Archivo no encontrado'},404)
         f=ROOT/'web'/files[path];raw=f.read_bytes()
         self.send_response(200);self.send_header('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css; charset=utf-8','svg':'image/svg+xml'}[f.suffix[1:]])

@@ -66,3 +66,11 @@ Límites configurados: plataforma 256 MiB; tres servicios 160 MiB cada uno; escr
 Los puestos arrancan con un proceso raíz y capacidades limitadas para preparar hogares, cambiar a UID 1000 y ejecutar sshd/X. Los tres puestos necesitan AUDIT_WRITE para abrir terminales SSH interactivas; está verificado explícitamente. El usuario interactivo carece de esas capacidades. El árbol de archivos del contenedor es de solo lectura, con hogares y directorios temporales específicos escribibles.
 
 Esta es una frontera pedagógica local. El administrador del host Docker puede alterar contenedores, reloj, redes, secretos y base. HMAC protege procedencia frente al uso normal del puesto; no demuestra autoría individual ni resiste al propietario administrador. Cada estudiante necesita su propia instalación. No hay cuentas ni aislamiento multiusuario de producción.
+
+## Rango de validación y continuación
+
+La [continuación 4–6](CONTINUACION_4_6.md) agrega `validation` (128 MiB), `collector` (96 MiB) y ZAP bajo demanda (768 MiB), todos solo en la red interna `app`, sin puertos al host. Gateway sustituye el origen enviado por el alumno por el peer real y autentica el reenvío privado. El verificador relaciona ese origen con las direcciones de las estaciones firmadas. El nuevo volumen `range_state` conserva controles y registros por campaña; las estaciones no lo montan. Cambiar de campaña conserva el estado anterior para poder retomarlo.
+
+Los endpoints de control y auditoría requieren una llave generada por instalación; el alumno usa comandos acotados del agente y no recibe esa llave. El marcador solo admite un programa fijo. El colector solo recibe el destino fijo desde la aplicación. No se aceptan comandos, rutas de archivo o URLs arbitrarias en esas acciones.
+
+ZAP tiene una clave sintética pública de práctica y API solo interna. Se usa como proxy/análisis pasivo de cuatro solicitudes fijas. Sus alertas no sustituyen las pruebas de autorización; las referencias de progreso provienen además del agente y del target. El alumno puede explorar su instalación; el propietario de Docker puede modificar cualquier componente, por lo que el límite sigue siendo educativo y no un examen resistente al administrador.

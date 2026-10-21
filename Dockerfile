@@ -13,7 +13,7 @@ COPY --chmod=644 training/ssh/vulncorp_student_ed25519* ./training/ssh/
 COPY requirements-legacy.txt ./requirements-legacy.txt
 COPY LICENSE NOTICE.md ./
 COPY scripts/vendor/anatomy/LICENSE ./licenses/anatomy.txt
-RUN mkdir -p /state /secrets && chown 10001:10001 /state /secrets && chmod 755 /app/training /app/training/ssh
+RUN mkdir -p /state /secrets /range-state && chown 10001:10001 /state /secrets /range-state && chmod 755 /app/training /app/training/ssh
 USER 10001:10001
 CMD ["python", "-m", "app.server"]
 

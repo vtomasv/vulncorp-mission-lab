@@ -73,6 +73,57 @@ services:
       timeout: 3s
       retries: 6
 
+  validation:
+    <<: *common
+    command: [python, -m, app.range_target]
+    environment: {LAB_SECRET_DIR: /secrets, LAB_RANGE_STATE: /range-state/validation.json}
+    volumes: [lab_secrets:/secrets:ro, range_state:/range-state]
+    networks: [app]
+    mem_limit: 128m
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8083/health',timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+
+  collector:
+    <<: *common
+    command: [python, -m, app.range_target]
+    environment: {LAB_RANGE_ROLE: collector, LAB_SECRET_DIR: /secrets, LAB_RANGE_STATE: /range-state/collector.json}
+    volumes: [lab_secrets:/secrets:ro, range_state:/range-state]
+    networks: [app]
+    mem_limit: 96m
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8084/health',timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+
+  webscan:
+    image: ghcr.io/zaproxy/zaproxy:stable@sha256:5ccfff9a411743ab2615136a2edd7416bec9ce41572fa94e935df38c14adb2b6
+    profiles: [webscan]
+    command: [zap.sh, -daemon, -host, 0.0.0.0, -port, "8080", -config, api.key=training-zap-local-only, -config, api.addrs.addr.name=.*, -config, api.addrs.addr.regex=true, -config, autoupdate.checkOnStart=false, -config, autoupdate.downloadNewRelease=false, -config, autoupdate.installAddonUpdates=false]
+    environment: {JAVA_OPTS: "-Xmx512m", HOME: /home/zap}
+    volumes: [zap_work:/home/zap]
+    networks: [app]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 768m
+    memswap_limit: 768m
+    cpus: 1.0
+    pids_limit: 128
+    tmpfs: ["/tmp:size=96m,mode=1777"]
+    logging:
+      driver: json-file
+      options: {max-size: 5m, max-file: "2"}
+    healthcheck:
+      test: [CMD, python3, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/JSON/core/view/version/?apikey=training-zap-local-only',timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 20s
+
   init-game:
     image: vulncorp-core:0.1.0
     command: [python, -m, app.init_game]
@@ -249,6 +300,8 @@ networks:
   feeds: {}
 
 volumes:
+  zap_work: {}
+  range_state: {}
   lab_secrets: {}
   analyst_home: {}
   analyst_journal: {}
