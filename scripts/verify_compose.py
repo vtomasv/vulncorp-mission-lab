@@ -32,3 +32,19 @@ assert int(services['webscan']['mem_limit'])==768*1024*1024
 active=['mission','gateway','records','backup','validation','collector','workstation','ops','appdesk','ollama','webscan']
 assert sum(int(services[x]['mem_limit']) for x in active) < 8*1024**3
 print('PASS: rango y ZAP internos, digest fijado y presupuesto de memoria <8 GiB.')
+
+locks=json.load(open('data/php-images.json'))
+for role in ['php-legacy','php-patched']:
+    s=services[role]
+    assert set(s['networks'])=={'php'} and cfg['networks']['php']['internal']
+    assert not s.get('ports') and s['read_only'] and s['user']=='10001:10001'
+    assert 'ALL' in s['cap_drop'] and not s.get('cap_add')
+    assert int(s['mem_limit'])==192*1024*1024
+    assert not any('docker.sock' in str(v) or v.get('source')=='lab_secrets' for v in s.get('volumes',[]))
+    lock=locks[role.removeprefix('php-')]
+    assert s['build']['args']['PHP_IMAGE']==lock['image']+'@'+lock['digest']
+    assert s['build']['args']['PHP_BASE_DIGEST']==lock['digest']
+php_active=[x for x in active if x!='webscan']+['php-legacy','php-patched']
+assert sum(int(services[x]['mem_limit']) for x in php_active)==7360*1024*1024
+assert sum(int(services[x]['mem_limit']) for x in php_active)<8*1024**3
+print('PASS: dos PHP sin puertos, llave exclusiva, usuario sin privilegios, imágenes fijadas; perfil PHP + IA =7360 MiB.')

@@ -1,6 +1,6 @@
 # Propuesta de misión: PHP2Shell, de la alerta al servicio verificado
 
-Estado: **diseño docente, aún no implementado**. Consulta de fuentes: **21 de octubre de 2026**. Complementa las presentaciones de las clases 4, 5 y 6 y propone una continuidad para el juego. No añade comandos, objetivos automáticos ni targets a la versión actual.
+Estado: **nivel 1 implementado y verificado**. La propuesta original se conserva abajo como antecedente de diseño; las instrucciones operativas y diferencias finales están en [CONTINUACION_7_10.md](CONTINUACION_7_10.md) y [VALIDACION_7_10.md](VALIDACION_7_10.md). No se implementó el nivel 2 de reproducción RCE. Consulta de fuentes: **21 de octubre de 2026**.
 
 ## Qué caso se estudiará
 

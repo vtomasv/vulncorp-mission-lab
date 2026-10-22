@@ -73,6 +73,11 @@ def packages(bom):
 
 def execute(data):
     action=data.get('action')
+    from . import continuation_station
+    if ROLE=='appdesk' and action in continuation_station.COMMANDS:
+        import sys
+        result,text=continuation_station.execute(action,sys.modules[__name__])
+        return {'ok':True,'stdout':text,'proof_id':emit(action,result)}
     from . import advanced_station
     if ROLE=='appdesk' and action in advanced_station.ACTIONS:
         import sys

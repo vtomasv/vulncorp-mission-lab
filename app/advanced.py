@@ -70,6 +70,8 @@ def evidence(store, run, state):
 
 
 def record(store, data):
+    from . import continuation
+    if data.get('challenge_id') in continuation.IDS:return continuation.record(store,data)
     from . import game
     run = game.campaign(store)
     item = game.current(store, run)
@@ -148,7 +150,9 @@ def record(store, data):
 
 def conditions(store, challenge, run):
     id = challenge['id']
-    if id not in IDS: return []
+    if id not in IDS:
+        from . import continuation
+        return continuation.conditions(store,challenge,run)
     state = range_state(store)
     rows = evidence(store, run, state)
     stations = [r for r in store.records('station') if r.get('occurred_at', 0) >= run['started']

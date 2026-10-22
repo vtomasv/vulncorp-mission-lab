@@ -4,7 +4,7 @@ Un laboratorio de gestión de vulnerabilidades que se juega dentro de una empres
 
 ![Ruta de desafíos](docs/assets/expansion-validacion.png)
 
-**33 desafíos · 6 zonas · noVNC + SSH · Syft + Grype + ZAP · IA local en CPU.** La ruta se desbloquea con resultados comprobados. Los puntos son formativos: no hay notas intermedias ni clasificación por velocidad.
+**57 desafíos · 10 zonas · noVNC + SSH · Syft + Grype + ZAP · PHP real · IA local en CPU.** La ruta se desbloquea con resultados comprobados. Los puntos son formativos: no hay notas intermedias ni clasificación por velocidad.
 
 | Zona | Lo que debes conseguir |
 |---|---|
@@ -14,6 +14,10 @@ Un laboratorio de gestión de vulnerabilidades que se juega dentro de una empres
 | Validación | Contrastar callback y ejecución acotada, probar autorización entre clientes y comparar con ZAP. |
 | Trazabilidad | Reconstruir eventos, mapear ATT&CK y probar autorización, revocación y continuidad. |
 | Gobierno | Crear una matriz de controles, ensayar reportes OIV, proponer excepciones y revisar IA sobre pruebas actuales. |
+| IA y fuentes | Comparar dos inferencias locales, cuestionar sus fuentes y verificar la frontera de autoridad. |
+| PHP2Shell | Contrastar CLI y web reales, aplicar un cambio de runtime y conservar la función del portal. |
+| Operación | Detectar deriva, reabrir una decisión, copiar, interrumpir y restaurar un documento sintético con hash. |
+| Defensa | Repriorizar con otro dueño, contraprobar, revisar con IA y defender un expediente trazable. |
 
 ## Empezar
 
@@ -38,6 +42,8 @@ Los servicios registran las solicitudes que reciben. Los agentes de los puestos 
 
 ZAP se inicia bajo demanda con `./lab.sh webscan-on` (Windows: `.\lab.ps1 webscan-on`) y se detiene con `webscan-off`. Solo analiza pasivamente cuatro solicitudes fijas del rango interno. La API vulnerable/corregida, el colector y el marcador fijo son servicios de entrenamiento; el marcador no reproduce Log4Shell.
 
+Para las misiones finales ejecuta `./lab.sh php-on` (Windows: `.\lab.ps1 php-on`). Este perfil detiene ZAP y prepara PHP 8.4.26 y 8.4.27 reales, sin publicar puertos. La práctica PHP2Shell comprueba actualización y función; **no reproduce RCE de las CVE ni abre una webshell**. [Guía paso a paso](labs/08-php2shell/ESTUDIANTE.md).
+
 La IA usa Ollama y Qwen3 1.7B local, con CPU, fuentes recuperadas y revisión humana. No obtiene autoridad para ejecutar cambios o aceptar riesgos. Los cálculos de riesgo y SSVC son deterministas.
 
 ## Para enseñar y extender
@@ -47,7 +53,9 @@ La IA usa Ollama y Qwen3 1.7B local, con CPU, fuentes recuperadas y revisión hu
 - Guías paso a paso de [Terreno](labs/01-superficie/ESTUDIANTE.md), [Señales](labs/02-evidencia/ESTUDIANTE.md) y [Continuidad](labs/03-priorizacion/ESTUDIANTE.md).
 - Nuevas guías de [Validación](labs/04-validacion/ESTUDIANTE.md), [Trazabilidad](labs/05-trazabilidad/ESTUDIANTE.md) y [Gobierno](labs/06-gobierno/ESTUDIANTE.md), con cuadernos y orientaciones del instructor.
 - [Continuación docente 4–6](docs/CONTINUACION_4_6.md): resultados, precondiciones, fuentes y límites de los talleres.
-- [Propuesta de misión PHP2Shell](docs/PROPUESTA_PHP2SHELL.md): continuidad para IA, remediación y operación, con fuentes primarias, pruebas y criterios de avance. Es un diseño futuro, aún no implementado.
+- [Continuación docente 7–10](docs/CONTINUACION_7_10.md): las cuatro misiones finales, fuentes, comprobadores y defensa formativa.
+- Guías de [IA y fuentes](labs/07-asistente/ESTUDIANTE.md), [PHP2Shell](labs/08-php2shell/ESTUDIANTE.md), [Operación](labs/09-operacion/ESTUDIANTE.md) y [Defensa](labs/10-defensa/ESTUDIANTE.md), cada una con cuaderno y pauta docente.
+- [Validación del tramo final](docs/VALIDACION_7_10.md) y [propuesta PHP2Shell original](docs/PROPUESTA_PHP2SHELL.md), implementada en su nivel 1.
 - [Acceso SSH y credenciales de práctica](docs/SSH.md).
 - [Arquitectura y confianza de la evidencia](docs/ARQUITECTURA.md), [IA local](docs/IA_LOCAL.md), [validación y límites](docs/VALIDACION.md), [soluciones](docs/SOLUCIONES.md).
 - [Hechos reales y fuentes](docs/CASOS_Y_FUENTES.md), [licencias](NOTICE.md).

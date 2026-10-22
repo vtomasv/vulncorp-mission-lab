@@ -1,0 +1,8 @@
+{
+  "consulted_at": "2026-10-21",
+  "branch": "8.4",
+  "legacy": {"version":"8.4.26","version_id":80426,"image":"php:8.4.26-apache-bookworm","digest":"sha256:52f04cd1e398edd0f80afa8330ce73bce61931ddbd0d5bdd919c6f914d02bcf8"},
+  "patched": {"version":"8.4.27","version_id":80427,"image":"php:8.4.27-apache-bookworm","digest":"sha256:e653ff90d7f6e2e6f81eddb07c864f1eae224ccbf5143f82a44f25e2f110e320"},
+  "method":"Versiones reales de mod_php y regresión HTTP funcional. No incluye PoC RCE ni webshell genérica.",
+  "sources":["https://www.php.net/archive/2026.php","https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w","https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp","https://github.com/docker-library/php"]
+}

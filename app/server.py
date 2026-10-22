@@ -57,7 +57,7 @@ def request_target(url,data=None,headers=None):
 def export_bundle():
     bundle={'format':'vulncorp-evidence/1.1','synthetic':True,'legal_submission':False,'exported_at':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),
             **{k:records(k) for k in ['evidence','decision','note','ai','review','triage','control','scan','context','portfolio','station','game_campaign','game_activation','game_award','game_analysis']}}
-    bundle.update(lab_event=records('lab_event'),lab_record=records('lab_record'),game_session=records('game_session'))
+    bundle.update(lab_event=records('lab_event'),lab_record=records('lab_record'),game_session=records('game_session'),operation_state=records('operation_state'))
     canonical=json.dumps(bundle,sort_keys=True,ensure_ascii=False).encode()
     return {**bundle,'content_sha256':hashlib.sha256(canonical).hexdigest()}
 
@@ -69,6 +69,8 @@ def nonempty(value,minlength=1,maxlength=4000):
 
 def dispatch(path,data):
     if not isinstance(data,dict):raise ValueError('Se esperaba un objeto JSON.')
+    if path=='/api/continuation/action':
+        raise ValueError('El cambio operativo requiere la estación autenticada.')
     if path=='/api/advanced/record':
         from . import advanced
         return advanced.record(sys.modules[__name__],data)
@@ -196,12 +198,14 @@ class Handler(BaseHTTPRequestHandler):
         if path=='/api/game':
             from . import game
             return self.send(game.snapshot(sys.modules[__name__]))
-        if path=='/health':return self.send({'ok':True,'version':'0.3.0'})
+        if path=='/health':return self.send({'ok':True,'version':'0.4.0'})
         if path=='/api/bootstrap':
             from .advanced import CONFIG
+            from . import continuation
+            config={**CONFIG,'exercises':{**CONFIG['exercises'],**continuation.CONFIG['exercises']}}
             intelligence=json.loads((ROOT/'data/intelligence.json').read_text())
             return self.send({'clients':CLIENTS,'findings':FINDINGS,'assets':ASSETS,'missions':MISSIONS,'corpus':CORPUS,
-                'intelligence':intelligence,'advanced':{k:v for k,v in CONFIG.items() if k!='report_answers'},'version':'0.3.0','ssvc_tree':'DT_DP v1.0.0',
+                'intelligence':intelligence,'advanced':{k:v for k,v in config.items() if k!='report_answers'},'continuation':continuation.view(sys.modules[__name__]),'version':'0.4.0','ssvc_tree':'DT_DP v1.0.0',
                 'records':{k:records(k) for k in ['evidence','decision','note','ai','review','triage','control','scan','context','portfolio','station','game_campaign','game_activation','game_award','game_analysis','lab_event','lab_record']}})
         if path=='/api/advanced/layer':
             from . import advanced,game
@@ -219,6 +223,17 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         try:
+            if self.path=='/api/continuation/action':
+                import hmac
+                if not hmac.compare_digest(self.headers.get('X-Station-Key',''),secret('appdesk')):
+                    return self.send({'error':'Usa el comando desde aplicaciones.'},403)
+                length=int(self.headers.get('Content-Length','0'))
+                if not 0<length<=1024:return self.send({'error':'Solicitud fuera del alcance'},400)
+                data=json.loads(self.rfile.read(length))
+                if not isinstance(data,dict):raise ValueError('Se esperaba un objeto JSON.')
+                from . import continuation
+                return self.send(continuation.execute(sys.modules[__name__],data.get('action')))
+
             host=self.headers.get('Host','')
             hostname=urlsplit('http://'+host).hostname
             if hostname not in ['127.0.0.1','localhost','::1','mission']:

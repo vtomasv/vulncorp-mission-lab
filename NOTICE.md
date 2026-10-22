@@ -17,6 +17,7 @@ Las imágenes base y herramientas se descargan con tag y digest fijados. Los paq
 
 | Componente | Proyecto / licencia principal |
 |---|---|
+| PHP / Apache HTTP Server | [PHP](https://www.php.net/license/) / PHP License; [Apache](https://httpd.apache.org/docs/2.4/license.html) / Apache-2.0; ver avisos de la imagen oficial y paquetes Debian |
 | Python | [python.org](https://www.python.org/psf/license/) / PSF |
 | Syft, Grype | [Anchore](https://github.com/anchore) / Apache-2.0 |
 | Ollama | [ollama/ollama](https://github.com/ollama/ollama) / MIT |

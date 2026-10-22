@@ -69,3 +69,9 @@ PowerShell: `$env:OLLAMA_MODEL='qwen3:4b'`. No es un requisito para la clase ni 
 En el último objetivo de Gobierno, `lab ia-expediente` ejecuta una inferencia real con tres pruebas posteriores a autorización y revocación y una paráfrasis identificada del art. 9 de la Ley 21.663. Se conserva el contenido exacto recibido por el modelo. El borrador se identifica con `purpose: oiv-dossier`, episodio y campaña. La revisión humana queda en `lab_record`, con audit ID, dictamen, fundamento y entrega pendiente al dueño. Debe citar un ID realmente recibido. Una salida estructuralmente inválida se puede corregir o rechazar, pero no aceptar.
 
 El modelo no calcula vencimientos jurídicos, no ejecuta controles ni acepta excepciones. Los vencimientos se calculan de forma determinista sobre el dossier fechado. El tratamiento de evidencia no confiable y las restricciones de ejecución del asistente se mantienen. `webscan-off` puede liberar memoria antes de esta inferencia CPU.
+
+## Comparación y revisión en el tramo final
+
+Los objetivos nuevos ejecutan tres inferencias locales: avisos resumidos, avisos más una nota ficticia con instrucciones incrustadas y revisión con un evento actual del documento. Se conservan solicitud, fuentes, digest, salida, errores de esquema y dictamen humano. La comparación no exige que el modelo obedezca la nota hostil. El controlador verifica que no ofreció herramientas y que el estado operativo no cambió durante cada inferencia.
+
+La memoria configurada con ambos PHP e IA suma 7360 MiB; ZAP se detiene al activar PHP. [Guía de IA y fuentes](../labs/07-asistente/ESTUDIANTE.md).

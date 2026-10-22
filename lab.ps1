@@ -8,7 +8,7 @@ Set-Location $PSScriptRoot
 function DC { & docker compose @args; if ($LASTEXITCODE -ne 0) { throw 'Docker Compose no pudo completar el paso. Revisa docs/SOLUCIONES.md.' } }
 function Write-Utf8($Path, $Lines) { [IO.File]::WriteAllText((Join-Path $PSScriptRoot $Path), ($Lines -join "`n"), (New-Object System.Text.UTF8Encoding($false))) }
 if ($Command -eq 'help') {
-  Write-Host '.\lab.ps1 up | prepare-game | ssh | doctor | status | down | sbom | scan | ai-prepare | ai-on | ai-off | webscan-on | webscan-off | test | smoke | export | reset-targets'
+  Write-Host '.\lab.ps1 up | prepare-game | ssh | doctor | status | down | sbom | scan | ai-prepare | ai-on | ai-off | webscan-on | webscan-off | php-on | php-off | test | smoke | export | reset-targets'
   Write-Host '.\lab.ps1 discover public     .\lab.ps1 discover support'
   Write-Host '.\lab.ps1 probe public export     .\lab.ps1 probe public transaction'
   return
@@ -45,7 +45,7 @@ switch ($Command) {
     & ssh -i $KeyPath -p $SshPort -o IdentitiesOnly=yes -o ForwardAgent=no -o StrictHostKeyChecking=yes -o UserKnownHostsFile=artifacts/ssh/known_hosts student@127.0.0.1
     if ($LASTEXITCODE -ne 0) { throw 'No se pudo abrir SSH. Revisa docs/SSH.md.' }
   }
-  down { DC --profile ai --profile tools --profile scanners --profile webscan down }
+  down { DC --profile ai --profile tools --profile scanners --profile webscan --profile php down }
   status { DC --profile ai ps }
   discover { if ($Zone -notin @('public','support')) { throw 'Zona: public o support' }; DC run --rm --no-deps "probe-$Zone" discover }
   probe { if ($Zone -notin @('public','support')) { throw 'Zona: public o support' }; DC run --rm --no-deps "probe-$Zone" probe $Action }
@@ -75,7 +75,9 @@ switch ($Command) {
   }
   ai-on { DC --profile ai up -d --wait mission ollama; Write-Host 'IA CPU activa; puestos y servicios siguen activos.' }
   ai-off { DC --profile ai stop ollama; Write-Host 'IA detenida; puestos, servicios y medidas permanecen activos.' }
-  webscan-on { DC --profile webscan up -d --wait webscan }
+  php-on { DC --profile webscan stop webscan; DC --profile php up -d --build --wait php-legacy php-patched; Write-Host "PHP preparado. Continúa en la misma campaña." }
+  php-off { DC --profile php stop php-legacy php-patched }
+  webscan-on { DC --profile php stop php-legacy php-patched; DC --profile webscan up -d --wait webscan }
   webscan-off { DC --profile webscan stop webscan }
   test { DC run --rm --no-deps check }
   smoke { DC exec -T mission python -m tests.smoke }

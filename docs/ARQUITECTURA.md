@@ -74,3 +74,15 @@ La [continuación 4–6](CONTINUACION_4_6.md) agrega `validation` (128 MiB), `co
 Los endpoints de control y auditoría requieren una llave generada por instalación; el alumno usa comandos acotados del agente y no recibe esa llave. El marcador solo admite un programa fijo. El colector solo recibe el destino fijo desde la aplicación. No se aceptan comandos, rutas de archivo o URLs arbitrarias en esas acciones.
 
 ZAP tiene una clave sintética pública de práctica y API solo interna. Se usa como proxy/análisis pasivo de cuatro solicitudes fijas. Sus alertas no sustituyen las pruebas de autorización; las referencias de progreso provienen además del agente y del target. El alumno puede explorar su instalación; el propietario de Docker puede modificar cualquier componente, por lo que el límite sigue siendo educativo y no un examen resistente al administrador.
+
+## Segmento PHP y cuatro zonas finales
+
+La red interna `php` conecta únicamente mission y los dos PHP. No hay puertos PHP publicados, Docker socket, red host ni agente con shell arbitraria. Ambos destinos usan UID 10001, raíz de archivos de solo lectura, 192 MiB, memoria de intercambio acotada y límites de procesos. Solo reciben una llave de runtime exclusiva, diferente de las llaves de firma de las estaciones.
+
+Desde aplicaciones, un comando fijo viaja por el socket del agente a un endpoint autenticado de mission. El controlador elige una ruta PHP fija y conserva la respuesta HTTP con campaña, episodio, revisión, despliegue, secuencia y hash. El agente también firma un recibo de la acción. La interfaz puede leer evidencia y registrar razonamiento, pero no llamar al cambio operativo sin la llave interna. Un archivo modificado en el directorio del alumno no se convierte en prueba del servidor.
+
+La ruta activa y los controles se persisten por campaña en SQLite. Los documentos y copias reales se guardan en un volumen separado, bajo el hash de la campaña. Un reinicio conserva copia y estado. Dos despliegues leen el mismo documento de esa campaña: el cambio de runtime no pierde datos. El controlador identifica los bloqueos propios como anteriores a PHP, separados de respuestas observadas del destino.
+
+La reversión de ruta es una acción del guion; el retorno a la versión antigua y el 503 del documento son observaciones reales. El impacto de negocio y condición OIV siguen siendo antecedentes ficticios. La evidencia histórica conserva su valor documental y sus PX; los nuevos objetivos exigen comprobaciones de la revisión actual. No se reescribe la historia al reabrir un tratamiento.
+
+`php-on` y `webscan-on` detienen el otro perfil para mantener respectivamente 7360 o 7744 MiB de límites con IA. Compose por sí solo permite al administrador forzar ambos: los lanzadores son la ruta soportada para el presupuesto de 8 GiB.

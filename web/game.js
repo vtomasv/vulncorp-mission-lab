@@ -17,6 +17,8 @@ function render() {
   $('#xp-value').textContent = game.xp; $('#progress-label').textContent = `${game.completed} de ${game.total} objetivos`;
   $('#progress-fill').style.width = `${100 * game.completed / game.total}%`;
   $('#zones').innerHTML = game.catalog.zones.map((z,i) => `<button class="zone-tab ${zone===z.id?'active':''}" data-zone="${z.id}" aria-current="${zone===z.id?'step':'false'}"><span class="zone-number">${String(i+1).padStart(2,'0')}</span>${esc(z.short)}${game.catalog.challenges.filter(c=>c.zone===z.id).every(c=>game.states[c.id]==='locked')?'<span class="zone-lock" aria-label="Bloqueada">○</span>':''}</button>`).join('');
+  const nav=$('#zones'), active=$('#zones .active');
+  if(active)nav.scrollLeft=Math.max(0,active.offsetLeft-nav.offsetLeft-(nav.clientWidth-active.offsetWidth)/2);
   const levels = game.catalog.challenges.filter(c => c.zone === zone);
   $('#zone-count').textContent = `${levels.filter(c=>game.states[c.id]==='done').length} / ${levels.length}`;
   $('#levels').innerHTML = levels.map((c,i) => `<button class="level ${game.states[c.id]} ${selected===c.id?'selected':''}" data-level="${c.id}" ${selected===c.id?'aria-current="step"':''}><span class="level-marker" aria-hidden="true">${game.states[c.id]==='done'?'✓':String(i+1).padStart(2,'0')}</span><span class="level-title">${esc(c.title)}<span class="level-label">${game.states[c.id]==='done'?'Comprobado':game.states[c.id]==='locked'?'Por desbloquear':`${c.xp} PX · En curso`}</span></span></button>`).join('');

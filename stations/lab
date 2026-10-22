@@ -10,6 +10,8 @@ if not args or args[0] in ['help','ayuda','--help']:
     print('Validación: lab abrir | callback | marcador | transferencia | zap')
     print('Trazabilidad: lab simular | cronologia | ensayar | corregir | revocar | capa')
     print('Gobierno: lab incidente | ia-expediente')
+    print('IA y PHP: lab mision-abrir | php-fuentes | ia-base | ia-hostil | ia-frontera | php-inventariar | php-ensayar | php-mitigar | php-desplegar | php-validar')
+    print('Operación y cierre: lab ops-deriva | ops-contener | ops-copiar | ops-danar | ops-restaurar | ops-metricas | cierre-caso | cierre-probar | cierre-ia | cierre-exportar')
     print('Los comandos ejecutan herramientas reales y conservan evidencia verificable.')
     raise SystemExit(0)
 data={'action':args[0]}

@@ -1,6 +1,6 @@
 {
   "id": "operacion-continuidad",
-  "version": "3.0",
+  "version": "4.0",
   "title": "Operación continuidad",
   "zones": [
     {
@@ -44,6 +44,34 @@
       "short": "Gobierno",
       "story": "Convierte pruebas en decisiones, reportes y límites explícitos.",
       "badge": "Expediente revisado"
+    },
+    {
+      "id": "asistente",
+      "name": "Audita al asistente",
+      "short": "IA y fuentes",
+      "story": "Compara dos inferencias locales y conserva tu autoridad.",
+      "badge": "Asistente auditado"
+    },
+    {
+      "id": "remediacion",
+      "name": "Cambia el servicio real",
+      "short": "PHP2Shell",
+      "story": "Comprueba el proceso web, corrige y conserva la función.",
+      "badge": "Cambio verificado"
+    },
+    {
+      "id": "operacion",
+      "name": "Recupera la operación",
+      "short": "Operación",
+      "story": "Una deriva obliga a reabrir el cierre. Recupera datos y servicio.",
+      "badge": "Recuperación probada"
+    },
+    {
+      "id": "defensa",
+      "name": "Defiende el expediente",
+      "short": "Defensa",
+      "story": "Otro dueño cambia el contexto. Sostén tu decisión con pruebas.",
+      "badge": "Expediente defendible"
     }
   ],
   "challenges": [
@@ -816,6 +844,554 @@
       "form": "advanced",
       "requires": [
         "excepcion"
+      ]
+    },
+    {
+      "id": "encargo-ia",
+      "zone": "asistente",
+      "title": "El encargo de NubeAndes",
+      "brief": "Conserva primero tu hipótesis. Un proveedor afirma que su PHP ya está actualizado.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "ssh appdesk",
+          "where": "Desde análisis, por SSH o noVNC",
+          "why": "Si ya estás en aplicaciones, conserva esa sesión y continúa con el siguiente paso. Este salto no publica el segmento PHP."
+        },
+        {
+          "command": "lab mision-abrir",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "El contrato identifica una función, un dueño y un límite de prueba. La afirmación del proveedor sigue siendo una hipótesis. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "auditoria"
+      ]
+    },
+    {
+      "id": "fuentes-php",
+      "zone": "asistente",
+      "title": "Dos avisos, condiciones distintas",
+      "brief": "Distingue las dos CVE y la configuración que describe cada fuente.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab php-fuentes",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "PHP-618 describe OOM; PHP-619, estado global entre solicitudes. Son paráfrasis con enlaces a avisos primarios. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "encargo-ia"
+      ]
+    },
+    {
+      "id": "ia-base",
+      "zone": "asistente",
+      "title": "La primera propuesta",
+      "brief": "Consulta Qwen local con fuentes delimitadas y conserva una afirmación verificable.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab ia-base",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Una inferencia local real, su digest y los fragmentos entregados al modelo. Puede acertar, omitir condiciones o atribuirse pruebas. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "fuentes-php"
+      ]
+    },
+    {
+      "id": "ia-hostil",
+      "zone": "asistente",
+      "title": "Una orden dentro del documento",
+      "brief": "Agrega la nota sintética del proveedor. Observa si el modelo la sigue o la resiste; ambos resultados sirven.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab ia-hostil",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Otra inferencia real añade DOC-PROVEEDOR. El resultado puede resistir o seguir la instrucción; no se fuerza un fallo para avanzar. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "ia-base"
+      ]
+    },
+    {
+      "id": "revision-ia",
+      "zone": "asistente",
+      "title": "La comparación vuelve a ti",
+      "brief": "Compara las dos salidas reales y señala qué respaldo conserva o pierde cada afirmación.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "ia-hostil"
+      ]
+    },
+    {
+      "id": "frontera-ia",
+      "zone": "asistente",
+      "title": "La autoridad fuera del modelo",
+      "brief": "Comprueba que ninguna salida tiene herramientas ni cambia el estado operativo.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab ia-frontera",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "La comprobación registra que no se ofrecieron herramientas y que el estado operativo permaneció igual durante las inferencias. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "revision-ia"
+      ]
+    },
+    {
+      "id": "php-inventario",
+      "zone": "remediacion",
+      "title": "El PHP que atiende tráfico",
+      "brief": "Compara el CLI del candidato con el mod_php activo. Ambos procesos son reales.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "ssh appdesk",
+          "where": "Desde análisis, por SSH o noVNC",
+          "why": "Si ya estás en aplicaciones, conserva esa sesión y continúa con el siguiente paso. Este salto no publica el segmento PHP."
+        },
+        {
+          "command": "lab php-inventariar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "CLI real del contenedor candidato y respuesta HTTP real del despliegue activo. Web: versión 80426, SAPI apache2handler; CLI candidato: 8.4.27. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "frontera-ia"
+      ]
+    },
+    {
+      "id": "php-linea-base",
+      "zone": "remediacion",
+      "title": "La línea base del servicio",
+      "brief": "Conserva el documento legítimo y la petición multipart pequeña antes de intervenir.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab php-ensayar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Documento NUBE-001 con status completed y hash, identidad del proceso web y una petición multipart pequeña aceptada. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "php-inventario"
+      ]
+    },
+    {
+      "id": "php-mitigacion",
+      "zone": "remediacion",
+      "title": "La medida parcial",
+      "brief": "Bloquea multipart antes de PHP. El documento sigue funcionando y la versión antigua permanece.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab php-mitigar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "La frontera devuelve 415 para la sonda multipart; el portal sigue entregando el documento y el runtime conserva 8.4.26. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "php-linea-base"
+      ]
+    },
+    {
+      "id": "php-plan",
+      "zone": "remediacion",
+      "title": "El dueño autoriza un cambio",
+      "brief": "Define aceptación y reversión antes de cambiar el portal.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "php-mitigacion"
+      ]
+    },
+    {
+      "id": "php-despliegue",
+      "zone": "remediacion",
+      "title": "El candidato recibe tráfico",
+      "brief": "Enruta al proceso corregido real y retira la restricción temporal. Conserva su respuesta.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab php-desplegar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "La ruta del controlador pasa al contenedor corregido real; versión 80427 y digest fijado. La restricción de formato se retira. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "php-plan"
+      ]
+    },
+    {
+      "id": "php-verificacion",
+      "zone": "remediacion",
+      "title": "Un cierre que admite límites",
+      "brief": "Repite las pruebas. El formato vuelve a funcionar sobre PHP corregido y el documento permanece.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab php-validar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "PHP corregido, documento completado y multipart funcional aceptado después del cambio, con la revisión actual. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "php-despliegue"
+      ]
+    },
+    {
+      "id": "ops-cambio",
+      "zone": "operacion",
+      "title": "La deriva reabre el cierre",
+      "brief": "Un rollback del guion vuelve a enrutar el portal hacia PHP antiguo. Comprueba el runtime.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "ssh appdesk",
+          "where": "Desde análisis, por SSH o noVNC",
+          "why": "Si ya estás en aplicaciones, conserva esa sesión y continúa con el siguiente paso. Este salto no publica el segmento PHP."
+        },
+        {
+          "command": "lab ops-deriva",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Una reversión de ruta controlada vuelve realmente a PHP 8.4.26. El dueño también cambia el contexto del servicio. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "php-verificacion"
+      ]
+    },
+    {
+      "id": "ops-residual",
+      "zone": "operacion",
+      "title": "La alternativa del dueño desaparece",
+      "brief": "El dossier cambia el impacto máximo a 5 con L=4. Recalcula, decide y restablece la ruta corregida.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab ops-contener",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "La contención vuelve al despliegue corregido. El contexto del incidente propone L=4 e impactos 5/2/5/4; la política ordinal produce 80. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "ops-cambio"
+      ]
+    },
+    {
+      "id": "ops-copia",
+      "zone": "operacion",
+      "title": "Una copia que puedes verificar",
+      "brief": "Copia el documento real del volumen y compara el hash con la lectura del servicio.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab ops-copiar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "El servicio escribe una copia real del documento y comprueba que su hash coincide con el documento observado. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "ops-residual"
+      ]
+    },
+    {
+      "id": "ops-interrupcion",
+      "zone": "operacion",
+      "title": "El puerto sigue abierto",
+      "brief": "Interrumpe deliberadamente el único documento sintético de tu campaña. PHP responde, pero el negocio devuelve 503.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab ops-danar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "El documento sintético se cambia de forma controlada y responde HTTP 503. /health sigue respondiendo: PHP permanece activo. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "ops-copia"
+      ]
+    },
+    {
+      "id": "ops-restauracion",
+      "zone": "operacion",
+      "title": "La función vuelve con sus datos",
+      "brief": "Restaura desde la copia, verifica hash y repite la operación por la ruta corregida.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab ops-restaurar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "La copia se restaura realmente. Su hash coincide con el conservado; documento completed y multipart funcional vuelven a responder. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "ops-interrupcion"
+      ]
+    },
+    {
+      "id": "ops-metricas",
+      "zone": "operacion",
+      "title": "Métricas con denominador",
+      "brief": "Calcula sobre eventos del episodio. Repetir solicitudes no crea nuevas derivas.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab ops-metricas",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Un episodio de deriva y una restauración. Se muestra el intervalo entre la observación de fallo y la restauración, sin puntuar velocidad. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "ops-restauracion"
+      ]
+    },
+    {
+      "id": "cierre-alcance",
+      "zone": "defensa",
+      "title": "Otro dueño, otra decisión",
+      "brief": "Usa el caso de cierre: misma plataforma, nueva función y alternativa limitada. Es ensayo formativo.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "ssh appdesk",
+          "where": "Desde análisis, por SSH o noVNC",
+          "why": "Si ya estás en aplicaciones, conserva esa sesión y continúa con el siguiente paso. Este salto no publica el segmento PHP."
+        },
+        {
+          "command": "lab cierre-caso",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "ArchivoSur es otro cliente ficticio. Se conservan las comprobaciones actuales del mismo portal, con una función y alternativa distintas. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "ops-metricas"
+      ]
+    },
+    {
+      "id": "cierre-contraprueba",
+      "zone": "defensa",
+      "title": "La objeción del otro equipo",
+      "brief": "Repite una prueba actual y explica cómo distingue bloqueo, apagado y operación legítima.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab cierre-probar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Se repiten identidad web, documento y multipart sobre la revisión actual; las respuestas quedan referenciadas. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "cierre-alcance"
+      ]
+    },
+    {
+      "id": "cierre-mapeo",
+      "zone": "defensa",
+      "title": "Un mapa que permite volver al hecho",
+      "brief": "Relaciona riesgo del servicio, ATT&CK candidato, objetivo ISO y deber aplicable con límites explícitos.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "cierre-contraprueba"
+      ]
+    },
+    {
+      "id": "cierre-ia",
+      "zone": "defensa",
+      "title": "La IA revisa el expediente actual",
+      "brief": "Solicita una síntesis local con una lectura posterior a la recuperación. Revisa la frase y sus fuentes.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab cierre-ia",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Tercera inferencia real, con avisos y una respuesta actual del documento. Conserva digest, fuentes, límites y revisión. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "cierre-mapeo"
+      ]
+    },
+    {
+      "id": "cierre-dossier",
+      "zone": "defensa",
+      "title": "El expediente sale de la pantalla",
+      "brief": "Exporta evidencia, análisis e inferencias de esta campaña a un archivo local con hash.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [
+        {
+          "command": "lab cierre-exportar",
+          "where": "En aplicaciones · ssh appdesk desde análisis",
+          "why": "Un JSON exportado en ~/evidence/cierre-exportar.json y un SHA-256 de su contenido canónico. Incluye eventos, análisis e inferencias conservadas hasta ese instante. Conserva el ID y explica qué queda sin demostrar."
+        }
+      ],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "cierre-ia"
+      ]
+    },
+    {
+      "id": "cierre-defensa",
+      "zone": "defensa",
+      "title": "Defensa ante el dueño",
+      "brief": "Defiende la decisión y registra la objeción recibida. Este ensayo no es el examen final.",
+      "xp": 120,
+      "station": "appdesk",
+      "steps": [],
+      "hints": [
+        "Entra por noVNC o SSH al mismo puesto. Una herramienta pesada a la vez.",
+        "Compara observaciones del episodio. El fundamento se discute, los PX no tienen nota."
+      ],
+      "form": "advanced",
+      "requires": [
+        "cierre-dossier"
       ]
     }
   ],

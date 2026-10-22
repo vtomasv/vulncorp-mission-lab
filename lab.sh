@@ -17,6 +17,8 @@ VulnCorp Mission Lab · sin herramientas de seguridad instaladas en el host
   ./lab.sh ai-prepare                 descargar motor y modelo (Internet)
   ./lab.sh ai-on                      iniciar IA aislada; puestos siguen activos
   ./lab.sh ai-off                     liberar RAM de IA; conserva puestos y controles
+  ./lab.sh php-on                    iniciar PHP real original y corregido
+  ./lab.sh php-off                   detener PHP; conserva documentos y progreso
   ./lab.sh webscan-on                iniciar ZAP interno (solo cuando se usa)
   ./lab.sh webscan-off               detener ZAP y liberar memoria
   ./lab.sh test                       pruebas unitarias en Docker
@@ -60,7 +62,7 @@ case "$cmd" in
   chmod 600 artifacts/ssh/known_hosts
   shift
   exec ssh -i artifacts/ssh/student_ed25519 -p "$ssh_port" -o IdentitiesOnly=yes -o ForwardAgent=no -o StrictHostKeyChecking=yes -o UserKnownHostsFile=artifacts/ssh/known_hosts student@127.0.0.1 "$@";;
- down) dc --profile ai --profile tools --profile scanners --profile webscan down;;
+ down) dc --profile ai --profile tools --profile scanners --profile webscan --profile php down;;
  status) dc --profile ai ps; ids=$(dc ps -q); if [[ -n "$ids" ]]; then docker stats --no-stream $ids; fi;;
  discover|probe)
   zone=${2:-public}; [[ "$zone" == public || "$zone" == support ]] || { echo 'Zona: public o support'; exit 1; }
@@ -93,7 +95,9 @@ case "$cmd" in
  ai-off)
   dc --profile ai stop ollama
   echo 'IA detenida y memoria liberada. Puestos, servicios y medidas permanecen activos.';;
- webscan-on) dc --profile webscan up -d --wait webscan;;
+ php-on) dc --profile webscan stop webscan; dc --profile php up -d --build --wait php-legacy php-patched; echo "PHP preparado. Continúa en la misma campaña; entra a aplicaciones desde análisis.";;
+ php-off) dc --profile php stop php-legacy php-patched;;
+ webscan-on) dc --profile php stop php-legacy php-patched; dc --profile webscan up -d --wait webscan;;
  webscan-off) dc --profile webscan stop webscan;;
  test) dc run --rm --no-deps check;;
  smoke) dc exec -T mission python -m tests.smoke;;

@@ -40,3 +40,11 @@ Las comprobaciones de desarrollo `tests/integration_game.py` y `tests/ui.mjs` cr
 No borres volúmenes para corregir una selección. Los nuevos controles y registros sobreviven a recreación de contenedores en `range_state`; los targets originales mantienen su comportamiento previo de estado en memoria.
 
 El directorio de trabajo de ZAP usa `zap_work` en disco; no se limita a una pequeña carpeta RAM. Si aparece un error de espacio, verificar el disco asignado a Docker y conservar el diagnóstico. No borrar el volumen de evidencia para solucionarlo.
+
+## Misiones finales y PHP
+
+Si el perfil no responde, ejecuta `./lab.sh php-on` desde la carpeta del repositorio en tu equipo. En Windows: `.\lab.ps1 php-on`. Esto conserva campañas y documentos. No uses `down -v`. Si necesitas volver al contraste de ZAP, `webscan-on` detiene PHP; vuelve a `php-on` antes de probar el portal.
+
+Una respuesta 415 tras `php-mitigar` es el bloqueo parcial esperado, no un fallo del contenedor ni prueba de corrección PHP. Un 503 de documento tras `ops-danar` es la interrupción sintética esperada: primero conserva el análisis de ese objetivo; después se habilita `ops-restaurar`. Los cambios no pueden saltar objetivos.
+
+Para refrescar una instalación existente después de actualizar el repositorio, usa `up` y `php-on`; `up` reconstruye el código de puestos y plataforma. `php-on` reconstruye las dos aplicaciones PHP. No necesitas reiniciar la campaña.

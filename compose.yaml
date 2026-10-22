@@ -21,7 +21,7 @@ services:
   mission:
     <<: *common
     ports: ["127.0.0.1:${LAB_PORT:-8095}:8000", "127.0.0.1:${LAB_SSH_PORT:-2222}:2222"]
-    networks: [ui, edge, app, support, ai]
+    networks: [ui, edge, app, support, ai, php]
     volumes: [mission_state:/state, lab_secrets:/secrets:ro]
     mem_limit: 256m
     cpus: 1.0
@@ -124,11 +124,75 @@ services:
       retries: 18
       start_period: 20s
 
+  php-legacy:
+    image: vulncorp-php-legacy:0.4.0
+    build:
+      context: .
+      dockerfile: php/Dockerfile
+      args:
+        PHP_IMAGE: php:8.4.26-apache-bookworm@sha256:52f04cd1e398edd0f80afa8330ce73bce61931ddbd0d5bdd919c6f914d02bcf8
+        PHP_BASE_DIGEST: sha256:52f04cd1e398edd0f80afa8330ce73bce61931ddbd0d5bdd919c6f914d02bcf8
+    profiles: [php]
+    networks: [php]
+    volumes: [php_key:/php-secret:ro, php_data:/php-data]
+    user: "10001:10001"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 192m
+    memswap_limit: 192m
+    cpus: 0.50
+    pids_limit: 32
+    tmpfs: ["/tmp:size=24m,mode=1777"]
+    depends_on:
+      init-game: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, curl, -fsS, "http://127.0.0.1:8080/health"]
+      interval: 10s
+      timeout: 4s
+      retries: 8
+    logging:
+      driver: json-file
+      options: {max-size: 5m, max-file: "2"}
+    restart: unless-stopped
+
+  php-patched:
+    image: vulncorp-php-patched:0.4.0
+    build:
+      context: .
+      dockerfile: php/Dockerfile
+      args:
+        PHP_IMAGE: php:8.4.27-apache-bookworm@sha256:e653ff90d7f6e2e6f81eddb07c864f1eae224ccbf5143f82a44f25e2f110e320
+        PHP_BASE_DIGEST: sha256:e653ff90d7f6e2e6f81eddb07c864f1eae224ccbf5143f82a44f25e2f110e320
+    profiles: [php]
+    networks: [php]
+    volumes: [php_key:/php-secret:ro, php_data:/php-data]
+    user: "10001:10001"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 192m
+    memswap_limit: 192m
+    cpus: 0.50
+    pids_limit: 32
+    tmpfs: ["/tmp:size=24m,mode=1777"]
+    depends_on:
+      init-game: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, curl, -fsS, "http://127.0.0.1:8080/health"]
+      interval: 10s
+      timeout: 4s
+      retries: 8
+    logging:
+      driver: json-file
+      options: {max-size: 5m, max-file: "2"}
+    restart: unless-stopped
+
   init-game:
     image: vulncorp-core:0.1.0
     command: [python, -m, app.init_game]
     environment: {LAB_SECRET_DIR: /secrets}
-    volumes: [lab_secrets:/secrets]
+    volumes: [lab_secrets:/secrets, php_key:/php-secret, php_data:/php-data]
     network_mode: none
     read_only: true
     cap_drop: [ALL]
@@ -298,8 +362,11 @@ networks:
   support: {internal: true}
   ai: {internal: true}
   feeds: {}
+  php: {internal: true}
 
 volumes:
+  php_key: {}
+  php_data: {}
   zap_work: {}
   range_state: {}
   lab_secrets: {}

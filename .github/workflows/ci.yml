@@ -36,6 +36,10 @@ jobs:
         run: |
           ./lab.sh webscan-on
           python3 -m tests.integration_advanced
+      - name: PHP real, deriva y restauración (IA excluida mediante fixtures explícitos)
+        run: |
+          ./lab.sh php-on
+          python3 -m tests.integration_continuation
       - name: Rutas desde dos zonas
         run: |
           ./lab.sh discover public > /tmp/public.json
@@ -48,4 +52,4 @@ jobs:
           PY
       - name: Detener proyecto
         if: always()
-        run: docker compose --profile ai --profile tools --profile scanners --profile webscan down
+        run: docker compose --profile ai --profile tools --profile scanners --profile webscan --profile php down
